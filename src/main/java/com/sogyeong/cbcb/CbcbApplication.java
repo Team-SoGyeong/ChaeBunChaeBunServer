@@ -11,13 +11,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 public class CbcbApplication {
 	public static final String APPLICATION_LOCATIONS = "spring.config.import="
-			+ "optional:classpath:application.yml";
-			//+ "/Users/yooyounglee/Desktop/app/config/sogyeong-cbcb/real-application.yml";
+			+ "classpath:application.yml, "
+			+ "/app/config/sogyeong-cbcb/real-application.yml";
 
 	public static void main(String[] args) {
 		new SpringApplicationBuilder(CbcbApplication.class)
 				.properties(APPLICATION_LOCATIONS)
 				.run(args);
+		//test
 		//SpringApplication.run(CbcbApplication.class, args);
 	}
 
