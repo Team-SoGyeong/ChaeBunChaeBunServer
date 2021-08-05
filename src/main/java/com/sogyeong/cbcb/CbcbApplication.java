@@ -18,7 +18,7 @@ public class CbcbApplication {
 		new SpringApplicationBuilder(CbcbApplication.class)
 				.properties(APPLICATION_LOCATIONS)
 				.run(args);
-		//test
+		//test2
 		//SpringApplication.run(CbcbApplication.class, args);
 	}
 
