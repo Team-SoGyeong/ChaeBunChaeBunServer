@@ -30,7 +30,7 @@ public class UserInfo { //extends UserLogin
     private String password;
 
     @Column(name ="address")
-    private String addr;
+    private long addr;
 
     @Column(name ="profile")
     private String url;
@@ -43,7 +43,7 @@ public class UserInfo { //extends UserLogin
 
 
     @Builder
-    UserInfo(String name,String nickname, String email, String password,String addr,String url,LocalDateTime joinDate){
+    UserInfo(String name,String nickname, String email, String password,long addr,String url,LocalDateTime joinDate){
         this.name=name;
         this.nickname = nickname;
         this.email = email;
