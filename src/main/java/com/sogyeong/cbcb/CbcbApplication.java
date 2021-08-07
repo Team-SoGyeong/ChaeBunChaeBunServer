@@ -11,14 +11,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 public class CbcbApplication {
 	public static final String APPLICATION_LOCATIONS = "spring.config.import="
-			+ "optional:classpath:application.yml, "
-			+ "/app/config/sogyeong-cbcb/real-application.yml";
+			+ "optional:classpath:application.yml";
+			//+ "/app/config/sogyeong-cbcb/real-application.yml"; //이건 로컬.. ec2는 어떻게 인식하지??
 
 	public static void main(String[] args) {
 		new SpringApplicationBuilder(CbcbApplication.class)
 				.properties(APPLICATION_LOCATIONS)
 				.run(args);
-		//test2
 		//SpringApplication.run(CbcbApplication.class, args);
 	}
 
