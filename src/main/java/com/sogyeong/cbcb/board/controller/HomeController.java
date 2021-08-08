@@ -11,6 +11,7 @@ import com.sogyeong.cbcb.defaults.repository.AddressRepository;
 import com.sogyeong.cbcb.defaults.repository.ProductsRepository;
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import com.sogyeong.cbcb.mypage.repository.UserInfoReposiorty;
+import com.sogyeong.cbcb.mypage.service.MyPostService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,11 +31,11 @@ import java.util.Optional;
 @AllArgsConstructor
 public class HomeController {
 
-
     AddressRepository addressRepository;
     UserInfoReposiorty userInfoReposiorty;
 
     private HomeListService homeListService;
+    private MyPostService myPostService;
 
     @PersistenceContext
     private EntityManager em;
@@ -69,9 +70,8 @@ public class HomeController {
             map.put("full_address", addrInfo);
             map.put("category",homeListService.getCategoryList());
             map.put("last_list", homeListService.getNewList(addr_seq));
-            map.put("deadline_alerts",homeListService.getDeadlineList(addr_seq));
+            map.put("deadline_alerts",myPostService.getMyDeadlineList(userId));
             //유저의 마감직전 리스트로 바꿔야함
-            
             homeInfo.add(map);
 
             return ResponseEntity.ok().body( new CommonResponse(homeInfo,"홈 구성 정보 표츌 성공"));

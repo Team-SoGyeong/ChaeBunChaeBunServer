@@ -52,13 +52,13 @@ public class HomeListService {
                         "end as buy_date, " +
                         "bp.headcount+'명' as headcount , " +
                         "FORMAT(bp.per_price,0) as price, " +
-                        "ba.isAuth, ui.profile, " +
+                        "ba.isAuth, ba.img1, " +
                         "date_format(bp.reg_date,'%m/%d') as dates " +
                         "from board_posts bp " +
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
                         "join user_info ui on bp.author_id = ui.info_id " +
-                        "where ui.address = :addrId " +
+                        "where ui.address = :addrId and bp.status = 0 " +
                         "order by dates desc, dp.seq " +
                         "limit 3 ")
                 .setParameter("addrId", addrSeq)
@@ -79,7 +79,7 @@ public class HomeListService {
             map.put("members", res[6]);
             map.put("per_price", res[7].toString()+'원');
             map.put("isAuth", res[8]);
-            map.put("profile", res[9]);
+            map.put("url", res[9]);
             map.put("witten_by", res[10]);
 
             newList.add(map);
@@ -102,16 +102,16 @@ public class HomeListService {
                         "end as buy_date, " +
                         "bp.headcount+'명' as headcount , " +
                         "FORMAT(bp.per_price,0) as price, " +
-                        "ba.isAuth, ui.profile, " +
+                        "ba.isAuth, ba.img1, " +
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
                         "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff "+
                         "from board_posts bp " +
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
                         "join user_info ui on bp.author_id = ui.info_id " +
-                        "where ui.address = :addrId " +
+                        "where ui.address = :addrId and bp.status = 0 " + // 소분이 완료되지않는경우만 나오게 하기
                         "and (TIMESTAMPDIFF(day,bp.reg_date,now()) > 4 and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7)" +
-                        "order by dates desc, dp.seq , diff desc " +
+                        "order by diff desc , dp.seq  " +
                         "limit 3 ")
                 .setParameter("addrId", addrSeq)
                 .getResultList();
@@ -131,7 +131,7 @@ public class HomeListService {
             map.put("members", res[6]);
             map.put("per_price", res[7].toString()+'원');
             map.put("isAuth", res[8]);
-            map.put("profile", res[9]);
+            map.put("url", res[9]);
             map.put("witten_by", res[10]);
 
             deadlineList.add(map);

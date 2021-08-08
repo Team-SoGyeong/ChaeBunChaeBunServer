@@ -16,7 +16,9 @@ public class CommonResponse<T,String> extends BasicResponse {
         this.message=message ;
         this.data = data;
     }
-
+    public CommonResponse(String message) {
+        this.message=message ;
+    }
     public CommonResponse() {
         this.data= (T) "ok";
     }
