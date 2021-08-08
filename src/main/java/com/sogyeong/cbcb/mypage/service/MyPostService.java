@@ -15,6 +15,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class MyPostService {
+
     @PersistenceContext
     private EntityManager em;
 
@@ -103,4 +104,5 @@ public class MyPostService {
         }
         return myDeadlineLists;
     }
+
 }
