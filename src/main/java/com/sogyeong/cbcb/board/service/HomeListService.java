@@ -1,9 +1,8 @@
 package com.sogyeong.cbcb.board.service;
 
-import com.sogyeong.cbcb.board.model.ResponseHomeList;
+import com.sogyeong.cbcb.board.model.response.ResponseHomeList;
 import com.sogyeong.cbcb.defaults.entity.Products;
 import com.sogyeong.cbcb.defaults.repository.ProductsRepository;
-import com.sogyeong.cbcb.mypage.model.response.ResponseMyPostList;
 import com.sogyeong.cbcb.mypage.model.response.ResponseMyWishtList;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

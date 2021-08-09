@@ -1,14 +1,11 @@
 package com.sogyeong.cbcb.board.controller;
 
 
-import com.sogyeong.cbcb.board.model.ResponseHomeList;
 import com.sogyeong.cbcb.board.service.HomeListService;
 import com.sogyeong.cbcb.defaults.entity.Address;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
-import com.sogyeong.cbcb.defaults.entity.Products;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
 import com.sogyeong.cbcb.defaults.repository.AddressRepository;
-import com.sogyeong.cbcb.defaults.repository.ProductsRepository;
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import com.sogyeong.cbcb.mypage.repository.UserInfoReposiorty;
 import com.sogyeong.cbcb.mypage.service.MyPageService;
@@ -55,7 +52,7 @@ public class HomeController {
         boolean isUser = userInfoReposiorty.existsById(userId);
         Optional<UserInfo> userInfo = userInfoReposiorty.findById(userId);
         if(!isUser){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
         }
         else{
@@ -85,7 +82,7 @@ public class HomeController {
     public ResponseEntity<? extends BasicResponse> getNewList(@PathVariable("addr_seq") long addr_seq) {
         boolean isAddr = addressRepository.existsById(addr_seq);
         if(!isAddr){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("입력된 주소 일련번호는 존재하지 않습니다. "));
         }
         else{
@@ -137,7 +134,7 @@ public class HomeController {
         boolean isUser = userInfoReposiorty.existsById(userId);
         Optional<UserInfo> userInfo = userInfoReposiorty.findById(userId);
         if (!isUser) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
         } else {
             List list = myPostService.getMyDeadlineList(userId);

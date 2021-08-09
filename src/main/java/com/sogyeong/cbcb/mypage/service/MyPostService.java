@@ -1,6 +1,5 @@
 package com.sogyeong.cbcb.mypage.service;
 
-import com.sogyeong.cbcb.board.model.ResponseHomeList;
 import com.sogyeong.cbcb.mypage.model.response.ResponseMyDedelineList;
 import com.sogyeong.cbcb.mypage.model.response.ResponseMyPostList;
 import lombok.AllArgsConstructor;

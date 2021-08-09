@@ -1,4 +1,4 @@
-package com.sogyeong.cbcb.board.model;
+package com.sogyeong.cbcb.board.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

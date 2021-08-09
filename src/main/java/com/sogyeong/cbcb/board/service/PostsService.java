@@ -1,10 +1,17 @@
 package com.sogyeong.cbcb.board.service;
 
 import com.sogyeong.cbcb.board.entity.Album;
-import com.sogyeong.cbcb.board.model.ResponseSubList;
+import com.sogyeong.cbcb.board.entity.Comment;
+import com.sogyeong.cbcb.board.entity.Posts;
+import com.sogyeong.cbcb.board.model.CommentDTO;
+import com.sogyeong.cbcb.board.model.response.ResponseSubList;
 import com.sogyeong.cbcb.board.repository.AlbumRepository;
+import com.sogyeong.cbcb.board.repository.CommentRepository;
+import com.sogyeong.cbcb.board.repository.PostsRepository;
+import com.sogyeong.cbcb.mypage.repository.UserInfoReposiorty;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,6 +25,9 @@ import java.util.Optional;
 public class PostsService {
 
     private AlbumRepository albumRepository;
+    private CommentRepository commentRepository;
+    private UserInfoReposiorty userInfoReposiorty;
+    private PostsRepository postsRepository;
 
     @PersistenceContext
     EntityManager em;
@@ -89,5 +99,25 @@ public class PostsService {
         }
         return subList;
 
+    }
+
+    @Transactional(readOnly = false)
+    public Boolean saveComments(CommentDTO comment) {
+        int lastSeq= commentRepository.getLastSeq();
+        Comment commentResult = commentRepository.save(comment.toEntity());
+        if(commentResult.getSeq()>lastSeq)
+            return true;
+        else return false;
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean deleteComments(long cmtId, long userId) {
+        Comment commentResult = commentRepository.getOne(cmtId);
+
+        if (userId == commentResult.getMember()) {
+            commentRepository.deleteById(cmtId);
+            return true;
+        }
+        return false;
     }
 }

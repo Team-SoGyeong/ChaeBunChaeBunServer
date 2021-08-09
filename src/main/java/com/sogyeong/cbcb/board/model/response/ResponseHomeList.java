@@ -1,4 +1,4 @@
-package com.sogyeong.cbcb.board.model;
+package com.sogyeong.cbcb.board.model.response;
 
 public class ResponseHomeList {
     private long category_id;
