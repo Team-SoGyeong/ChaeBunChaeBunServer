@@ -15,6 +15,7 @@ public class ResponseSubList {
     private int wish_cnts;
     private int comment_cnts;
     private int isAuth;
+    private Boolean isMyWish;
     private String reg_date;
     private List album;
 }

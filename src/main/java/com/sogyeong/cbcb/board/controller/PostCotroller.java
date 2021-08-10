@@ -45,20 +45,22 @@ public class PostCotroller {
     @PersistenceContext
     private EntityManager em;
 
-    @GetMapping("/posts/category/{categoryId}/{addr_seq}")
-    public ResponseEntity<? extends BasicResponse> getSubCategoryList(@PathVariable("categoryId") long category_id,@PathVariable("addr_seq") long addr_seq) {
-        boolean isAddr = addressRepository.existsById(addr_seq);
+    @GetMapping("/posts/category/{categoryId}/{user_id}")
+    public ResponseEntity<? extends BasicResponse> getSubCategoryList(@PathVariable("categoryId") long category_id,@PathVariable("user_id") long user_id) {
         boolean isCategory = productsRepository.existsById(category_id);
-        if(!isCategory){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("입력된 카테고리 정보는 존재하지 않습니다. "));
+        boolean isUser = userInfoReposiorty.existsById(user_id);
+        if(!isCategory || category_id>11){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("입력된 카테고리 정보는 정확하지 않습니다. "));
         }
-        if(!isAddr){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("입력된 주소 일련번호는 존재하지 않습니다. "));
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
         }
         else{
             Optional<Products> products = productsRepository.findById(category_id);
+            Optional<UserInfo> user = userInfoReposiorty.findById(user_id);
+            long addr_seq = user.stream().findFirst().get().getAddr();
             String name =products.stream().findFirst().get().getName();
             long seq =products.stream().findFirst().get().getSeq();
             Boolean isEct = products.stream().findFirst().get().getIsOther()==0?false:true;
@@ -77,7 +79,7 @@ public class PostCotroller {
             }
             map.put("isEct",isEct);
             map.put("address_id", addr_seq);
-            map.put("posts",pService.getSubCategoryList(category_id,addr_seq));
+            map.put("posts",pService.getSubCategoryList(category_id,user_id,addr_seq));
 
             subList.add(map);
 
