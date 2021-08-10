@@ -79,7 +79,7 @@ public class PostController {
         }
 
     }
-
+    //댓글 저장
     @PostMapping("/posts/comment")
     public ResponseEntity<? extends BasicResponse> saveComments(@RequestBody CommentVO CVO) {
 
@@ -107,7 +107,7 @@ public class PostController {
                         .body(new ErrorResponse("댓글 작성 실패"));
         }
     }
-
+    // 댓글 삭제
     @DeleteMapping("/posts/comment/{comment_id}/{user_id}")
     public ResponseEntity<? extends BasicResponse> deleteComments(@PathVariable("comment_id") long comment_id,@PathVariable("user_id") long user_id){
 
@@ -130,6 +130,7 @@ public class PostController {
         }
     }
 
+    // 댓글리스트
     @GetMapping("/posts/comment{post_id}")
     public ResponseEntity<? extends BasicResponse> getCommentsList(@PathVariable("post_id") long post_id){
         if (!postsRepository.existsById(post_id)) {
