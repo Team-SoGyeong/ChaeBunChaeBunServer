@@ -17,7 +17,7 @@ import javax.persistence.PersistenceContext;
 
 @RestController
 @AllArgsConstructor
-public class MyPostContorller {
+public class MyPostController {
 
     MyPostService myPostService;
     UserInfoReposiorty userInfoReposiorty;

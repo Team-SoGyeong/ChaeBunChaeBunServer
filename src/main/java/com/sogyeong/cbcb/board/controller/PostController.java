@@ -30,7 +30,7 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
-public class PostCotroller {
+public class PostController {
 
     AddressRepository addressRepository;
     UserInfoReposiorty userInfoReposiorty;
@@ -129,4 +129,26 @@ public class PostCotroller {
                         .body(new ErrorResponse("댓글 삭제 실패"));
         }
     }
+
+    @GetMapping("/posts/comment{post_id}")
+    public ResponseEntity<? extends BasicResponse> getCommentsList(@PathVariable("post_id") long post_id){
+        if (!postsRepository.existsById(post_id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+        }
+        else{
+            List list = new ArrayList();
+            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            map.put("post_id", post_id);
+            map.put("cmts", pService.getComments(post_id) );
+            list.add(map);
+
+            if (pService.getComments(post_id).size() > 0)
+                return ResponseEntity.ok().body(new CommonResponse(list, "댓글리스트 알럿 출력 성공"));
+            else
+                return ResponseEntity.ok().body(new CommonResponse(list, "해당 게시글에 댓글 없음"));
+        }
+    }
+
+
 }

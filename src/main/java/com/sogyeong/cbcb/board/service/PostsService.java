@@ -4,6 +4,7 @@ import com.sogyeong.cbcb.board.entity.Album;
 import com.sogyeong.cbcb.board.entity.Comment;
 import com.sogyeong.cbcb.board.entity.Posts;
 import com.sogyeong.cbcb.board.model.CommentDTO;
+import com.sogyeong.cbcb.board.model.response.ResponseCmtList;
 import com.sogyeong.cbcb.board.model.response.ResponseSubList;
 import com.sogyeong.cbcb.board.repository.AlbumRepository;
 import com.sogyeong.cbcb.board.repository.CommentRepository;
@@ -131,5 +132,41 @@ public class PostsService {
             return true;
         }
         return false;
+    }
+
+    @Transactional(readOnly = false)
+    public List getComments(long postId) {
+
+        List resultList =  em.createNativeQuery(
+                        "select" +
+                                "        ui.info_id as userId, " +
+                                "        ui.nickname, " +
+                                "        ui.profile," +
+                                "        bc.contents," +
+                                "        date_format(bc.reg_date,'%m/%d %H:%m') as dates " +
+                                "from board_posts bp\n" +
+                                "left join board_comment bc on bp.seq = bc.post_id " +
+                                "join user_info ui on bc.member = ui.info_id " +
+                                "where bp.seq = :post_id " +
+                                "order by dates; ")
+                .setParameter("post_id", postId)
+                .getResultList();
+
+        List cmtList = new ArrayList<ResponseCmtList>();
+        for (Object o: resultList) {
+            Object[] res = (Object[]) o;
+
+            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+
+            map.put("user_id", res[0]);
+            map.put("nickname", res[1]);
+            map.put("profile", res[2]);
+            map.put("comments", res[3]);
+            map.put("witten_by", res[4]);
+
+            cmtList.add(map);
+
+        }
+        return cmtList;
     }
 }
