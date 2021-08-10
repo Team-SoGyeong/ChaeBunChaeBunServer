@@ -33,6 +33,7 @@ public class PostsService {
     EntityManager em;
 
     public List getSubCategoryList(long category_id,long user_id,long addr_seq) {
+
         List resultList =  em.createNativeQuery(
                         "select "+
                                 "bp.seq as postId, " +
@@ -59,17 +60,19 @@ public class PostsService {
                                 "  where post_id =bp.seq " +
                                 ") as comment_cnts, " +
                                 "ba.isAuth, " +
-                                "case " +
-                                "when bw.member = :user then true" +
-                                "   else false " +
-                                "end as isMyWish, " +
+                                "(select " +
+                                " case when count(seq)>0 then true" +
+                                " else false " +
+                                " end " +
+                                " from board_wish " +
+                                " where board_wish.member = :user and post_id = bp.seq " +
+                                ") as isMyWish," +
                                 "date_format(bp.reg_date,'%m/%d') as dates, " +
                                 "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff "+
                                 "from board_posts bp " +
                                 "join default_products dp on bp.prod_id = dp.seq " +
                                 "join board_album ba on bp.seq = ba.post_id " +
                                 "join user_info ui on bp.author_id = ui.info_id " +
-                                "join board_wish bw on bw.post_id = bp.seq " +
                                 "where ui.address = :addrId and " +
                                 "case when :categoryId > 10 then bp.prod_id >=11 else bp.prod_id = :categoryId end " +
                                 "and bp.status = 0 " + // 소분이 완료되지않는경우만 나오게 하기

@@ -67,19 +67,11 @@ public class PostCotroller {
 
             List subList = new ArrayList();
             LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-
-            if(seq>10) {
-                map.put("category_id1", 11);
-                map.put("category_id2", products.stream().findFirst().get().getSeq());
-                map.put("category_name","기타" );
-            }
-            else {
                 map.put("category_id1", seq);
                 map.put("category_name",name );
-            }
-            map.put("isEct",isEct);
-            map.put("address_id", addr_seq);
-            map.put("posts",pService.getSubCategoryList(category_id,user_id,addr_seq));
+                map.put("isEct",isEct);
+                map.put("address_id", addr_seq);
+                map.put("posts",pService.getSubCategoryList(category_id,user_id,addr_seq));
 
             subList.add(map);
 
