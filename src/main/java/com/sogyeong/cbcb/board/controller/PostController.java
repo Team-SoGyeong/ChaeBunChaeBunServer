@@ -1,8 +1,7 @@
 package com.sogyeong.cbcb.board.controller;
 
 
-import com.sogyeong.cbcb.board.model.CommentDTO;
-import com.sogyeong.cbcb.board.model.CommentVO;
+import com.sogyeong.cbcb.board.model.*;
 import com.sogyeong.cbcb.board.repository.CommentRepository;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
 import com.sogyeong.cbcb.board.service.HomeListService;
@@ -44,6 +43,39 @@ public class PostController {
 
     @PersistenceContext
     private EntityManager em;
+
+    @PostMapping("/posts/common")
+    public ResponseEntity<? extends BasicResponse> postCommonPost(@RequestBody PostVO PVO){
+        boolean isCategory = productsRepository.existsById(PVO.getCategory_id());
+        boolean isUser = userInfoReposiorty.existsById(PVO.getAuthor_id());
+        if(!isCategory){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("입력된 카테고리 정보는 정확하지 않습니다."));
+        }
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+        }
+
+        PostDTO postDTO = new PostDTO();
+        //AlbumDTO albumDTO = new AlbumDTO();
+
+        postDTO.setCategory_id(PVO.getCategory_id());
+        postDTO.setAuthor_id(PVO.getAuthor_id());
+        postDTO.setContents(PVO.getContents());
+        postDTO.setTitle(PVO.getTitle());
+        //postDTO.setPeriod(PVO.getBuy_date()); //period가 뭐지??
+        postDTO.setAmount(PVO.getAmount());
+        postDTO.setUnit(PVO.getUnit());
+        postDTO.setTotal_price(PVO.getTotal_price());
+        postDTO.setHeadcount(PVO.getHeadcount());
+        postDTO.setPer_price(PVO.getPer_price());
+        postDTO.setContact(PVO.getContact());
+        //이미지처리는 어떻게??
+        //따로 이미지처리 dto 둬야하는 부분,,?
+
+        return null;
+    }
 
     @GetMapping("/posts/category/{categoryId}/{user_id}")
     public ResponseEntity<? extends BasicResponse> getSubCategoryList(@PathVariable("categoryId") long category_id,@PathVariable("user_id") long user_id) {

@@ -191,4 +191,17 @@ public class HomeListService {
         }
         return wishLists;
     }
+
+    public List getAddressList(String addr_str){
+        List addressList = em.createNativeQuery(
+                "select local_code, city, district, neighborhood " +
+                        "from default_address " +
+                        "where district like concat('%', :addr, '%') " +
+                        "or neighborhood like concat('%', :addr, '%') " +
+                        "and city in ('서울특별시')")
+                .setParameter("addr", addr_str)
+                .getResultList();
+
+        return addressList;
+    }
 }

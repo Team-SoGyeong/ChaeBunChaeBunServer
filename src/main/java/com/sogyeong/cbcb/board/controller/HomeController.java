@@ -16,14 +16,13 @@ import org.springframework.http.ResponseEntity;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Optional;
+import java.net.URLDecoder;
+import java.util.*;
 
 @RestController
 @AllArgsConstructor
@@ -143,6 +142,35 @@ public class HomeController {
             else
                 return ResponseEntity.ok().body(new CommonResponse(list, "나의 마감직전 채분 없음"));
         }
+    }
+
+    //게시글 검색
+    @PostMapping("/home/{addr_seq}/{search_str}")
+    public ResponseEntity<? extends BasicResponse> searchPosts(@PathVariable("addr_seq") long addr_seq,
+                                                               @PathVariable("search_str") String searchStr){
+        //해당지역에 올라온 게시글 중 검색이 맞나? 그게 맞다면 url -> /home/{addr_seq}/{search_str}이 나을
+        // 1차: 해당 지역 설정 -> 2차: 들어온 스트링 검색
+        boolean isAddr = addressRepository.existsById(addr_seq);
+        if(!isAddr){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("입력된 주소 일련번호는 존재하지 않습니다. "));
+        }
+        else{
+            //1차: 제목 - 2차: 내용 - 3차: 카테고리 검색
+        }
+
+        return null;
+    }
+
+    //위치검색
+    @PostMapping("/home/location/{addr_str}")
+    public ResponseEntity<? extends BasicResponse> searchAddress(@PathVariable("addr_str") String addr_str){
+        List addressList = homeListService.getAddressList(addr_str);
+
+        if (addressList.size() > 0)
+            return ResponseEntity.ok().body(new CommonResponse(addressList, "주소 검색 출력 성공"));
+        else
+            return ResponseEntity.ok().body(new CommonResponse(addressList, "검색한 주소 결과 없음"));
     }
 
 }
