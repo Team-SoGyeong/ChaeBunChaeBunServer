@@ -3,12 +3,15 @@ package com.sogyeong.cbcb.board.service;
 import com.sogyeong.cbcb.board.entity.Album;
 import com.sogyeong.cbcb.board.entity.Comment;
 import com.sogyeong.cbcb.board.entity.Posts;
+import com.sogyeong.cbcb.board.entity.Wish;
 import com.sogyeong.cbcb.board.model.CommentDTO;
 import com.sogyeong.cbcb.board.model.response.ResponseCmtList;
 import com.sogyeong.cbcb.board.model.response.ResponseSubList;
+import com.sogyeong.cbcb.board.model.response.WishDTO;
 import com.sogyeong.cbcb.board.repository.AlbumRepository;
 import com.sogyeong.cbcb.board.repository.CommentRepository;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
+import com.sogyeong.cbcb.board.repository.WishRepository;
 import com.sogyeong.cbcb.mypage.repository.UserInfoReposiorty;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,7 @@ public class PostsService {
 
     private AlbumRepository albumRepository;
     private CommentRepository commentRepository;
+    private WishRepository wishRepository;
     private UserInfoReposiorty userInfoReposiorty;
     private PostsRepository postsRepository;
 
@@ -168,5 +172,25 @@ public class PostsService {
 
         }
         return cmtList;
+    }
+
+    @Transactional(readOnly = false)
+    public Boolean storeWish(WishDTO wDTO) {
+        int lastSeq= wishRepository.getLastSeq();
+        Wish wResult = wishRepository.save(wDTO.toEntity());
+        if(wResult.getSeq()>lastSeq)
+            return true;
+        else return false;
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean deleteWish(long postId, long userId) {
+        List<Wish> wishResult = wishRepository.getWish(postId,userId);
+
+        if (userId == wishResult.get(0).getMember()) {
+            wishRepository.deleteByIdAndMember(postId,userId);
+            return true;
+        }
+        return false;
     }
 }

@@ -1,10 +1,12 @@
 package com.sogyeong.cbcb.board.controller;
 
 
-import com.sogyeong.cbcb.board.model.CommentDTO;
-import com.sogyeong.cbcb.board.model.CommentVO;
+import com.sogyeong.cbcb.board.entity.Wish;
+import com.sogyeong.cbcb.board.model.*;
+import com.sogyeong.cbcb.board.model.response.WishDTO;
 import com.sogyeong.cbcb.board.repository.CommentRepository;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
+import com.sogyeong.cbcb.board.repository.WishRepository;
 import com.sogyeong.cbcb.board.service.HomeListService;
 import com.sogyeong.cbcb.board.service.PostsService;
 import com.sogyeong.cbcb.defaults.entity.Products;
@@ -37,6 +39,7 @@ public class PostController {
     ProductsRepository productsRepository;
     PostsRepository postsRepository;
     CommentRepository commentRepository;
+    private WishRepository wishRepository;
 
     private HomeListService homeListService;
     private PostsService pService;
@@ -45,6 +48,40 @@ public class PostController {
     @PersistenceContext
     private EntityManager em;
 
+    @PostMapping("/posts/common")
+    public ResponseEntity<? extends BasicResponse> postCommonPost(@RequestBody PostVO PVO){
+        boolean isCategory = productsRepository.existsById(PVO.getCategory_id());
+        boolean isUser = userInfoReposiorty.existsById(PVO.getAuthor_id());
+        if(!isCategory){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("입력된 카테고리 정보는 정확하지 않습니다."));
+        }
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+        }
+
+        PostDTO postDTO = new PostDTO();
+        AlbumDTO albumDTO = new AlbumDTO();
+
+        postDTO.setCategory_id(PVO.getCategory_id());
+        postDTO.setAuthor_id(PVO.getAuthor_id());
+        postDTO.setContents(PVO.getContents());
+        postDTO.setTitle(PVO.getTitle());
+        //postDTO.setPeriod(PVO.getBuy_date()); //period가 뭐지??
+        postDTO.setAmount(PVO.getAmount());
+        postDTO.setUnit(PVO.getUnit());
+        postDTO.setTotal_price(PVO.getTotal_price());
+        postDTO.setHeadcount(PVO.getHeadcount());
+        postDTO.setPer_price(PVO.getPer_price());
+        postDTO.setContact(PVO.getContact());
+        //이미지처리는 어떻게??
+        //따로 이미지처리 dto 둬야하는 부분,,?
+
+        return null;
+    }
+
+    //하위카테고리리스트
     @GetMapping("/posts/category/{categoryId}/{user_id}")
     public ResponseEntity<? extends BasicResponse> getSubCategoryList(@PathVariable("categoryId") long category_id,@PathVariable("user_id") long user_id) {
         boolean isCategory = productsRepository.existsById(category_id);
@@ -79,6 +116,7 @@ public class PostController {
         }
 
     }
+
     //댓글 저장
     @PostMapping("/posts/comment")
     public ResponseEntity<? extends BasicResponse> saveComments(@RequestBody CommentVO CVO) {
@@ -107,6 +145,7 @@ public class PostController {
                         .body(new ErrorResponse("댓글 작성 실패"));
         }
     }
+
     // 댓글 삭제
     @DeleteMapping("/posts/comment/{comment_id}/{user_id}")
     public ResponseEntity<? extends BasicResponse> deleteComments(@PathVariable("comment_id") long comment_id,@PathVariable("user_id") long user_id){
@@ -151,5 +190,49 @@ public class PostController {
         }
     }
 
+    //찜하기
+    @PostMapping("/posts/wishlist/{post_id}/{user_id}")
+    public ResponseEntity<? extends BasicResponse> saveWish(@PathVariable("post_id") long post_id, @PathVariable("user_id") long user_id){
+        boolean isUser = userInfoReposiorty.existsById(user_id);
+        long author = postsRepository.findById(post_id).stream().findFirst().get().getAuthorId();
+        List<Wish> wishResult = wishRepository.getWish(post_id,user_id);
 
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+        }
+        else if (!postsRepository.existsById(post_id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+        }
+        else if(author==user_id){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse("자신의 글을 찜할 수 없습니다."));
+        }
+        else{
+            if(wishResult.size()==0){
+                WishDTO wDTO = new WishDTO();
+
+                wDTO.setPost_id(post_id);
+                wDTO.setAuthor_id(author);
+                wDTO.setUser_id(user_id);
+
+                Boolean isSave = pService.storeWish(wDTO);
+                if(isSave)
+                    return  ResponseEntity.ok().body( new CommonResponse("찜 하기 성공"));
+                else
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(new ErrorResponse("찜하기 실패"));
+            }
+            else{
+                Boolean isDelete = pService.deleteWish(post_id,user_id);
+                if(isDelete)
+                    return  ResponseEntity.ok().body( new CommonResponse("찜 취소 성공"));
+                else
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(new ErrorResponse("찜 취소 실패"));
+            }
+
+        }
+    }
 }
