@@ -219,7 +219,7 @@ public class PostController {
 
                 Boolean isSave = pService.storeWish(wDTO);
                 if(isSave)
-                    return  ResponseEntity.ok().body( new CommonResponse("찜 하기 성공"));
+                    return  ResponseEntity.ok().body( new CommonResponse(post_id+"번 포스트 찜 하기 성공!"));
                 else
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body(new ErrorResponse("찜하기 실패"));
@@ -227,7 +227,7 @@ public class PostController {
             else{
                 Boolean isDelete = pService.deleteWish(post_id,user_id);
                 if(isDelete)
-                    return  ResponseEntity.ok().body( new CommonResponse("찜 취소 성공"));
+                    return  ResponseEntity.ok().body( new CommonResponse(post_id+"번 포스트 찜 취소 성공!"));
                 else
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body(new ErrorResponse("찜 취소 실패"));
