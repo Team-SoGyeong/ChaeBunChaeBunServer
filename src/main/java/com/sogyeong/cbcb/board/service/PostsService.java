@@ -5,9 +5,7 @@ import com.sogyeong.cbcb.board.entity.Comment;
 import com.sogyeong.cbcb.board.entity.Posts;
 import com.sogyeong.cbcb.board.entity.Wish;
 import com.sogyeong.cbcb.board.model.CommentDTO;
-import com.sogyeong.cbcb.board.model.response.ResponseCmtList;
-import com.sogyeong.cbcb.board.model.response.ResponseSubList;
-import com.sogyeong.cbcb.board.model.response.WishDTO;
+import com.sogyeong.cbcb.board.model.response.*;
 import com.sogyeong.cbcb.board.repository.AlbumRepository;
 import com.sogyeong.cbcb.board.repository.CommentRepository;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
@@ -37,6 +35,7 @@ public class PostsService {
     @PersistenceContext
     EntityManager em;
 
+    @Transactional(readOnly = true)
     public List getSubCategoryList(long category_id,long user_id,long addr_seq) {
 
         List resultList =  em.createNativeQuery(
@@ -54,7 +53,7 @@ public class PostsService {
                                 "when bp.period =3 then '1주일 이내 구매' " +
                                 "else '2주일 이내 구매' " +
                                 "end as buy_date, " +
-                                "bp.headcount+'명' as headcount , " +
+                                "bp.headcount, " +
                                 "FORMAT(bp.per_price,0) as price," +
                                 "( select IFNULL(count(seq),0)" +
                                 "   from  board_wish" +
@@ -103,8 +102,8 @@ public class PostsService {
             map.put("title", res[4]);
             map.put("contents",res[5]);
             map.put("buy_date", res[6]);
-            map.put("headcounts", res[7].toString()+'원');
-            map.put("per_price", res[8]);
+            map.put("headcounts", res[7].toString()+'명');
+            map.put("per_price", res[8].toString()+'원');
             map.put("wish_cnts", res[9]);
             map.put("comment_cnts", res[10]);
             map.put("isAuth", res[11]);
@@ -115,6 +114,115 @@ public class PostsService {
             subList.add(map);
         }
         return subList;
+
+    }
+
+    @Transactional(readOnly = true)
+    public List getSubCategory(long category_id,long user_id,long postid) {
+
+        List result =  em.createNativeQuery(
+                        "select "+
+                                "bp.seq as postId, " +
+                                "ui.info_id as userId, " +
+                                "ui.nickname, " +
+                                "ui.profile, " +
+                                "bp.title, " +
+                                "bp.contents, " +
+                                "case "+
+                                "when bp.period =0 then '1일 전 구매' " +
+                                "when bp.period =1 then '2일 전 구매' " +
+                                "when bp.period =2 then '3일 전 구매' " +
+                                "when bp.period =3 then '1주일 이내 구매' " +
+                                "else '2주일 이내 구매' " +
+                                "end as buy_date, " +
+                                "bp.headcount , " +
+                                "FORMAT(bp.per_price,0) as price," +
+                                "( select IFNULL(count(seq),0)" +
+                                "   from  board_wish" +
+                                "   where post_id =bp.seq" +
+                                ") as wish_cnts, " +
+                                "( select IFNULL(count(seq),0) " +
+                                "  from  board_comment" +
+                                "  where post_id =bp.seq " +
+                                ") as comment_cnts, " +
+                                "ba.isAuth, " +
+                                "(select " +
+                                " case when count(seq)>0 then true" +
+                                " else false " +
+                                " end " +
+                                " from board_wish " +
+                                " where board_wish.member = :user and post_id = bp.seq " +
+                                ") as isMyWish," +
+                                "date_format(bp.reg_date,'%m/%d') as dates, " +
+                                "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff," +
+                                "dp.name "+
+                                "from board_posts bp " +
+                                "join default_products dp on bp.prod_id = dp.seq " +
+                                "join board_album ba on bp.seq = ba.post_id " +
+                                "join user_info ui on bp.author_id = ui.info_id " +
+                                "where bp.seq = :post and bp.prod_id = :categoryId " +
+                                "and bp.status = 0 and bp.isDonated = 0 " + // 소분이 완료되지않는경우만 나오게 하기
+                                "and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7 " +
+                                "order by diff desc , bp.prod_id ")
+                .setParameter("categoryId", category_id)
+                .setParameter("user", user_id)
+                .setParameter("post", postid)
+                .getResultList();
+
+            List subDetail = category_id<11? new ArrayList<ResponseSubDetail1>() : new ArrayList<ResponseSubDetail2>();
+
+            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            LinkedHashMap<String, Object> map2 = new LinkedHashMap<String, Object>();
+            Optional<Album> album = albumRepository.findById(postid);
+
+            System.out.println(category_id+":"+result.size());
+
+        if(category_id>11) {
+            for (Object o: result) {
+                Object[] res = (Object[]) o;
+                map.put("post_id", res[0]);
+                map.put("detail_name", res[15]);
+                map.put("user_id", res[1]);
+                map.put("nickname", res[2]);
+                map.put("profile", res[3]);
+                map.put("title", res[4]);
+                map.put("contents", res[5]);
+                map.put("buy_date", res[6]);
+                map.put("headcounts", res[7].toString() + '명');
+                map.put("per_price", res[8].toString() + '원');
+                map.put("wish_cnts", res[9]);
+                map.put("comment_cnts", res[10]);
+                map.put("isAuth", res[11]);
+                map.put("isMyWish", res[12]);
+                map.put("imgs", album);
+                map.put("witten_by", res[13]);
+
+                subDetail.add(map);
+            }
+        }
+       else{
+            for (Object o: result) {
+                Object[] res = (Object[]) o;
+                map.put("post_id", res[0]);
+                map.put("user_id", res[1]);
+                map.put("nickname", res[2]);
+                map.put("profile", res[3]);
+                map.put("title", res[4]);
+                map.put("contents", res[5]);
+                map.put("buy_date", res[6]);
+                map.put("headcounts", res[7].toString() + '명');
+                map.put("per_price", res[8].toString() + '원');
+                map.put("wish_cnts", res[9]);
+                map.put("comment_cnts", res[10]);
+                map.put("isAuth", res[11]);
+                map.put("isMyWish", res[12]);
+                map.put("imgs", album);
+                map.put("witten_by", res[13]);
+
+                subDetail.add(map);
+            }
+        }
+        return subDetail;
 
     }
 

@@ -1,6 +1,7 @@
 package com.sogyeong.cbcb.board.controller;
 
 
+import com.sogyeong.cbcb.board.entity.Posts;
 import com.sogyeong.cbcb.board.entity.Wish;
 import com.sogyeong.cbcb.board.model.*;
 import com.sogyeong.cbcb.board.model.response.WishDTO;
@@ -76,7 +77,7 @@ public class PostController {
         postDTO.setPer_price(PVO.getPer_price());
         postDTO.setContact(PVO.getContact());
         //이미지처리는 어떻게??
-        //따로 이미지처리 dto 둬야하는 부분,,?
+        //따로 이미지처리 dto 둬야하는 부분,,?'
 
         return null;
     }
@@ -98,7 +99,7 @@ public class PostController {
             Optional<Products> products = productsRepository.findById(category_id);
             Optional<UserInfo> user = userInfoReposiorty.findById(user_id);
             long addr_seq = user.stream().findFirst().get().getAddr();
-            String name =products.stream().findFirst().get().getName();
+            String name = products.stream().findFirst().get().getName();
             long seq =products.stream().findFirst().get().getSeq();
             Boolean isEct = products.stream().findFirst().get().getIsOther()==0?false:true;
 
@@ -116,6 +117,42 @@ public class PostController {
         }
 
     }
+
+    //채분팟 상세 페이지
+    @GetMapping("/posts/{post_id}/{user_id}")
+    public ResponseEntity<? extends BasicResponse> getPostDetail(@PathVariable("post_id") long post_id,@PathVariable("user_id") long user_id) {
+
+        boolean isUser = userInfoReposiorty.existsById(user_id);
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+        }
+        if (!postsRepository.existsById(post_id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+        } else{
+            Optional<Posts> post = postsRepository.findById(post_id);
+            Optional<Products> products = productsRepository.findById(post.get().getProdId());
+            Optional<UserInfo> user = userInfoReposiorty.findById(user_id);
+
+            long addr_seq = user.stream().findFirst().get().getAddr();
+            long seq =products.stream().findFirst().get().getSeq();
+            String name = seq <11 ? products.stream().findFirst().get().getName() : "기타";
+
+            List sub = new ArrayList();
+            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            map.put("category_name",name );
+            map.put("address_id", addr_seq);
+            map.put("posts",pService.getSubCategory(post.get().getProdId(),user_id,post_id));
+
+            sub.add(map);
+
+            String msg = seq >10 ? "기타 채분 게시글 표출 성공" : "일반 채분 게시글 표출 성공";
+            return ResponseEntity.ok().body( new CommonResponse(sub,msg));
+        }
+
+    }
+
     //댓글 저장
     @PostMapping("/posts/comment")
     public ResponseEntity<? extends BasicResponse> saveComments(@RequestBody CommentVO CVO) {
