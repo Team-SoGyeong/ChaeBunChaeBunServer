@@ -165,12 +165,17 @@ public class HomeController {
     //위치검색
     @PostMapping("/home/location/{addr_str}")
     public ResponseEntity<? extends BasicResponse> searchAddress(@PathVariable("addr_str") String addr_str){
-        List addressList = homeListService.getAddressList(addr_str);
 
+        List addressList = homeListService.getAddressList(addr_str.split(" "));
+
+        if(addr_str.equals("")||addr_str.length()<2){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("두글자 이상 입력 바랍니다."));
+        }
         if (addressList.size() > 0)
             return ResponseEntity.ok().body(new CommonResponse(addressList, "주소 검색 출력 성공"));
         else
-            return ResponseEntity.ok().body(new CommonResponse(addressList, "검색한 주소 결과 없음"));
+            return ResponseEntity.ok().body(new CommonResponse(addressList, "검색한 주소가 없거나 서울외 지역을 입력하셨습니다."));
     }
 
 }

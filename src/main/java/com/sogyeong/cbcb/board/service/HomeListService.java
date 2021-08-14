@@ -192,15 +192,50 @@ public class HomeListService {
         return wishLists;
     }
 
-    public List getAddressList(String addr_str){
-        List addressList = em.createNativeQuery(
-                "select local_code, city, district, neighborhood " +
-                        "from default_address " +
-                        "where district like concat('%', :addr, '%') " +
-                        "or neighborhood like concat('%', :addr, '%') " +
-                        "and city in ('서울특별시')")
-                .setParameter("addr", addr_str)
-                .getResultList();
+    public List getAddressList(String[] addr_str){
+        List addressList = null;
+        if(addr_str.length==3) {
+            addressList = em.createNativeQuery(
+                    "select local_code, city, district, neighborhood " +
+                            "from default_address " +
+                            "where district like concat('%', :addr1, '%') " +
+                            "and neighborhood like concat('%', :addr2, '%') " +
+                            "and city in ('서울특별시')")
+                    .setParameter("addr1", addr_str[1])
+                    .setParameter("addr2", addr_str[2])
+                    .getResultList();
+        }else if(addr_str.length==2) {
+            if(addr_str[0].contains("시")){
+                addressList = em.createNativeQuery(
+                        "select local_code, city, district, neighborhood " +
+                                "from default_address " +
+                                "where district like concat('%', :addr2, '%') " +
+                                "or neighborhood like concat('%', :addr2, '%') " +
+                                "and city in ('서울특별시')")
+                        .setParameter("addr2", addr_str[1])
+                        .getResultList();
+            }else{
+                addressList = em.createNativeQuery(
+                                "select local_code, city, district, neighborhood " +
+                                        "from default_address " +
+                                        "where district like concat('%', :addr1, '%') " +
+                                        "and neighborhood like concat('%', :addr2, '%') " +
+                                        "and city in ('서울특별시')")
+                        .setParameter("addr1", addr_str[0])
+                        .setParameter("addr2", addr_str[1])
+                        .getResultList();
+            }
+
+        }else{
+            addressList = em.createNativeQuery(
+                            "select local_code, city, district, neighborhood " +
+                                    "from default_address " +
+                                    "where district like concat('%', :addr, '%') " +
+                                    "or neighborhood like concat('%', :addr, '%') " +
+                                    "and city in ('서울특별시')")
+                    .setParameter("addr", addr_str[0])
+                    .getResultList();
+        }
 
         return addressList;
     }
