@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class Album {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name ="post_id")
     private long albumId;
 

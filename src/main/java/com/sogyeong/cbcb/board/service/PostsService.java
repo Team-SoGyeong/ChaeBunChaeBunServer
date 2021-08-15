@@ -4,7 +4,10 @@ import com.sogyeong.cbcb.board.entity.Album;
 import com.sogyeong.cbcb.board.entity.Comment;
 import com.sogyeong.cbcb.board.entity.Posts;
 import com.sogyeong.cbcb.board.entity.Wish;
+import com.sogyeong.cbcb.board.model.AlbumDTO;
+import com.sogyeong.cbcb.board.model.AlbumVO;
 import com.sogyeong.cbcb.board.model.CommentDTO;
+import com.sogyeong.cbcb.board.model.PostDTO;
 import com.sogyeong.cbcb.board.model.response.*;
 import com.sogyeong.cbcb.board.repository.AlbumRepository;
 import com.sogyeong.cbcb.board.repository.CommentRepository;
@@ -121,49 +124,49 @@ public class PostsService {
     public List getSubCategory(long category_id,long user_id,long postid) {
 
         List result =  em.createNativeQuery(
-                        "select "+
-                                "bp.seq as postId, " +
-                                "ui.info_id as userId, " +
-                                "ui.nickname, " +
-                                "ui.profile, " +
-                                "bp.title, " +
-                                "bp.contents, " +
-                                "case "+
-                                "when bp.period =0 then '1일 전 구매' " +
-                                "when bp.period =1 then '2일 전 구매' " +
-                                "when bp.period =2 then '3일 전 구매' " +
-                                "when bp.period =3 then '1주일 이내 구매' " +
-                                "else '2주일 이내 구매' " +
-                                "end as buy_date, " +
-                                "bp.headcount , " +
-                                "FORMAT(bp.per_price,0) as price," +
-                                "( select IFNULL(count(seq),0)" +
-                                "   from  board_wish" +
-                                "   where post_id =bp.seq" +
-                                ") as wish_cnts, " +
-                                "( select IFNULL(count(seq),0) " +
-                                "  from  board_comment" +
-                                "  where post_id =bp.seq " +
-                                ") as comment_cnts, " +
-                                "ba.isAuth, " +
-                                "(select " +
-                                " case when count(seq)>0 then true" +
-                                " else false " +
-                                " end " +
-                                " from board_wish " +
-                                " where board_wish.member = :user and post_id = bp.seq " +
-                                ") as isMyWish," +
-                                "date_format(bp.reg_date,'%m/%d') as dates, " +
-                                "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff," +
-                                "dp.name "+
-                                "from board_posts bp " +
-                                "join default_products dp on bp.prod_id = dp.seq " +
-                                "join board_album ba on bp.seq = ba.post_id " +
-                                "join user_info ui on bp.author_id = ui.info_id " +
-                                "where bp.seq = :post and bp.prod_id = :categoryId " +
-                                "and bp.status = 0 and bp.isDonated = 0 " + // 소분이 완료되지않는경우만 나오게 하기
-                                "and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7 " +
-                                "order by diff desc , bp.prod_id ")
+                "select "+
+                        "bp.seq as postId, " +
+                        "ui.info_id as userId, " +
+                        "ui.nickname, " +
+                        "ui.profile, " +
+                        "bp.title, " +
+                        "bp.contents, " +
+                        "case "+
+                        "when bp.period =0 then '1일 전 구매' " +
+                        "when bp.period =1 then '2일 전 구매' " +
+                        "when bp.period =2 then '3일 전 구매' " +
+                        "when bp.period =3 then '1주일 이내 구매' " +
+                        "else '2주일 이내 구매' " +
+                        "end as buy_date, " +
+                        "bp.headcount , " +
+                        "FORMAT(bp.per_price,0) as price," +
+                        "( select IFNULL(count(seq),0)" +
+                        "   from  board_wish" +
+                        "   where post_id =bp.seq" +
+                        ") as wish_cnts, " +
+                        "( select IFNULL(count(seq),0) " +
+                        "  from  board_comment" +
+                        "  where post_id =bp.seq " +
+                        ") as comment_cnts, " +
+                        "ba.isAuth, " +
+                        "(select " +
+                        " case when count(seq)>0 then true" +
+                        " else false " +
+                        " end " +
+                        " from board_wish " +
+                        " where board_wish.member = :user and post_id = bp.seq " +
+                        ") as isMyWish," +
+                        "date_format(bp.reg_date,'%m/%d') as dates, " +
+                        "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff," +
+                        "dp.name "+
+                        "from board_posts bp " +
+                        "join default_products dp on bp.prod_id = dp.seq " +
+                        "join board_album ba on bp.seq = ba.post_id " +
+                        "join user_info ui on bp.author_id = ui.info_id " +
+                        "where bp.seq = :post and bp.prod_id = :categoryId " +
+                        "and bp.status = 0 and bp.isDonated = 0 " + // 소분이 완료되지않는경우만 나오게 하기
+                        "and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7 " +
+                        "order by diff desc , bp.prod_id ")
                 .setParameter("categoryId", category_id)
                 .setParameter("user", user_id)
                 .setParameter("post", postid)
@@ -224,6 +227,29 @@ public class PostsService {
         }
         return subDetail;
 
+    }
+
+    @Transactional(readOnly = false)
+    public long savePosts(PostDTO postDTO, AlbumVO imgs) {
+        AlbumDTO aDTO =new AlbumDTO();
+
+        int lastSeq= postsRepository.getLastSeq();
+        Posts posts = postsRepository.save(postDTO.toEntity());
+        if(posts.getSeq()>lastSeq) {
+
+            aDTO.setPost_id(posts.getSeq());
+            aDTO.setBill1(imgs.getBill1());
+            aDTO.setBill2(imgs.getBill2());
+            aDTO.setImg1(imgs.getImg1());
+            aDTO.setImg2(imgs.getImg2());
+            aDTO.setImg3(imgs.getImg3());
+            aDTO.setImg4(imgs.getImg4());
+            aDTO.setImg5(imgs.getImg5());
+
+            albumRepository.save(aDTO.toEntity());
+            return posts.getSeq();
+        }
+        else return -1;
     }
 
     @Transactional(readOnly = false)

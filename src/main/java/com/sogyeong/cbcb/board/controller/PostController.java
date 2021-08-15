@@ -50,7 +50,7 @@ public class PostController {
     private EntityManager em;
 
     @PostMapping("/posts/common")
-    public ResponseEntity<? extends BasicResponse> postCommonPost(@RequestBody PostVO PVO){
+    public ResponseEntity<? extends BasicResponse> saveCommonPost(@RequestBody PostVO PVO){
         boolean isCategory = productsRepository.existsById(PVO.getCategory_id());
         boolean isUser = userInfoReposiorty.existsById(PVO.getAuthor_id());
         if(!isCategory){
@@ -69,17 +69,41 @@ public class PostController {
         postDTO.setAuthor_id(PVO.getAuthor_id());
         postDTO.setContents(PVO.getContents());
         postDTO.setTitle(PVO.getTitle());
-        //postDTO.setPeriod(PVO.getBuy_date()); //period가 뭐지??
+
+        if(PVO.getBuy_date().contains("1일")) postDTO.setPeriod(0);
+        if(PVO.getBuy_date().contains("2일")) postDTO.setPeriod(1);
+        if(PVO.getBuy_date().contains("3일")) postDTO.setPeriod(2);
+        if(PVO.getBuy_date().contains("일주일")) postDTO.setPeriod(3);
+        if(PVO.getBuy_date().contains("2주일"))postDTO.setPeriod(4);
+
         postDTO.setAmount(PVO.getAmount());
         postDTO.setUnit(PVO.getUnit());
         postDTO.setTotal_price(PVO.getTotal_price());
         postDTO.setHeadcount(PVO.getHeadcount());
         postDTO.setPer_price(PVO.getPer_price());
         postDTO.setContact(PVO.getContact());
-        //이미지처리는 어떻게??
-        //따로 이미지처리 dto 둬야하는 부분,,?'
 
-        return null;
+        long isSave = pService.savePosts(postDTO,PVO.getImgs());
+        if(isSave!=-1) {
+            Optional<Products> products = productsRepository.findById(PVO.getCategory_id());
+            Optional<UserInfo> user = userInfoReposiorty.findById(PVO.getAuthor_id());
+
+            long addr_seq = user.stream().findFirst().get().getAddr();
+            String name = PVO.getCategory_id() <11 ? products.stream().findFirst().get().getName() : "기타";
+
+            List sub = new ArrayList();
+            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            map.put("category_name",name );
+            map.put("address_id", addr_seq);
+            map.put("posts",pService.getSubCategory(PVO.getCategory_id(),PVO.getAuthor_id(),isSave));
+
+            sub.add(map);
+
+            return ResponseEntity.ok().body(new CommonResponse(sub,"일반 게시글 작성 성공"));
+        }
+        else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("일반 게시글 작성 실패"));
     }
 
     //하위카테고리리스트

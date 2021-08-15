@@ -17,6 +17,5 @@ public class PostVO {
     private int headcount;
     private int per_price;
     private String contact;
-    private List<String> imgs;
-    private List<String> bill;
+    private AlbumVO imgs;
 }
