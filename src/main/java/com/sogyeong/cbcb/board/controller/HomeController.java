@@ -175,7 +175,7 @@ public class HomeController {
         if (addressList.size() > 0)
             return ResponseEntity.ok().body(new CommonResponse(addressList, "주소 검색 출력 성공"));
         else
-            return ResponseEntity.ok().body(new CommonResponse(addressList, "검색한 주소가 없거나 서울외 지역을 입력하셨습니다."));
+            return ResponseEntity.ok().body(new CommonResponse(addressList, addr_str+"에 대한 검색결과가 없어요! 다시 시도해주세요!"));
     }
 
 }
