@@ -3,8 +3,13 @@ package com.sogyeong.cbcb.board.controller;
 
 import com.sogyeong.cbcb.board.entity.Posts;
 import com.sogyeong.cbcb.board.entity.Wish;
-import com.sogyeong.cbcb.board.model.*;
+import com.sogyeong.cbcb.board.model.dto.AlbumDTO;
+import com.sogyeong.cbcb.board.model.dto.CommentDTO;
+import com.sogyeong.cbcb.board.model.dto.PostDTO;
 import com.sogyeong.cbcb.board.model.response.WishDTO;
+import com.sogyeong.cbcb.board.model.vo.CommentVO;
+import com.sogyeong.cbcb.board.model.vo.PostEctVO;
+import com.sogyeong.cbcb.board.model.vo.PostVO;
 import com.sogyeong.cbcb.board.repository.CommentRepository;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
 import com.sogyeong.cbcb.board.repository.WishRepository;
@@ -49,6 +54,7 @@ public class PostController {
     @PersistenceContext
     private EntityManager em;
 
+    // 일반 게시글 저장
     @PostMapping("/posts/common")
     public ResponseEntity<? extends BasicResponse> saveCommonPost(@RequestBody PostVO PVO){
         boolean isCategory = productsRepository.existsById(PVO.getCategory_id());
@@ -104,6 +110,65 @@ public class PostController {
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse("일반 게시글 작성 실패"));
+    }
+
+    // 기타 품목 게시글 저장
+    @PostMapping("/posts/etc")
+    public ResponseEntity<? extends BasicResponse> saveEctPost(@RequestBody PostEctVO PVO){
+        boolean isCategory = productsRepository.existsById(PVO.getCategory_id());
+        boolean isUser = userInfoReposiorty.existsById(PVO.getAuthor_id());
+        if(!isCategory){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("입력된 카테고리 정보는 정확하지 않습니다."));
+        }
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+        }
+
+        PostDTO postDTO = new PostDTO();
+        AlbumDTO albumDTO = new AlbumDTO();
+
+        postDTO.setCategory_id(PVO.getCategory_id());
+        postDTO.setAuthor_id(PVO.getAuthor_id());
+        postDTO.setContents(PVO.getContents());
+        postDTO.setTitle(PVO.getTitle());
+
+        if(PVO.getBuy_date().contains("1일")) postDTO.setPeriod(0);
+        if(PVO.getBuy_date().contains("2일")) postDTO.setPeriod(1);
+        if(PVO.getBuy_date().contains("3일")) postDTO.setPeriod(2);
+        if(PVO.getBuy_date().contains("일주일")) postDTO.setPeriod(3);
+        if(PVO.getBuy_date().contains("2주일"))postDTO.setPeriod(4);
+
+        postDTO.setAmount(PVO.getAmount());
+        postDTO.setUnit(PVO.getUnit());
+        postDTO.setTotal_price(PVO.getTotal_price());
+        postDTO.setHeadcount(PVO.getHeadcount());
+        postDTO.setPer_price(PVO.getPer_price());
+        postDTO.setContact(PVO.getContact());
+
+        String res = pService.saveEctPosts(postDTO,PVO.getImgs(),PVO.getEct_name());
+        // 게시글을 저장한다. 받은 결과 값은 게시글 순번정보와 품목 순번 정보 이다.
+        long isSave = Long.valueOf(res.split(",")[0].toString()).longValue();
+        long category = Long.valueOf(res.split(",")[1].toString()).longValue();
+        if(isSave!=-1) {
+            Optional<UserInfo> user = userInfoReposiorty.findById(PVO.getAuthor_id());
+            long addr_seq = user.stream().findFirst().get().getAddr();
+
+            List sub = new ArrayList();
+            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            map.put("category_name","기타");
+            map.put("address_id", addr_seq);
+            map.put("posts",pService.getSubCategory(category,PVO.getAuthor_id(),isSave));
+            // 세부 카테고리 페이지를 불러서 붙인다.
+
+            sub.add(map);
+
+            return ResponseEntity.ok().body(new CommonResponse(sub,"기타 게시글 작성 성공"));
+        }
+        else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("기타 게시글 작성 실패"));
     }
 
     //하위카테고리리스트

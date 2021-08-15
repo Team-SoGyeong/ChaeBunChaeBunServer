@@ -1,8 +1,7 @@
 package com.sogyeong.cbcb.board.service;
 
 
-import com.sogyeong.cbcb.board.entity.Comment;
-import com.sogyeong.cbcb.board.model.ReportDTO;
+import com.sogyeong.cbcb.board.model.dto.ReportDTO;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
 import com.sogyeong.cbcb.board.repository.ReportRepository;
 import com.sogyeong.cbcb.defaults.entity.Opinion;
@@ -12,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Service
 @AllArgsConstructor

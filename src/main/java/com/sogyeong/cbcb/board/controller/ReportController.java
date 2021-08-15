@@ -1,20 +1,14 @@
 package com.sogyeong.cbcb.board.controller;
 
-import com.sogyeong.cbcb.board.model.CommentDTO;
-import com.sogyeong.cbcb.board.model.CommentVO;
-import com.sogyeong.cbcb.board.model.ReportDTO;
-import com.sogyeong.cbcb.board.model.ReportVO;
-import com.sogyeong.cbcb.board.repository.CommentRepository;
+import com.sogyeong.cbcb.board.model.dto.ReportDTO;
+import com.sogyeong.cbcb.board.model.vo.ReportVO;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
-import com.sogyeong.cbcb.board.service.HomeListService;
-import com.sogyeong.cbcb.board.service.PostsService;
 import com.sogyeong.cbcb.board.service.ReportService;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
 import com.sogyeong.cbcb.defaults.repository.ProductsRepository;
 import com.sogyeong.cbcb.mypage.repository.UserInfoReposiorty;
-import com.sogyeong.cbcb.mypage.service.MyPageService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

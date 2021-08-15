@@ -1,12 +1,11 @@
-package com.sogyeong.cbcb.board.model;
+package com.sogyeong.cbcb.board.model.vo;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class PostVO {
+public class PostEctVO {
     private long category_id;
+    private String ect_name;
     private long author_id;
     private String title;
     private String contents;

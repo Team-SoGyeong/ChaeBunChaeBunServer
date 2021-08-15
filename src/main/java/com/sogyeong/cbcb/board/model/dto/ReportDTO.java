@@ -1,4 +1,4 @@
-package com.sogyeong.cbcb.board.model;
+package com.sogyeong.cbcb.board.model.dto;
 
 import com.sogyeong.cbcb.defaults.entity.Opinion;
 import lombok.Getter;

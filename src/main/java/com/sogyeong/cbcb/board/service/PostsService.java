@@ -4,15 +4,18 @@ import com.sogyeong.cbcb.board.entity.Album;
 import com.sogyeong.cbcb.board.entity.Comment;
 import com.sogyeong.cbcb.board.entity.Posts;
 import com.sogyeong.cbcb.board.entity.Wish;
-import com.sogyeong.cbcb.board.model.AlbumDTO;
-import com.sogyeong.cbcb.board.model.AlbumVO;
-import com.sogyeong.cbcb.board.model.CommentDTO;
-import com.sogyeong.cbcb.board.model.PostDTO;
+import com.sogyeong.cbcb.board.model.dto.AlbumDTO;
+import com.sogyeong.cbcb.board.model.vo.AlbumVO;
+import com.sogyeong.cbcb.board.model.dto.CommentDTO;
+import com.sogyeong.cbcb.board.model.dto.PostDTO;
 import com.sogyeong.cbcb.board.model.response.*;
 import com.sogyeong.cbcb.board.repository.AlbumRepository;
 import com.sogyeong.cbcb.board.repository.CommentRepository;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
 import com.sogyeong.cbcb.board.repository.WishRepository;
+import com.sogyeong.cbcb.defaults.entity.Products;
+import com.sogyeong.cbcb.defaults.model.ProdDTO;
+import com.sogyeong.cbcb.defaults.repository.ProductsRepository;
 import com.sogyeong.cbcb.mypage.repository.UserInfoReposiorty;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ import java.util.Optional;
 public class PostsService {
 
     private AlbumRepository albumRepository;
+    private ProductsRepository prodRepository;
     private CommentRepository commentRepository;
     private WishRepository wishRepository;
     private UserInfoReposiorty userInfoReposiorty;
@@ -250,6 +254,45 @@ public class PostsService {
             return posts.getSeq();
         }
         else return -1;
+    }
+
+    @Transactional(readOnly = false)
+    public String saveEctPosts(PostDTO postDTO, AlbumVO imgs, String name) {
+        AlbumDTO aDTO =new AlbumDTO();
+        ProdDTO pDTO =new ProdDTO();
+        long category=0;
+
+        Boolean isExist = prodRepository.existsByName(name); //1. 기타 카테고리에 이미존재한가 확인
+        if(isExist){ // 1.1 있다면 픔목 일련번호를 가져와서 저장될 게시글 정보에 삽입한다.
+            category=prodRepository.findByName(name).get(0).getSeq();
+            postDTO.setCategory_id(category);
+        }
+        else{ // 1.2 없다면 픔목을 저장하고 결과로 일련번호를 가져와서 저장될 게시글 정보에 삽입한다.
+            pDTO.setName(name);
+            Products prod = prodRepository.save(pDTO.toEntity());
+            category=prod.getSeq();
+            postDTO.setCategory_id(prod.getSeq());
+        }
+
+        int lastSeq= postsRepository.getLastSeq(); //2. 가장 최근에 게시글 순번을 가져온다.
+        Posts posts = postsRepository.save(postDTO.toEntity());
+        if(posts.getSeq()>lastSeq) {
+            //3. 저장이 잘되었는지를 확인하기 위해 일전에 가져온 게시글 번호와 지금 저장된 게시글의 번호를 비교한다,
+            //4. 게시글 순번를 가지고 이미지를 따로 저장한다,
+
+            aDTO.setPost_id(posts.getSeq());
+            aDTO.setBill1(imgs.getBill1());
+            aDTO.setBill2(imgs.getBill2());
+            aDTO.setImg1(imgs.getImg1());
+            aDTO.setImg2(imgs.getImg2());
+            aDTO.setImg3(imgs.getImg3());
+            aDTO.setImg4(imgs.getImg4());
+            aDTO.setImg5(imgs.getImg5());
+
+            albumRepository.save(aDTO.toEntity());
+            return posts.getSeq()+","+category; //5. 모든게 다 잘 저장되면 게시글 순번과 품목 순번을 결과로 출력한다.
+        }
+        else return "-1,";
     }
 
     @Transactional(readOnly = false)
