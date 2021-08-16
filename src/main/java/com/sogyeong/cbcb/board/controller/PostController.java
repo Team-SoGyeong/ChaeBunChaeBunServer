@@ -294,7 +294,7 @@ public class PostController {
     }
 
     // 댓글리스트
-    @GetMapping("/posts/comment{post_id}")
+    @GetMapping("/posts/comment/{post_id}")
     public ResponseEntity<? extends BasicResponse> getCommentsList(@PathVariable("post_id") long post_id){
         if (!postsRepository.existsById(post_id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

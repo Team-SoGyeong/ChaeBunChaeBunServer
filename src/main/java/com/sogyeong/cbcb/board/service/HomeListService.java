@@ -194,7 +194,7 @@ public class HomeListService {
 
     public List getAddressList(String[] addr_str){
         List addressList = null;
-        if(addr_str.length==3) {
+        if(addr_str.length==3) { //1. 시구동으로 입력했을 경우
             addressList = em.createNativeQuery(
                     "select local_code, city, district, neighborhood " +
                             "from default_address " +
@@ -205,7 +205,7 @@ public class HomeListService {
                     .setParameter("addr2", addr_str[2])
                     .getResultList();
         }else if(addr_str.length==2) {
-            if(addr_str[0].contains("시")){
+            if(addr_str[0].contains("시")){//2-1. 두단어인데 시,구로 입력했다고 가정
                 addressList = em.createNativeQuery(
                         "select local_code, city, district, neighborhood " +
                                 "from default_address " +
@@ -214,7 +214,7 @@ public class HomeListService {
                                 "and city in ('서울특별시')")
                         .setParameter("addr2", addr_str[1])
                         .getResultList();
-            }else{
+            }else{//2-2. 두단어인데 구,동로 입력했다고 가정
                 addressList = em.createNativeQuery(
                                 "select local_code, city, district, neighborhood " +
                                         "from default_address " +
@@ -226,7 +226,7 @@ public class HomeListService {
                         .getResultList();
             }
 
-        }else{
+        }else{// 3.한단어만 입력한 경우
             addressList = em.createNativeQuery(
                             "select local_code, city, district, neighborhood " +
                                     "from default_address " +

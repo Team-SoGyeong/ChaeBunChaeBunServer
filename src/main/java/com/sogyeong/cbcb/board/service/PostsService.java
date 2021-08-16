@@ -97,10 +97,12 @@ public class PostsService {
         List subList = new ArrayList<ResponseSubList>();
         for (Object o: resultList){
             Object[] res = (Object[]) o;
-
-            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            long post =Long.valueOf(res[0].toString()).longValue();
+            LinkedHashMap<String, Object> map;
+            map = new LinkedHashMap<String, Object>();
             LinkedHashMap<String, Object> map2 = new LinkedHashMap<String, Object>();
-            Optional<Album> album = albumRepository.findById(Long.valueOf(res[0].toString()).longValue());
+            Optional<Album> album =
+                    albumRepository.findById(post);
 
             map.put("post_id", res[0]);
             map.put("user_id", res[1]);
@@ -176,7 +178,10 @@ public class PostsService {
                 .setParameter("post", postid)
                 .getResultList();
 
-            List subDetail = category_id<11? new ArrayList<ResponseSubDetail1>() : new ArrayList<ResponseSubDetail2>();
+            List subDetail =
+                    category_id<11?
+                            new ArrayList<ResponseSubDetail1>() :
+                            new ArrayList<ResponseSubDetail2>();
 
             LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
             LinkedHashMap<String, Object> map2 = new LinkedHashMap<String, Object>();
@@ -230,7 +235,6 @@ public class PostsService {
             }
         }
         return subDetail;
-
     }
 
     @Transactional(readOnly = false)
@@ -290,25 +294,27 @@ public class PostsService {
             aDTO.setImg5(imgs.getImg5());
 
             albumRepository.save(aDTO.toEntity());
-            return posts.getSeq()+","+category; //5. 모든게 다 잘 저장되면 게시글 순번과 품목 순번을 결과로 출력한다.
+            return posts.getSeq()+","+category;
+            //5. 모든게 다 잘 저장되면 게시글 순번과 품목 순번을 결과로 출력한다.
         }
         else return "-1,";
     }
 
     @Transactional(readOnly = false)
     public Boolean saveComments(CommentDTO comment) {
-        int lastSeq= commentRepository.getLastSeq();
+        int lastSeq= commentRepository.getLastSeq(); //1. 최신의 댓글 일련 번호를 얻는다
         Comment commentResult = commentRepository.save(comment.toEntity());
-        if(commentResult.getSeq()>lastSeq)
+        if(commentResult.getSeq()>lastSeq) //2. 일전의 일련번호와 저장된 댓글의 일련번호를 바교한다.
             return true;
-        else return false;
+        else return false; //3. 비교가 잘못된다면. 저장안된 걸로 판명
     }
 
     @Transactional(readOnly = true)
     public Boolean deleteComments(long cmtId, long userId) {
         Comment commentResult = commentRepository.getOne(cmtId);
-
+        //1. 댓글 자체 일련 번호로 쿼리 결과를 가져온다
         if (userId == commentResult.getMember()) {
+            //2. 댓글 작성자가 본인일때만 삭제하게 한다.
             commentRepository.deleteById(cmtId);
             return true;
         }
@@ -325,7 +331,7 @@ public class PostsService {
                                 "        ui.profile," +
                                 "        bc.contents," +
                                 "        date_format(bc.reg_date,'%m/%d %H:%m') as dates " +
-                                "from board_posts bp\n" +
+                                "from board_posts bp " +
                                 "left join board_comment bc on bp.seq = bc.post_id " +
                                 "join user_info ui on bc.member = ui.info_id " +
                                 "where bp.seq = :post_id " +
