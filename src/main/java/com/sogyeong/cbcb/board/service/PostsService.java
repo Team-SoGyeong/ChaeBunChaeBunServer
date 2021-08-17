@@ -325,7 +325,8 @@ public class PostsService {
     public List getComments(long postId) {
 
         List resultList =  em.createNativeQuery(
-                        "select" +
+                        "select " +
+                                "      bc.seq, " +
                                 "        ui.info_id as userId, " +
                                 "        ui.nickname, " +
                                 "        ui.profile," +
@@ -335,7 +336,7 @@ public class PostsService {
                                 "left join board_comment bc on bp.seq = bc.post_id " +
                                 "join user_info ui on bc.member = ui.info_id " +
                                 "where bp.seq = :post_id " +
-                                "order by dates; ")
+                                "order by bc.seq  ")
                 .setParameter("post_id", postId)
                 .getResultList();
 
@@ -345,11 +346,12 @@ public class PostsService {
 
             LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 
-            map.put("user_id", res[0]);
-            map.put("nickname", res[1]);
-            map.put("profile", res[2]);
-            map.put("comments", res[3]);
-            map.put("witten_by", res[4]);
+            map.put("comment_id", res[0]);
+            map.put("user_id", res[1]);
+            map.put("nickname", res[2]);
+            map.put("profile", res[3]);
+            map.put("comments", res[4]);
+            map.put("witten_by", res[5]);
 
             cmtList.add(map);
 
