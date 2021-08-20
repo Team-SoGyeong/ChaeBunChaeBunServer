@@ -21,4 +21,10 @@ public interface WishRepository extends JpaRepository<Wish,Long> {
     @Modifying
     @Query(value = "DELETE FROM board_wish WHERE post_id = :post and member=:user", nativeQuery = true)
     void deleteByIdAndMember(@Param(value="post") long postID,@Param(value="user") long user); // 찜 삭제
+
+    @Modifying
+    @Query(value = "DELETE FROM board_wish WHERE post_id = :post", nativeQuery = true)
+    void deleteByPostId(@Param(value="post") long postID);
+
+    Boolean existsByPostId(long postId);
 }

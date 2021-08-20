@@ -14,4 +14,10 @@ public interface CommentRepository extends JpaRepository<Comment,Long> {
     @Modifying
     @Query(value = "DELETE FROM board_comment WHERE seq = :commentId", nativeQuery = true)
     void deleteById(@Param(value="commentId") long commentId); // 댓글 삭제
+
+    @Modifying
+    @Query(value = "DELETE FROM board_comment WHERE post_id = :postId", nativeQuery = true)
+    void deleteByPostId(@Param(value="postId")long postId);
+
+    Boolean existsByPostId(long postId);
 }

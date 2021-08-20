@@ -10,6 +10,7 @@ import com.sogyeong.cbcb.board.model.response.WishDTO;
 import com.sogyeong.cbcb.board.model.vo.CommentVO;
 import com.sogyeong.cbcb.board.model.vo.PostEctVO;
 import com.sogyeong.cbcb.board.model.vo.PostVO;
+import com.sogyeong.cbcb.board.model.vo.UpdatePostVO;
 import com.sogyeong.cbcb.board.repository.CommentRepository;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
 import com.sogyeong.cbcb.board.repository.WishRepository;
@@ -46,10 +47,7 @@ public class PostController {
     PostsRepository postsRepository;
     CommentRepository commentRepository;
     private WishRepository wishRepository;
-
-    private HomeListService homeListService;
     private PostsService pService;
-    private MyPageService myPageService;
 
     @PersistenceContext
     private EntityManager em;
@@ -171,6 +169,95 @@ public class PostController {
                     .body(new ErrorResponse("기타 게시글 작성 실패"));
     }
 
+    //게시글 수정
+    @PutMapping("/posts")
+    public ResponseEntity<? extends BasicResponse> updatePost(@RequestBody UpdatePostVO PVO){
+        boolean isCategory = productsRepository.existsById(PVO.getCategory_id());
+        boolean isUser = userInfoReposiorty.existsById(PVO.getAuthor_id());
+        if(!isCategory){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("입력된 카테고리 정보는 정확하지 않습니다."));
+        }
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+        }
+
+        PostDTO postDTO = new PostDTO();
+        AlbumDTO albumDTO = new AlbumDTO();
+
+        postDTO.setCategory_id(PVO.getCategory_id());
+        postDTO.setAuthor_id(PVO.getAuthor_id());
+        postDTO.setContents(PVO.getContents());
+        postDTO.setTitle(PVO.getTitle());
+
+        if(PVO.getBuy_date().contains("1일")) postDTO.setPeriod(0);
+        if(PVO.getBuy_date().contains("2일")) postDTO.setPeriod(1);
+        if(PVO.getBuy_date().contains("3일")) postDTO.setPeriod(2);
+        if(PVO.getBuy_date().contains("일주일")) postDTO.setPeriod(3);
+        if(PVO.getBuy_date().contains("2주일"))postDTO.setPeriod(4);
+
+        postDTO.setAmount(PVO.getAmount());
+        postDTO.setUnit(PVO.getUnit());
+        postDTO.setTotal_price(PVO.getTotal_price());
+        postDTO.setHeadcount(PVO.getHeadcount());
+        postDTO.setPer_price(PVO.getPer_price());
+        postDTO.setContact(PVO.getContact());
+
+
+        Optional<Products> prod = productsRepository.findById(PVO.getCategory_id());
+        long isSave = pService.updatePosts(PVO.getPost_id(),postDTO,PVO.getImgs());
+        long category = prod.get().getSeq();
+        if(isSave!=-1) {
+            Optional<UserInfo> user = userInfoReposiorty.findById(PVO.getAuthor_id());
+            long addr_seq = user.stream().findFirst().get().getAddr();
+            String name = category>10 ? "기타" : prod.get().getName();
+
+            List sub = new ArrayList();
+            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            map.put("category_name",name);
+            map.put("address_id", addr_seq);
+            map.put("posts",pService.getSubCategory(category,PVO.getAuthor_id(),PVO.getPost_id()));
+            // 세부 카테고리 페이지를 불러서 붙인다.
+
+            sub.add(map);
+
+            return ResponseEntity.ok().body(new CommonResponse(sub,"게시글 수정 성공"));
+        }
+        else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("기타 수정 작성 실패"));
+    }
+
+    //게시글 삭제
+    @DeleteMapping("/posts/{post_id}/{user_id}")
+    public ResponseEntity<? extends BasicResponse> deletePost(@PathVariable("post_id") long post_id,@PathVariable("user_id") long user_id){
+        boolean isUser = userInfoReposiorty.existsById(user_id);
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+        }
+        if (!postsRepository.existsById(post_id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+        }
+        else{
+            Optional<Posts> post  = postsRepository.findById(post_id);
+            if(post.get().getAuthorId()==user_id){
+                Boolean isDelete = pService.deletePost(post_id);
+                if(isDelete)
+                    return  ResponseEntity.ok().body( new CommonResponse("게시글 삭제 성공"));
+                else
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(new ErrorResponse("게시글 삭제 실패"));
+            }
+            else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse("타인의 글을 삭제할 수 없습니다. 다시 시도 해주세요"));
+            }
+        }
+    }
+
     //하위카테고리리스트
     @GetMapping("/posts/category/{categoryId}/{user_id}")
     public ResponseEntity<? extends BasicResponse> getSubCategoryList(@PathVariable("categoryId") long category_id,@PathVariable("user_id") long user_id) {
@@ -270,6 +357,7 @@ public class PostController {
                         .body(new ErrorResponse("댓글 작성 실패"));
         }
     }
+
     // 댓글 삭제
     @DeleteMapping("/posts/comment/{comment_id}/{user_id}")
     public ResponseEntity<? extends BasicResponse> deleteComments(@PathVariable("comment_id") long comment_id,@PathVariable("user_id") long user_id){

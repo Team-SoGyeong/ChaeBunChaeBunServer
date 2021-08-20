@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -260,6 +261,41 @@ public class PostsService {
         else return -1;
     }
 
+    @Transactional
+    public long updatePosts(long postId,PostDTO postDTO, AlbumVO imgs){
+
+        Optional<Posts> posts = postsRepository.findById(postId);
+        posts.ifPresent(updatePost->{
+            updatePost.setTitle(postDTO.getTitle());
+            updatePost.setContents(postDTO.getContents());
+            updatePost.setPeoples(postDTO.getHeadcount());
+            updatePost.setPeriod(postDTO.getPeriod());
+            updatePost.setAmount(postDTO.getAmount());
+            updatePost.setUnit(postDTO.getUnit());
+            updatePost.setTotalPrice(postDTO.getTotal_price());
+            updatePost.setPerPrice(postDTO.getPer_price());
+            updatePost.setContact(postDTO.getContact());
+            updatePost.setRegDate(LocalDateTime.now());
+
+            postsRepository.save(updatePost);
+        });
+        Optional<Album> album = albumRepository.findById(postId);
+        album.ifPresent(updateAlbum->{
+            updateAlbum.setBill1(imgs.getBill1());
+            updateAlbum.setBill2(imgs.getBill2());
+            updateAlbum.setImg1(imgs.getImg1());
+            updateAlbum.setImg2(imgs.getImg2());
+            updateAlbum.setImg3(imgs.getImg3());
+            updateAlbum.setImg4(imgs.getImg4());
+            updateAlbum.setImg5(imgs.getImg5());
+
+            albumRepository.save(updateAlbum);
+        });
+
+        return posts.stream().count()==1 && album.stream().count()==1 ? 1:-1;
+
+    }
+
     @Transactional(readOnly = false)
     public String saveEctPosts(PostDTO postDTO, AlbumVO imgs, String name) {
         AlbumDTO aDTO =new AlbumDTO();
@@ -298,6 +334,30 @@ public class PostsService {
             //5. 모든게 다 잘 저장되면 게시글 순번과 품목 순번을 결과로 출력한다.
         }
         else return "-1,";
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean deletePost(long postId) {
+        int cnt =0;
+        if(wishRepository.existsByPostId(postId)){
+            wishRepository.deleteByPostId(postId);
+            cnt+=1;
+        }
+        if(commentRepository.existsByPostId(postId)){
+            commentRepository.deleteByPostId(postId);
+            cnt+=1;
+        }
+        if(albumRepository.existsById(postId)){
+            albumRepository.deleteById(postId);
+            cnt+=1;
+        }
+        if(postsRepository.existsById(postId)){
+            postsRepository.deleteById(postId);
+            cnt+=1;
+        }
+
+        return cnt>0 ? true:false;
+
     }
 
     @Transactional(readOnly = false)
