@@ -1,6 +1,7 @@
 package com.sogyeong.cbcb.board.controller;
 
 
+import com.sogyeong.cbcb.board.model.vo.UpdatePostVO;
 import com.sogyeong.cbcb.board.service.HomeListService;
 import com.sogyeong.cbcb.defaults.entity.Address;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
@@ -14,10 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -178,4 +176,20 @@ public class HomeController {
             return ResponseEntity.ok().body(new CommonResponse(addressList, addr_str+"에 대한 검색결과가 없어요! 다시 시도해주세요!"));
     }
 
+    //위치 수정
+    @PutMapping("/posts/location/{user_id}/{addr_seq}")
+    public ResponseEntity<? extends BasicResponse> updatePost(@PathVariable("user_id") long userId,@PathVariable("addr_seq") long addr_seq){
+        boolean isUser = userInfoReposiorty.existsById(userId);
+        Optional<UserInfo> userInfo = userInfoReposiorty.findById(userId);
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
+        } else {
+            Boolean isChange = myPostService.updateAddr(userId,addr_seq);
+            if (isChange)
+                return ResponseEntity.ok().body(new CommonResponse("주소 변경 성공"));
+            else
+                return ResponseEntity.ok().body(new CommonResponse("주소 변경 실패"));
+        }
+    }
 }

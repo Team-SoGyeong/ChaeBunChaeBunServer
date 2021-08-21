@@ -1,15 +1,23 @@
 package com.sogyeong.cbcb.mypage.service;
 
+import com.sogyeong.cbcb.board.entity.Posts;
+import com.sogyeong.cbcb.board.model.dto.PostDTO;
+import com.sogyeong.cbcb.board.model.vo.AlbumVO;
+import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import com.sogyeong.cbcb.mypage.model.response.ResponseMyDedelineList;
 import com.sogyeong.cbcb.mypage.model.response.ResponseMyPostList;
+import com.sogyeong.cbcb.mypage.repository.UserInfoReposiorty;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -17,6 +25,8 @@ public class MyPostService {
 
     @PersistenceContext
     private EntityManager em;
+
+    UserInfoReposiorty userInfoReposiorty;
 
     public List getMyPostList(int platform, int state, long user) {
         // platform = 1
@@ -104,4 +114,14 @@ public class MyPostService {
         return myDeadlineLists;
     }
 
+    @Transactional
+    public Boolean updateAddr(long userId, long addrSeq) {
+
+        Optional<UserInfo> info = userInfoReposiorty.findById(userId);
+        info.ifPresent(addrInfo -> {
+            addrInfo.setAddr(addrSeq);
+            userInfoReposiorty.save(addrInfo);
+        });
+        return info.stream().count()==1? true : false;
+    }
 }
