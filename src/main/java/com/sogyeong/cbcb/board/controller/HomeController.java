@@ -192,4 +192,5 @@ public class HomeController {
                 return ResponseEntity.ok().body(new CommonResponse("주소 변경 실패"));
         }
     }
+
 }
