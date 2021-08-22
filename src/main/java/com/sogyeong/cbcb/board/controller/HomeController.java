@@ -155,9 +155,19 @@ public class HomeController {
         }
         else{
             //1차: 제목 - 2차: 내용 - 3차: 카테고리 검색
-        }
+            List searchList = homeListService.getSearchList(addr_seq,searchStr);
 
-        return null;
+            if(searchStr.equals("")||searchStr.length()<2){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ErrorResponse("두글자 이상 입력 바랍니다."));
+            }
+            else{
+                if (searchList.size() > 0)
+                    return ResponseEntity.ok().body(new CommonResponse(searchList, "게시글 검색 성공"));
+                else
+                    return ResponseEntity.ok().body(new CommonResponse(searchList, searchStr+"에 대한 검색결과가 없어요! 다시 시도해주세요!"));
+            }
+        }
     }
 
     //위치검색
@@ -178,7 +188,7 @@ public class HomeController {
 
     //위치 수정
     @PutMapping("/posts/location/{user_id}/{addr_seq}")
-    public ResponseEntity<? extends BasicResponse> updatePost(@PathVariable("user_id") long userId,@PathVariable("addr_seq") long addr_seq){
+    public ResponseEntity<? extends BasicResponse> updateLocation(@PathVariable("user_id") long userId,@PathVariable("addr_seq") long addr_seq){
         boolean isUser = userInfoReposiorty.existsById(userId);
         Optional<UserInfo> userInfo = userInfoReposiorty.findById(userId);
         if (!isUser) {
