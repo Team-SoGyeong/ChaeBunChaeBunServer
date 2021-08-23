@@ -142,24 +142,6 @@ public class HomeController {
         }
     }
 
-    //게시글 검색
-    @PostMapping("/home/{addr_seq}/{search_str}")
-    public ResponseEntity<? extends BasicResponse> searchPosts(@PathVariable("addr_seq") long addr_seq,
-                                                               @PathVariable("search_str") String searchStr){
-        //해당지역에 올라온 게시글 중 검색이 맞나? 그게 맞다면 url -> /home/{addr_seq}/{search_str}이 나을
-        // 1차: 해당 지역 설정 -> 2차: 들어온 스트링 검색
-        boolean isAddr = addressRepository.existsById(addr_seq);
-        if(!isAddr){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("입력된 주소 일련번호는 존재하지 않습니다. "));
-        }
-        else{
-            //1차: 제목 - 2차: 내용 - 3차: 카테고리 검색
-        }
-
-        return null;
-    }
-
     //위치검색
     @PostMapping("/home/location/{addr_str}")
     public ResponseEntity<? extends BasicResponse> searchAddress(@PathVariable("addr_str") String addr_str){
