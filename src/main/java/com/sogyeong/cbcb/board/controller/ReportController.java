@@ -33,7 +33,7 @@ public class ReportController {
     private EntityManager em;
 
     @PostMapping("/posts/report")
-    public ResponseEntity<? extends BasicResponse> saveComments(@RequestBody ReportVO RVO) {
+    public ResponseEntity<? extends BasicResponse> saveReport(@RequestBody ReportVO RVO) {
 
         boolean isUser = userInfoReposiorty.existsById(RVO.getAuthor_id());
         if (!isUser) {

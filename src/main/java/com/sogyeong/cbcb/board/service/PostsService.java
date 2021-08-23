@@ -419,23 +419,4 @@ public class PostsService {
         return cmtList;
     }
 
-    @Transactional(readOnly = false)
-    public Boolean storeWish(WishDTO wDTO) {
-        int lastSeq= wishRepository.getLastSeq();
-        Wish wResult = wishRepository.save(wDTO.toEntity());
-        if(wResult.getSeq()>lastSeq)
-            return true;
-        else return false;
-    }
-
-    @Transactional(readOnly = true)
-    public Boolean deleteWish(long postId, long userId) {
-        List<Wish> wishResult = wishRepository.getWish(postId,userId);
-
-        if (userId == wishResult.get(0).getMember()) {
-            wishRepository.deleteByIdAndMember(postId,userId);
-            return true;
-        }
-        return false;
-    }
 }
