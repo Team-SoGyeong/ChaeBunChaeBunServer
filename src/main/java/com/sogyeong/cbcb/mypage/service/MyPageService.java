@@ -59,6 +59,7 @@ public class MyPageService {
                         "join board_album ba on bp.seq = ba.post_id " +
                         "join user_info ui on bp.author_id = ui.info_id " +
                         "where  bw.member = :user and " +
+                        "TIMESTAMPDIFF(day,bp.reg_date,now()) < 7 and " +
                         "case when :state=1 then " +
                         "   bp.status = 1 " +
                         "   when :state=0 then " +
