@@ -1,6 +1,16 @@
 spring :
   profiles :
     active : local # 기본 환경 선택
+---
+spring:
+  profiles:
+    include:
+      - aws         # application-aws.yml 가져오기!
+  servlet:
+    multipart:        # multipart file 용량 제한
+      max-file-size: 10MB
+      max-request-size: 10MB
+
 # local 환경
 ---
 spring :
