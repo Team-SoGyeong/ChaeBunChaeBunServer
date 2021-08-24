@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 public class ReportDTO {
     private String typ;
     private long post_id;
+    private long cmt_id;
     private long author_id;
     private int reason_num;
     private String reason;
@@ -22,6 +23,7 @@ public class ReportDTO {
     public ReportDTO(Opinion oi){
         this.typ =  oi.getType();
         this.post_id = oi.getPostId();
+        this.cmt_id =oi.getCmtId();
         this.author_id = oi.getAuthorId();
         this.reason_num = oi.getReason_num();
         this.reason = oi.getReason();
@@ -32,6 +34,7 @@ public class ReportDTO {
         return new Opinion().builder()
                 .type(typ)
                 .postId(post_id)
+                .cmtId(cmt_id)
                 .authorId(author_id)
                 .reason_num(reason_num)
                 .reason(reason)

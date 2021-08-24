@@ -22,6 +22,9 @@ public class Opinion {
     @Column(name = "post_id")
     private long postId;
 
+    @Column(name = "cmt_id")
+    private long cmtId;
+
     @Column(name = "author_id")
     private long authorId;
 
@@ -35,10 +38,11 @@ public class Opinion {
     private LocalDateTime regDate;
 
     @Builder
-    Opinion(long seq, String type,long postId, long authorId, int reason_num,String reason,LocalDateTime regDate){
+    Opinion(long seq, String type,long postId,long cmtId, long authorId, int reason_num,String reason,LocalDateTime regDate){
         this.seq = seq;
         this.type = type;
         this.postId =postId;
+        this.cmtId=cmtId;
         this.authorId=authorId;
         this.reason_num=reason_num;
         this.reason= reason;
