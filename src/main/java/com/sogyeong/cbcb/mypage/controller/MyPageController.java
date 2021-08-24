@@ -73,4 +73,31 @@ public class MyPageController {
                 return ResponseEntity.ok().body(new CommonResponse("프로필 변경 실패"));
         }
     }
+
+    //찜목록
+    @GetMapping("/mypage/scrap/{userId}/{platform_id}/{state_id}")
+    public ResponseEntity<? extends BasicResponse> getScrapList(@PathVariable("userId") long userId,
+                                                                @PathVariable("platform_id") long platformId,
+                                                                @PathVariable("state_id") long stateId){
+        boolean isUser = userInfoReposiorty.existsById(userId);
+        if(!isUser){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
+        }
+        else{
+            if(platformId == 0) { // 채분페이지인 경우
+                if(stateId>2){
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(new ErrorResponse("잘못된 상태 값입니다. 다시 시도 부탁드립니다."));
+                }
+                else return ResponseEntity.ok().body(new CommonResponse
+                        (myPageService.getScrapList(userId, platformId, stateId),"찜목록 출력 성공"));
+            }//커뮤니티는 추후 개발
+            else if(platformId == 1)
+                return ResponseEntity.ok().body(new CommonResponse("커뮤니티 서비스는 추후에 오픈됩니다."));
+            else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ErrorResponse("잘못된 플랫폼 타입입니다. 다시 시도 부탁드립니다."));
+        }
+    }
 }
