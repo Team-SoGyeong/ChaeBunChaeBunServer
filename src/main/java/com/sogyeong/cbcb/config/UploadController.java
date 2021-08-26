@@ -16,7 +16,7 @@ public class UploadController {
     private final S3Uploader s3Uploader;
 
     @PostMapping("/image/upload/{user}")
-    public ResponseEntity<? extends BasicResponse> upload(@RequestParam("data") List<MultipartFile> file, @PathVariable("user") long user) throws IOException {
+    public ResponseEntity<? extends BasicResponse> upload(@RequestPart("data") MultipartFile file, @PathVariable("user") long user) throws IOException {
         return ResponseEntity.ok().body( new CommonResponse(s3Uploader.upload(file, "static/"+user),"이미지변환완료")); // S3 bucket의 static/ 폴더를 지정한 것.
     }
 

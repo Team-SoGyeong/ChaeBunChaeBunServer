@@ -27,16 +27,21 @@ public class S3Uploader {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public List<String> upload(List<MultipartFile> multipartFile, String dirName) throws IOException {
-        List<String> uploadFiles =new ArrayList<>();
-        for(MultipartFile file : multipartFile) {
-            File uploadFile = convert(file)
-                    .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
-            uploadFiles.add(upload(uploadFile, dirName));
-        }
-        return uploadFiles;
-    }
+//    public List<String> upload(List<MultipartFile> multipartFile, String dirName) throws IOException {
+//        List<String> uploadFiles =new ArrayList<>();
+//        for(MultipartFile file : multipartFile) {
+//            File uploadFile = convert(file)
+//                    .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
+//            uploadFiles.add(upload(uploadFile, dirName));
+//        }
+//        return uploadFiles;
+//    }
+    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
 
+        File uploadFile = convert(multipartFile)
+                .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
+        return upload(uploadFile, dirName);
+    }
     private String upload(File uploadFile, String dirName) {
         String fileName = dirName + "/" + uploadFile.getName();
         String uploadImageUrl = putS3(uploadFile, fileName);
