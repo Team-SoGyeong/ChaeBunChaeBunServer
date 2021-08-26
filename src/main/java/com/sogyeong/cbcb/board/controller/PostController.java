@@ -349,8 +349,16 @@ public class PostController {
             commentDTO.setCmts(CVO.getCmts());
             
             Boolean isSave = pService.saveComments(commentDTO);
-            if(isSave)
-                return  ResponseEntity.ok().body( new CommonResponse("댓글 작성 성공"));
+
+            if(isSave){
+                List list = new ArrayList();
+                LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+                map.put("post_id", CVO.getPost_id());
+                map.put("cmts", pService.getComments(CVO.getPost_id()) );
+                list.add(map);
+                return  ResponseEntity.ok().body( new CommonResponse(list,"댓글 작성 성공"));
+            }
+
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(new ErrorResponse("댓글 작성 실패"));
