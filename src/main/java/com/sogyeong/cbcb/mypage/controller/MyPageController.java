@@ -1,11 +1,16 @@
 package com.sogyeong.cbcb.mypage.controller;
 
+import com.sogyeong.cbcb.board.entity.Posts;
+import com.sogyeong.cbcb.board.repository.PostsRepository;
+import com.sogyeong.cbcb.board.service.PostsService;
+import com.sogyeong.cbcb.defaults.entity.Products;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
+import com.sogyeong.cbcb.defaults.repository.ProductsRepository;
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import com.sogyeong.cbcb.mypage.model.vo.ProfileVO;
-import com.sogyeong.cbcb.mypage.repository.UserInfoReposiorty;
+import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import com.sogyeong.cbcb.mypage.service.MyPageService;
 import com.sogyeong.cbcb.mypage.service.MyPostService;
 import lombok.AllArgsConstructor;
@@ -25,16 +30,20 @@ import java.util.Optional;
 public class MyPageController {
 
     MyPageService myPageService;
-    UserInfoReposiorty userInfoReposiorty;
+    UserInfoRepository userInfoRepository;
+    PostsRepository postsRepository;
+    ProductsRepository productsRepository;
 
     @PersistenceContext
     private EntityManager em;
 
+    private PostsService pService;
+
     //프로필 조회
     @GetMapping("/mypage/profile/{userId}")
     public ResponseEntity<? extends BasicResponse> getProfile(@PathVariable("userId") long userId){
-        boolean isUser = userInfoReposiorty.existsById(userId);
-        Optional<UserInfo> userInfo = userInfoReposiorty.findById(userId);
+        boolean isUser = userInfoRepository.existsById(userId);
+        Optional<UserInfo> userInfo = userInfoRepository.findById(userId);
         if(!isUser){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
@@ -58,8 +67,8 @@ public class MyPageController {
     //프로필 수정
     @PutMapping("/mypage/profile")
     public ResponseEntity<? extends BasicResponse> updateProfile(@RequestBody ProfileVO PVO){
-        boolean isUser = userInfoReposiorty.existsById(PVO.getUser_id());
-        Optional<UserInfo> userInfo = userInfoReposiorty.findById(PVO.getUser_id());
+        boolean isUser = userInfoRepository.existsById(PVO.getUser_id());
+        Optional<UserInfo> userInfo = userInfoRepository.findById(PVO.getUser_id());
         if(!isUser){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
@@ -74,12 +83,85 @@ public class MyPageController {
         }
     }
 
+    //내가 쓴 글 상세조회
+    @GetMapping("/mypage/mypost/{post_id}/{userId}")
+    public ResponseEntity<? extends BasicResponse> getMyPostDetail(@PathVariable("userId") long userId,
+                                                                      @PathVariable("post_id") long postId) {
+
+        boolean isUser = userInfoRepository.existsById(userId);
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+        }
+        if (!postsRepository.existsById(postId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+        } else{
+            Optional<Posts> post = postsRepository.findById(postId);
+            Optional<Products> products = productsRepository.findById(post.get().getProdId());
+            Optional<UserInfo> user = userInfoRepository.findById(userId);
+
+            long addr_seq = user.stream().findFirst().get().getAddr();
+            long seq =products.stream().findFirst().get().getSeq();
+            String name = seq <11 ? products.stream().findFirst().get().getName() : "기타";
+
+            List sub = new ArrayList();
+            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            map.put("category_name",name );
+            map.put("address_id", addr_seq);
+            map.put("posts",pService.getSubCategory(post.get().getProdId(),userId,postId));
+
+            sub.add(map);
+
+            String msg = seq >10 ? "내가 쓴 기타 채분 게시글 표출 성공" : "내가 쓴 일반 채분 게시글 표출 성공";
+            return ResponseEntity.ok().body( new CommonResponse(sub,msg));
+        }
+
+    }
+
+    //내가 쓴 댓글 상세조회
+    @GetMapping("/mypage/mycomment/{userId}/{post_id}")
+    public ResponseEntity<? extends BasicResponse> getCommentPostDetail(@PathVariable("userId") long userId,
+                                                                      @PathVariable("post_id") long postId) {
+
+        boolean isUser = userInfoRepository.existsById(userId);
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+        }
+        if (!postsRepository.existsById(postId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+        } else{
+            Optional<Posts> post = postsRepository.findById(postId);
+            Optional<Products> products = productsRepository.findById(post.get().getProdId());
+            Optional<UserInfo> user = userInfoRepository.findById(userId);
+
+            long addr_seq = user.stream().findFirst().get().getAddr();
+            long seq =products.stream().findFirst().get().getSeq();
+            String name = seq <11 ? products.stream().findFirst().get().getName() : "기타";
+
+            List sub = new ArrayList();
+            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            map.put("category_name",name );
+            map.put("address_id", addr_seq);
+            map.put("posts",pService.getSubCategory(post.get().getProdId(),userId,postId));
+
+            sub.add(map);
+
+            String msg = seq >10 ? "내가 쓴 댓글 기타 채분 게시글 표출 성공" : "내가 쓴 댓글 일반 채분 게시글 표출 성공";
+            return ResponseEntity.ok().body( new CommonResponse(sub,msg));
+        }
+
+    }
+
+
     //찜목록
     @GetMapping("/mypage/scrap/{userId}/{platform_id}/{state_id}")
     public ResponseEntity<? extends BasicResponse> getScrapList(@PathVariable("userId") long userId,
                                                                 @PathVariable("platform_id") long platformId,
                                                                 @PathVariable("state_id") long stateId){
-        boolean isUser = userInfoReposiorty.existsById(userId);
+        boolean isUser = userInfoRepository.existsById(userId);
         if(!isUser){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
@@ -99,5 +181,41 @@ public class MyPageController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(new ErrorResponse("잘못된 플랫폼 타입입니다. 다시 시도 부탁드립니다."));
         }
+    }
+
+    //찜 상세 페이지
+    @GetMapping("/mypage/scrap/{userId}/{post_id}")
+    public ResponseEntity<? extends BasicResponse> getScrapPostDetail(@PathVariable("userId") long userId,
+                                                                      @PathVariable("post_id") long postId) {
+
+        boolean isUser = userInfoRepository.existsById(userId);
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+        }
+        if (!postsRepository.existsById(postId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+        } else{
+            Optional<Posts> post = postsRepository.findById(postId);
+            Optional<Products> products = productsRepository.findById(post.get().getProdId());
+            Optional<UserInfo> user = userInfoRepository.findById(userId);
+
+            long addr_seq = user.stream().findFirst().get().getAddr();
+            long seq =products.stream().findFirst().get().getSeq();
+            String name = seq <11 ? products.stream().findFirst().get().getName() : "기타";
+
+            List sub = new ArrayList();
+            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            map.put("category_name",name );
+            map.put("address_id", addr_seq);
+            map.put("posts",pService.getSubCategory(post.get().getProdId(),userId,postId));
+
+            sub.add(map);
+
+            String msg = seq >10 ? "기타 찜 채분 게시글 표출 성공" : "일반 찜 채분 게시글 표출 성공";
+            return ResponseEntity.ok().body( new CommonResponse(sub,msg));
+        }
+
     }
 }

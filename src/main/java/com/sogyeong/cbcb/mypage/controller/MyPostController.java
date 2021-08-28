@@ -3,7 +3,7 @@ package com.sogyeong.cbcb.mypage.controller;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
-import com.sogyeong.cbcb.mypage.repository.UserInfoReposiorty;
+import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import com.sogyeong.cbcb.mypage.service.MyPostService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import javax.persistence.PersistenceContext;
 public class MyPostController {
 
     MyPostService myPostService;
-    UserInfoReposiorty userInfoReposiorty;
+    UserInfoRepository userInfoRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -30,7 +30,7 @@ public class MyPostController {
             @PathVariable("user_id") long userId,
             @PathVariable("platform_id") int platform,
             @PathVariable("state_id") int state) {
-        boolean isUser = userInfoReposiorty.existsById(userId);
+        boolean isUser = userInfoRepository.existsById(userId);
 
         if(!isUser){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

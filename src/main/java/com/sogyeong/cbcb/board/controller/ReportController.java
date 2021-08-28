@@ -8,7 +8,7 @@ import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
 import com.sogyeong.cbcb.defaults.repository.ProductsRepository;
-import com.sogyeong.cbcb.mypage.repository.UserInfoReposiorty;
+import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ import javax.persistence.PersistenceContext;
 @AllArgsConstructor
 public class ReportController {
 
-    UserInfoReposiorty userInfoReposiorty;
+    UserInfoRepository userInfoRepository;
     ProductsRepository productsRepository;
     PostsRepository postsRepository;
 
@@ -35,7 +35,7 @@ public class ReportController {
     @PostMapping("/posts/report")
     public ResponseEntity<? extends BasicResponse> saveReport(@RequestBody ReportVO RVO) {
 
-        boolean isUser = userInfoReposiorty.existsById(RVO.getAuthor_id());
+        boolean isUser = userInfoRepository.existsById(RVO.getAuthor_id());
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
@@ -66,7 +66,7 @@ public class ReportController {
     @PostMapping("/comments/report")
     public ResponseEntity<? extends BasicResponse> saveCmtReport(@RequestBody ReportVO RVO) {
 
-        boolean isUser = userInfoReposiorty.existsById(RVO.getAuthor_id());
+        boolean isUser = userInfoRepository.existsById(RVO.getAuthor_id());
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));

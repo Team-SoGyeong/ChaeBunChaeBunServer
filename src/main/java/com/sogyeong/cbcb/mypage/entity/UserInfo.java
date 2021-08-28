@@ -43,7 +43,8 @@ public class UserInfo { //extends UserLogin
 
 
     @Builder
-    UserInfo(String name,String nickname, String email, String password,long addr,String url,LocalDateTime joinDate){
+    UserInfo(long seq,String name,String nickname, String email, String password,long addr,String url,LocalDateTime joinDate){
+        this.seq=seq;
         this.name=name;
         this.nickname = nickname;
         this.email = email;

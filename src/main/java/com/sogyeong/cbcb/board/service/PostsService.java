@@ -3,12 +3,12 @@ package com.sogyeong.cbcb.board.service;
 import com.sogyeong.cbcb.board.entity.Album;
 import com.sogyeong.cbcb.board.entity.Comment;
 import com.sogyeong.cbcb.board.entity.Posts;
-import com.sogyeong.cbcb.board.entity.Wish;
 import com.sogyeong.cbcb.board.model.dto.AlbumDTO;
 import com.sogyeong.cbcb.board.model.vo.AlbumVO;
 import com.sogyeong.cbcb.board.model.dto.CommentDTO;
 import com.sogyeong.cbcb.board.model.dto.PostDTO;
 import com.sogyeong.cbcb.board.model.response.*;
+import com.sogyeong.cbcb.board.model.vo.UpdatePostVO;
 import com.sogyeong.cbcb.board.repository.AlbumRepository;
 import com.sogyeong.cbcb.board.repository.CommentRepository;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
@@ -16,7 +16,7 @@ import com.sogyeong.cbcb.board.repository.WishRepository;
 import com.sogyeong.cbcb.defaults.entity.Products;
 import com.sogyeong.cbcb.defaults.model.ProdDTO;
 import com.sogyeong.cbcb.defaults.repository.ProductsRepository;
-import com.sogyeong.cbcb.mypage.repository.UserInfoReposiorty;
+import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +37,7 @@ public class PostsService {
     private ProductsRepository prodRepository;
     private CommentRepository commentRepository;
     private WishRepository wishRepository;
-    private UserInfoReposiorty userInfoReposiorty;
+    private UserInfoRepository userInfoRepository;
     private PostsRepository postsRepository;
 
     @PersistenceContext
@@ -262,37 +262,17 @@ public class PostsService {
     }
 
     @Transactional
-    public long updatePosts(long postId,PostDTO postDTO, AlbumVO imgs){
+    public long updatePosts(long postId, UpdatePostVO post){
 
         Optional<Posts> posts = postsRepository.findById(postId);
         posts.ifPresent(updatePost->{
-            updatePost.setTitle(postDTO.getTitle());
-            updatePost.setContents(postDTO.getContents());
-            updatePost.setPeoples(postDTO.getHeadcount());
-            updatePost.setPeriod(postDTO.getPeriod());
-            updatePost.setAmount(postDTO.getAmount());
-            updatePost.setUnit(postDTO.getUnit());
-            updatePost.setTotalPrice(postDTO.getTotal_price());
-            updatePost.setPerPrice(postDTO.getPer_price());
-            updatePost.setContact(postDTO.getContact());
+            updatePost.setContents(post.getContents());
+            updatePost.setContact(post.getContact());
             updatePost.setRegDate(LocalDateTime.now());
 
             postsRepository.save(updatePost);
         });
-        Optional<Album> album = albumRepository.findById(postId);
-        album.ifPresent(updateAlbum->{
-            updateAlbum.setBill1(imgs.getBill1());
-            updateAlbum.setBill2(imgs.getBill2());
-            updateAlbum.setImg1(imgs.getImg1());
-            updateAlbum.setImg2(imgs.getImg2());
-            updateAlbum.setImg3(imgs.getImg3());
-            updateAlbum.setImg4(imgs.getImg4());
-            updateAlbum.setImg5(imgs.getImg5());
-
-            albumRepository.save(updateAlbum);
-        });
-
-        return posts.stream().count()==1 && album.stream().count()==1 ? 1:-1;
+        return posts.stream().count()==1 ? 1:-1;
 
     }
 

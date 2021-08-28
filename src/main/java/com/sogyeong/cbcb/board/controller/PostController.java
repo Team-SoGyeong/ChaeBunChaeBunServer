@@ -2,11 +2,9 @@ package com.sogyeong.cbcb.board.controller;
 
 
 import com.sogyeong.cbcb.board.entity.Posts;
-import com.sogyeong.cbcb.board.entity.Wish;
 import com.sogyeong.cbcb.board.model.dto.AlbumDTO;
 import com.sogyeong.cbcb.board.model.dto.CommentDTO;
 import com.sogyeong.cbcb.board.model.dto.PostDTO;
-import com.sogyeong.cbcb.board.model.response.WishDTO;
 import com.sogyeong.cbcb.board.model.vo.CommentVO;
 import com.sogyeong.cbcb.board.model.vo.PostEctVO;
 import com.sogyeong.cbcb.board.model.vo.PostVO;
@@ -14,7 +12,6 @@ import com.sogyeong.cbcb.board.model.vo.UpdatePostVO;
 import com.sogyeong.cbcb.board.repository.CommentRepository;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
 import com.sogyeong.cbcb.board.repository.WishRepository;
-import com.sogyeong.cbcb.board.service.HomeListService;
 import com.sogyeong.cbcb.board.service.PostsService;
 import com.sogyeong.cbcb.defaults.entity.Products;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
@@ -23,8 +20,7 @@ import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
 import com.sogyeong.cbcb.defaults.repository.AddressRepository;
 import com.sogyeong.cbcb.defaults.repository.ProductsRepository;
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
-import com.sogyeong.cbcb.mypage.repository.UserInfoReposiorty;
-import com.sogyeong.cbcb.mypage.service.MyPageService;
+import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +38,7 @@ import java.util.Optional;
 public class PostController {
 
     AddressRepository addressRepository;
-    UserInfoReposiorty userInfoReposiorty;
+    UserInfoRepository userInfoRepository;
     ProductsRepository productsRepository;
     PostsRepository postsRepository;
     CommentRepository commentRepository;
@@ -56,7 +52,7 @@ public class PostController {
     @PostMapping("/posts/common")
     public ResponseEntity<? extends BasicResponse> saveCommonPost(@RequestBody PostVO PVO){
         boolean isCategory = productsRepository.existsById(PVO.getCategory_id());
-        boolean isUser = userInfoReposiorty.existsById(PVO.getAuthor_id());
+        boolean isUser = userInfoRepository.existsById(PVO.getAuthor_id());
         if(!isCategory){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("입력된 카테고리 정보는 정확하지 않습니다."));
@@ -90,7 +86,7 @@ public class PostController {
         long isSave = pService.savePosts(postDTO,PVO.getImgs());
         if(isSave!=-1) {
             Optional<Products> products = productsRepository.findById(PVO.getCategory_id());
-            Optional<UserInfo> user = userInfoReposiorty.findById(PVO.getAuthor_id());
+            Optional<UserInfo> user = userInfoRepository.findById(PVO.getAuthor_id());
 
             long addr_seq = user.stream().findFirst().get().getAddr();
             String name = PVO.getCategory_id() <11 ? products.stream().findFirst().get().getName() : "기타";
@@ -114,7 +110,7 @@ public class PostController {
     @PostMapping("/posts/etc")
     public ResponseEntity<? extends BasicResponse> saveEctPost(@RequestBody PostEctVO PVO){
         boolean isCategory = productsRepository.existsById(PVO.getCategory_id());
-        boolean isUser = userInfoReposiorty.existsById(PVO.getAuthor_id());
+        boolean isUser = userInfoRepository.existsById(PVO.getAuthor_id());
         if(!isCategory){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("입력된 카테고리 정보는 정확하지 않습니다."));
@@ -150,7 +146,7 @@ public class PostController {
         long isSave = Long.valueOf(res.split(",")[0].toString()).longValue();
         long category = Long.valueOf(res.split(",")[1].toString()).longValue();
         if(isSave!=-1) {
-            Optional<UserInfo> user = userInfoReposiorty.findById(PVO.getAuthor_id());
+            Optional<UserInfo> user = userInfoRepository.findById(PVO.getAuthor_id());
             long addr_seq = user.stream().findFirst().get().getAddr();
 
             List sub = new ArrayList();
@@ -172,7 +168,7 @@ public class PostController {
     @PutMapping("/posts")
     public ResponseEntity<? extends BasicResponse> updatePost(@RequestBody UpdatePostVO PVO){
         boolean isCategory = productsRepository.existsById(PVO.getCategory_id());
-        boolean isUser = userInfoReposiorty.existsById(PVO.getAuthor_id());
+        boolean isUser = userInfoRepository.existsById(PVO.getAuthor_id());
         if(!isCategory){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("입력된 카테고리 정보는 정확하지 않습니다."));
@@ -182,33 +178,12 @@ public class PostController {
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
         }
 
-        PostDTO postDTO = new PostDTO();
-        AlbumDTO albumDTO = new AlbumDTO();
-
-        postDTO.setCategory_id(PVO.getCategory_id());
-        postDTO.setAuthor_id(PVO.getAuthor_id());
-        postDTO.setContents(PVO.getContents());
-        postDTO.setTitle(PVO.getTitle());
-
-        if(PVO.getBuy_date().contains("1일")) postDTO.setPeriod(0);
-        if(PVO.getBuy_date().contains("2일")) postDTO.setPeriod(1);
-        if(PVO.getBuy_date().contains("3일")) postDTO.setPeriod(2);
-        if(PVO.getBuy_date().contains("일주일")) postDTO.setPeriod(3);
-        if(PVO.getBuy_date().contains("2주일"))postDTO.setPeriod(4);
-
-        postDTO.setAmount(PVO.getAmount());
-        postDTO.setUnit(PVO.getUnit());
-        postDTO.setTotal_price(PVO.getTotal_price());
-        postDTO.setHeadcount(PVO.getHeadcount());
-        postDTO.setPer_price(PVO.getPer_price());
-        postDTO.setContact(PVO.getContact());
-
 
         Optional<Products> prod = productsRepository.findById(PVO.getCategory_id());
-        long isSave = pService.updatePosts(PVO.getPost_id(),postDTO,PVO.getImgs());
+        long isSave = pService.updatePosts(PVO.getPost_id(),PVO);
         long category = prod.get().getSeq();
         if(isSave!=-1) {
-            Optional<UserInfo> user = userInfoReposiorty.findById(PVO.getAuthor_id());
+            Optional<UserInfo> user = userInfoRepository.findById(PVO.getAuthor_id());
             long addr_seq = user.stream().findFirst().get().getAddr();
             String name = category>10 ? "기타" : prod.get().getName();
 
@@ -231,7 +206,7 @@ public class PostController {
     //게시글 삭제
     @DeleteMapping("/posts/{post_id}/{user_id}")
     public ResponseEntity<? extends BasicResponse> deletePost(@PathVariable("post_id") long post_id,@PathVariable("user_id") long user_id){
-        boolean isUser = userInfoReposiorty.existsById(user_id);
+        boolean isUser = userInfoRepository.existsById(user_id);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
@@ -261,7 +236,7 @@ public class PostController {
     @GetMapping("/posts/category/{categoryId}/{user_id}")
     public ResponseEntity<? extends BasicResponse> getSubCategoryList(@PathVariable("categoryId") long category_id,@PathVariable("user_id") long user_id) {
         boolean isCategory = productsRepository.existsById(category_id);
-        boolean isUser = userInfoReposiorty.existsById(user_id);
+        boolean isUser = userInfoRepository.existsById(user_id);
         if(!isCategory || category_id>11){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("입력된 카테고리 정보는 정확하지 않습니다. "));
@@ -272,7 +247,7 @@ public class PostController {
         }
         else{
             Optional<Products> products = productsRepository.findById(category_id);
-            Optional<UserInfo> user = userInfoReposiorty.findById(user_id);
+            Optional<UserInfo> user = userInfoRepository.findById(user_id);
             long addr_seq = user.stream().findFirst().get().getAddr();
             String name = products.stream().findFirst().get().getName();
             long seq =products.stream().findFirst().get().getSeq();
@@ -297,7 +272,7 @@ public class PostController {
     @GetMapping("/posts/{post_id}/{user_id}")
     public ResponseEntity<? extends BasicResponse> getPostDetail(@PathVariable("post_id") long post_id,@PathVariable("user_id") long user_id) {
 
-        boolean isUser = userInfoReposiorty.existsById(user_id);
+        boolean isUser = userInfoRepository.existsById(user_id);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
@@ -308,7 +283,7 @@ public class PostController {
         } else{
             Optional<Posts> post = postsRepository.findById(post_id);
             Optional<Products> products = productsRepository.findById(post.get().getProdId());
-            Optional<UserInfo> user = userInfoReposiorty.findById(user_id);
+            Optional<UserInfo> user = userInfoRepository.findById(user_id);
 
             long addr_seq = user.stream().findFirst().get().getAddr();
             long seq =products.stream().findFirst().get().getSeq();
@@ -332,7 +307,7 @@ public class PostController {
     @PostMapping("/posts/comment")
     public ResponseEntity<? extends BasicResponse> saveComments(@RequestBody CommentVO CVO) {
 
-        boolean isUser = userInfoReposiorty.existsById(CVO.getUser_id());
+        boolean isUser = userInfoRepository.existsById(CVO.getUser_id());
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
@@ -369,7 +344,7 @@ public class PostController {
     @DeleteMapping("/posts/comment/{comment_id}/{user_id}")
     public ResponseEntity<? extends BasicResponse> deleteComments(@PathVariable("comment_id") long comment_id,@PathVariable("user_id") long user_id){
 
-        boolean isUser = userInfoReposiorty.existsById(user_id);
+        boolean isUser = userInfoRepository.existsById(user_id);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));

@@ -1,14 +1,13 @@
 package com.sogyeong.cbcb.board.controller;
 
 
-import com.sogyeong.cbcb.board.model.vo.UpdatePostVO;
 import com.sogyeong.cbcb.board.service.HomeListService;
 import com.sogyeong.cbcb.defaults.entity.Address;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
 import com.sogyeong.cbcb.defaults.repository.AddressRepository;
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
-import com.sogyeong.cbcb.mypage.repository.UserInfoReposiorty;
+import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import com.sogyeong.cbcb.mypage.service.MyPageService;
 import com.sogyeong.cbcb.mypage.service.MyPostService;
 import lombok.AllArgsConstructor;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.net.URLDecoder;
 import java.util.*;
 
 @RestController
@@ -27,7 +25,7 @@ import java.util.*;
 public class HomeController {
 
     AddressRepository addressRepository;
-    UserInfoReposiorty userInfoReposiorty;
+    UserInfoRepository userInfoRepository;
 
     private HomeListService homeListService;
     private MyPostService myPostService;
@@ -46,8 +44,8 @@ public class HomeController {
     @GetMapping("/home/{userId}")
     public ResponseEntity<? extends BasicResponse> getMainHome(@PathVariable("userId") long userId) {
 
-        boolean isUser = userInfoReposiorty.existsById(userId);
-        Optional<UserInfo> userInfo = userInfoReposiorty.findById(userId);
+        boolean isUser = userInfoRepository.existsById(userId);
+        Optional<UserInfo> userInfo = userInfoRepository.findById(userId);
         if(!isUser){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
@@ -111,8 +109,8 @@ public class HomeController {
     //찜리스트
     @GetMapping("/home/wishlist/{userId}")
     public ResponseEntity<? extends BasicResponse> getMyWishList(@PathVariable("userId") long userId){
-        boolean isUser = userInfoReposiorty.existsById(userId);
-        Optional<UserInfo> userInfo = userInfoReposiorty.findById(userId);
+        boolean isUser = userInfoRepository.existsById(userId);
+        Optional<UserInfo> userInfo = userInfoRepository.findById(userId);
         if(!isUser){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
@@ -128,8 +126,8 @@ public class HomeController {
 
     @GetMapping("/home/mydeadline/{userId}")
     public ResponseEntity<? extends BasicResponse> getMyDeadLineList(@PathVariable("userId") long userId) {
-        boolean isUser = userInfoReposiorty.existsById(userId);
-        Optional<UserInfo> userInfo = userInfoReposiorty.findById(userId);
+        boolean isUser = userInfoRepository.existsById(userId);
+        Optional<UserInfo> userInfo = userInfoRepository.findById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
@@ -189,8 +187,8 @@ public class HomeController {
     //위치 수정
     @PutMapping("/posts/location/{user_id}/{addr_seq}")
     public ResponseEntity<? extends BasicResponse> updateLocation(@PathVariable("user_id") long userId,@PathVariable("addr_seq") long addr_seq){
-        boolean isUser = userInfoReposiorty.existsById(userId);
-        Optional<UserInfo> userInfo = userInfoReposiorty.findById(userId);
+        boolean isUser = userInfoRepository.existsById(userId);
+        Optional<UserInfo> userInfo = userInfoRepository.findById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
