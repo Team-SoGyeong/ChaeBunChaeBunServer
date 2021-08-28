@@ -208,7 +208,7 @@ public class PostsService {
                 map.put("isAuth", res[11]);
                 map.put("isMyWish", res[12]);
                 map.put("imgs", album);
-                map.put("witten_by", res[13]);
+                map.put("written_by", res[13]);
 
                 subDetail.add(map);
             }
@@ -230,7 +230,7 @@ public class PostsService {
                 map.put("isAuth", res[11]);
                 map.put("isMyWish", res[12]);
                 map.put("imgs", album);
-                map.put("witten_by", res[13]);
+                map.put("written_by", res[13]);
 
                 subDetail.add(map);
             }
