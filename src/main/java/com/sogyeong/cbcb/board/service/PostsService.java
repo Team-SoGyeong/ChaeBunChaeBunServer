@@ -146,6 +146,8 @@ public class PostsService {
                         "else '2주일 이내 구매' " +
                         "end as buy_date, " +
                         "bp.headcount , " +
+                        "concat(bp.amount,bp.unit) as amount, " +
+                        "FORMAT(bp.total_price,0) , " +
                         "FORMAT(bp.per_price,0) as price," +
                         "( select IFNULL(count(seq),0)" +
                         "   from  board_wish" +
@@ -165,7 +167,8 @@ public class PostsService {
                         ") as isMyWish," +
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
                         "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff," +
-                        "dp.name "+
+                        "dp.name ," +
+                        "bp.contact "+
                         "from board_posts bp " +
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
@@ -194,7 +197,7 @@ public class PostsService {
             for (Object o: result) {
                 Object[] res = (Object[]) o;
                 map.put("post_id", res[0]);
-                map.put("detail_name", res[15]);
+                map.put("detail_name", res[16]);
                 map.put("user_id", res[1]);
                 map.put("nickname", res[2]);
                 map.put("profile", res[3]);
@@ -202,13 +205,16 @@ public class PostsService {
                 map.put("contents", res[5]);
                 map.put("buy_date", res[6]);
                 map.put("headcounts", res[7].toString() + '명');
-                map.put("per_price", res[8].toString() + '원');
-                map.put("wish_cnts", res[9]);
-                map.put("comment_cnts", res[10]);
-                map.put("isAuth", res[11]);
-                map.put("isMyWish", res[12]);
+                map.put("amount", res[8]);
+                map.put("total_price", res[9].toString() + '원');
+                map.put("per_price", res[10].toString() + '원');
+                map.put("wish_cnts", res[11]);
+                map.put("comment_cnts", res[12]);
+                map.put("isAuth", res[13]);
+                map.put("isMyWish", res[14]);
+                map.put("contact", res[18]);
                 map.put("imgs", album);
-                map.put("written_by", res[13]);
+                map.put("written_by", res[15]);
 
                 subDetail.add(map);
             }
@@ -224,14 +230,16 @@ public class PostsService {
                 map.put("contents", res[5]);
                 map.put("buy_date", res[6]);
                 map.put("headcounts", res[7].toString() + '명');
-                map.put("per_price", res[8].toString() + '원');
-                map.put("wish_cnts", res[9]);
-                map.put("comment_cnts", res[10]);
-                map.put("isAuth", res[11]);
-                map.put("isMyWish", res[12]);
+                map.put("amount", res[8]);
+                map.put("total_price", res[9].toString() + '원');
+                map.put("per_price", res[10].toString() + '원');
+                map.put("wish_cnts", res[11]);
+                map.put("comment_cnts", res[12]);
+                map.put("isAuth", res[13]);
+                map.put("isMyWish", res[14]);
+                map.put("contact", res[18]);
                 map.put("imgs", album);
-                map.put("written_by", res[13]);
-
+                map.put("written_by", res[15]);
                 subDetail.add(map);
             }
         }
@@ -268,8 +276,6 @@ public class PostsService {
         posts.ifPresent(updatePost->{
             updatePost.setContents(post.getContents());
             updatePost.setContact(post.getContact());
-            updatePost.setRegDate(LocalDateTime.now());
-
             postsRepository.save(updatePost);
         });
         return posts.stream().count()==1 ? 1:-1;
