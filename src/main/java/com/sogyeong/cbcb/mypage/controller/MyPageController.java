@@ -244,4 +244,22 @@ public class MyPageController {
         }
 
     }
+
+    //탈퇴하기 - PUT
+    @PutMapping("/mypage/profile/{userId}")
+    public ResponseEntity<? extends BasicResponse> deleteUser(@PathVariable("userId") long userId){
+        boolean isUser = userInfoRepository.existsById(userId);
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+        }
+        else{
+            Boolean isChange = myPageService.updateUserQuitDate(userId);
+            if(isChange)
+                return  ResponseEntity.ok().body( new CommonResponse("탈퇴 성공"));
+            else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ErrorResponse("탈퇴 실패"));
+        }
+    }
 }

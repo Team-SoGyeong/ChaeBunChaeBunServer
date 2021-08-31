@@ -1,15 +1,19 @@
 package com.sogyeong.cbcb.mypage.service;
 
+import com.sogyeong.cbcb.board.entity.Comment;
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
+import com.sogyeong.cbcb.mypage.entity.UserLogin;
 import com.sogyeong.cbcb.mypage.model.response.ResponseMyCommentList;
 import com.sogyeong.cbcb.mypage.model.response.ResponseMyWishList;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
+import com.sogyeong.cbcb.mypage.repository.UserLoginRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,6 +26,7 @@ public class MyPageService {
     private EntityManager em;
 
     UserInfoRepository userInfoRepository;
+    UserLoginRepository userLoginRepository;
 
     @Transactional
     public Boolean updateProfile(long userId, String image, String nickname){
@@ -30,6 +35,16 @@ public class MyPageService {
             profileInfo.setUrl(image);
             profileInfo.setNickname(nickname);
             userInfoRepository.save(profileInfo);
+        });
+        return info.stream().count() > 0 ? true : false;
+    }
+
+    @Transactional
+    public Boolean updateUserQuitDate(long userId){
+        Optional<UserLogin> info = userLoginRepository.findById(userId);
+        info.ifPresent(loginInfo ->{
+            loginInfo.setQuitDate(LocalDateTime.now());
+            userLoginRepository.save(loginInfo);
         });
         return info.stream().count() > 0 ? true : false;
     }
@@ -158,4 +173,6 @@ public class MyPageService {
         }
         return wishLists;
     }
+
+
 }
