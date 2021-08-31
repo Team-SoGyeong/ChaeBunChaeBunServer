@@ -3,7 +3,7 @@ package com.sogyeong.cbcb.board.service;
 import com.sogyeong.cbcb.board.model.response.ResponseHomeList;
 import com.sogyeong.cbcb.defaults.entity.Products;
 import com.sogyeong.cbcb.defaults.repository.ProductsRepository;
-import com.sogyeong.cbcb.mypage.model.response.ResponseMyWishtList;
+import com.sogyeong.cbcb.mypage.model.response.ResponseMyWishList;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -169,7 +169,7 @@ public class HomeListService {
                 .setParameter("user", user)
                 .getResultList();
 
-        List wishLists = new ArrayList<ResponseMyWishtList>();
+        List wishLists = new ArrayList<ResponseMyWishList>();
         for (Object o: resultList){
             Object[] res = (Object[]) o;
 

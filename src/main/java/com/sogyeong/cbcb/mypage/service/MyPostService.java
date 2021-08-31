@@ -1,7 +1,7 @@
 package com.sogyeong.cbcb.mypage.service;
 
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
-import com.sogyeong.cbcb.mypage.model.response.ResponseMyDedelineList;
+import com.sogyeong.cbcb.mypage.model.response.ResponseMyDeadlineList;
 import com.sogyeong.cbcb.mypage.model.response.ResponseMyPostList;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import lombok.AllArgsConstructor;
@@ -95,7 +95,7 @@ public class MyPostService {
                 .setParameter("user", user)
                 .getResultList();
 
-        List myDeadlineLists = new ArrayList<ResponseMyDedelineList>();
+        List myDeadlineLists = new ArrayList<ResponseMyDeadlineList>();
         for (Object o: resultList){
             Object[] res = (Object[]) o;
 
