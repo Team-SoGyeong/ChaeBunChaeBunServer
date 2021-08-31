@@ -1,6 +1,6 @@
 package com.sogyeong.cbcb.mypage.model.response;
 
-public class ResponseMyWishtList {
+public class ResponseMyWishList {
     private long category_id;
     private String name;
     private long wish_id;
