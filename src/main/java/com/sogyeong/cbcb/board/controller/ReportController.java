@@ -56,7 +56,7 @@ public class ReportController {
 
             Boolean isSave = reportService.storeReport(report);
             if(isSave)
-                return  ResponseEntity.ok().body( new CommonResponse("게시긓 신고 하기 성공"));
+                return  ResponseEntity.ok().body( new CommonResponse("게시글신고 하기 성공"));
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(new ErrorResponse("게시글 신고 하기 실패"));
@@ -91,6 +91,37 @@ public class ReportController {
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(new ErrorResponse("댓글 신고 하기 실패"));
+        }
+    }
+
+    @PostMapping("/posts/blind")
+    public ResponseEntity<? extends BasicResponse> saveBlind(@RequestBody ReportVO RVO) {
+
+        boolean isUser = userInfoRepository.existsById(RVO.getAuthor_id());
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+        }
+        else if (!postsRepository.existsById(RVO.getPost_id())) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+        }
+        else{
+            ReportDTO report = new ReportDTO();
+
+            report.setTyp("blind");
+            report.setPost_id(RVO.getPost_id());
+            report.setCmt_id(RVO.getCmt_id());
+            report.setAuthor_id(RVO.getAuthor_id());
+            report.setReason_num(RVO.getReason_num());
+            report.setReason(RVO.getReason());
+
+            Boolean isSave = reportService.storeReport(report);
+            if(isSave)
+                return  ResponseEntity.ok().body( new CommonResponse("더이상 안보이게 하기 성공"));
+            else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ErrorResponse("더이상 안보이게 하기 실패"));
         }
     }
 }

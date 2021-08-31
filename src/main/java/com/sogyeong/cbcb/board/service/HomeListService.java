@@ -38,7 +38,7 @@ public class HomeListService {
 
         return category_list;
     }
-    public List getNewList(long addrSeq) {
+    public List getNewList(long addrSeq, long user_id) {
         List resultList =  em.createNativeQuery(
                 "select "+
                         "dp.seq as categoryId, " +
@@ -56,13 +56,16 @@ public class HomeListService {
                         "ba.isAuth, ba.img1, " +
                         "date_format(bp.reg_date,'%m/%d') as dates " +
                         "from board_posts bp " +
+                        "left join default_opinion d_o on bp.seq = d_o.post_id " +
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
                         "join user_info ui on bp.author_id = ui.info_id " +
                         "where ui.address = :addrId and bp.status = 0 " +
+                        "and case when d_o.post_id = bp.seq  then d_o.types <>'blind' and d_o.author_id <> :user else 1=1 end  " +
                         "order by dates desc, dp.seq " +
                         "limit 3 ")
                 .setParameter("addrId", addrSeq)
+                .setParameter("user", user_id)
                 .getResultList();
 
         List newList = new ArrayList<ResponseHomeList>();
@@ -87,7 +90,7 @@ public class HomeListService {
         }
         return newList;
     }
-    public List getDeadlineList(long addrSeq) {
+    public List getDeadlineList(long addrSeq , long user_id) {
         List resultList =  em.createNativeQuery(
                 "select "+
                         "dp.seq as categoryId, " +
@@ -106,14 +109,17 @@ public class HomeListService {
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
                         "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff "+
                         "from board_posts bp " +
+                        "left join default_opinion d_o on bp.seq = d_o.post_id " +
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
                         "join user_info ui on bp.author_id = ui.info_id " +
                         "where ui.address = :addrId and bp.status = 0 " + // 소분이 완료되지않는경우만 나오게 하기
                         "and (TIMESTAMPDIFF(day,bp.reg_date,now()) > 4 and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7)" +
+                        "and case when d_o.post_id = bp.seq  then d_o.types <>'blind' and d_o.author_id <> :user else 1=1 end  " +
                         "order by diff desc , dp.seq  " +
                         "limit 3 ")
                 .setParameter("addrId", addrSeq)
+                .setParameter("user", user_id)
                 .getResultList();
 
         List deadlineList = new ArrayList<ResponseHomeList>();
@@ -160,10 +166,12 @@ public class HomeListService {
                                 "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff " +
                                 "from board_wish bw " +
                                 "join board_posts bp on  bw.post_id = bp.seq " +
+                                "left join default_opinion d_o on bp.seq = d_o.post_id " +
                                 "join default_products dp on bp.prod_id = dp.seq " +
                                 "join board_album ba on bp.seq = ba.post_id " +
                                 "join user_info ui on bp.author_id = ui.info_id " +
                                 "where  bw.member = :user and bp.status = 0 and bw.author_id <> :user " +
+                                "and ( d_o.post_id <> bp.seq and d_o.types <>'blind' and d_o.author_id <> :user) " +
                                 "order by diff desc , dp.seq " +
                                 "limit 3")
                 .setParameter("user", user)
@@ -263,8 +271,7 @@ public class HomeListService {
                                 "bp.title like concat('%', :searchStr, '%') or " +
                                 "bp.contents like concat('%', :searchStr, '%') or " +
                                 "dp.name like concat('%', :searchStr, '%') )" +
-                                "order by dates desc, dp.seq " +
-                                "limit 3 ")
+                                "order by dates desc, dp.seq ")
                 .setParameter("addrId", addrSeq)
                 .setParameter("searchStr", search_str)
                 .getResultList();

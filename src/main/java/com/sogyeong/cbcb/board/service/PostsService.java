@@ -82,6 +82,7 @@ public class PostsService {
                                 "date_format(bp.reg_date,'%m/%d') as dates, " +
                                 "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff "+
                                 "from board_posts bp " +
+                                "left join default_opinion d_o on bp.seq = d_o.post_id " +
                                 "join default_products dp on bp.prod_id = dp.seq " +
                                 "join board_album ba on bp.seq = ba.post_id " +
                                 "join user_info ui on bp.author_id = ui.info_id " +
@@ -89,6 +90,7 @@ public class PostsService {
                                 "case when :categoryId > 10 then bp.prod_id >=11 else bp.prod_id = :categoryId end " +
                                 "and bp.status = 0 " + // 소분이 완료되지않는경우만 나오게 하기
                                 "and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7 " +
+                                "and case when d_o.post_id = bp.seq  then d_o.types <>'blind' and d_o.author_id <> :user else 1=1 end " +
                                 "order by diff desc , bp.prod_id ")
                 .setParameter("categoryId", category_id)
                 .setParameter("user", user_id)

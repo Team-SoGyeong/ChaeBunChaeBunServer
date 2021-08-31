@@ -63,7 +63,7 @@ public class HomeController {
             map.put("address_id", userInfo.stream().findFirst().get().getAddr());
             map.put("full_address", addrInfo);
             map.put("category",homeListService.getCategoryList());
-            map.put("last_list", homeListService.getNewList(addr_seq));
+            map.put("last_list", homeListService.getNewList(addr_seq,userId));
             map.put("deadline_alerts",myPostService.getMyDeadlineList(userId));
             //유저의 마감직전 리스트로 바꿔야함
             homeInfo.add(map);
@@ -73,15 +73,15 @@ public class HomeController {
     }
 
     //신규채분리스트
-    @GetMapping("/home/new/{addr_seq}")
-    public ResponseEntity<? extends BasicResponse> getNewList(@PathVariable("addr_seq") long addr_seq) {
+    @GetMapping("/home/new/{addr_seq}/{userId}")
+    public ResponseEntity<? extends BasicResponse> getNewList(@PathVariable("addr_seq") long addr_seq,@PathVariable("userId") long userId) {
         boolean isAddr = addressRepository.existsById(addr_seq);
         if(!isAddr){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("입력된 주소 일련번호는 존재하지 않습니다. "));
         }
         else{
-            List newList = homeListService.getNewList(addr_seq);
+            List newList = homeListService.getNewList(addr_seq,userId);
             if(newList.size()>0)
                 return ResponseEntity.ok().body( new CommonResponse(newList,"신규 채분 리스트 출력 성공"));
             else
@@ -90,15 +90,15 @@ public class HomeController {
     }
 
     //마감직전채분리스트
-    @GetMapping("/home/deadline/{addr_seq}")
-    public ResponseEntity<? extends BasicResponse> getDeadLineList(@PathVariable("addr_seq") long addr_seq) {
+    @GetMapping("/home/deadline/{addr_seq}/{userId}")
+    public ResponseEntity<? extends BasicResponse> getDeadLineList(@PathVariable("addr_seq") long addr_seq,@PathVariable("userId") long userId) {
         boolean isAddr = addressRepository.existsById(addr_seq);
         if(!isAddr){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse("입력된 주소 일련번호는 존재하지 않습니다. "));
         }
         else{
-            List deadlineList = homeListService.getDeadlineList(addr_seq);
+            List deadlineList = homeListService.getDeadlineList(addr_seq,userId);
             if(deadlineList.size()>0)
                 return ResponseEntity.ok().body( new CommonResponse(deadlineList,"마감 직전 채분 리스트 출력 성공"));
             else
