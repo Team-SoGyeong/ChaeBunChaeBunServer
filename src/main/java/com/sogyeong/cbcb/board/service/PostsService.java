@@ -160,6 +160,7 @@ public class PostsService {
                         "  where post_id =bp.seq " +
                         ") as comment_cnts, " +
                         "ba.isAuth, " +
+                        "bp.status, " +
                         "(select " +
                         " case when count(seq)>0 then true" +
                         " else false " +
@@ -199,7 +200,7 @@ public class PostsService {
             for (Object o: result) {
                 Object[] res = (Object[]) o;
                 map.put("post_id", res[0]);
-                map.put("detail_name", res[16]);
+                map.put("detail_name", res[17]);
                 map.put("user_id", res[1]);
                 map.put("nickname", res[2]);
                 map.put("profile", res[3]);
@@ -213,10 +214,11 @@ public class PostsService {
                 map.put("wish_cnts", res[11]);
                 map.put("comment_cnts", res[12]);
                 map.put("isAuth", res[13]);
-                map.put("isMyWish", res[14]);
-                map.put("contact", res[18]);
+                map.put("status", res[14]); //이거 index 맞나
+                map.put("isMyWish", res[15]);
+                map.put("contact", res[19]);
                 map.put("imgs", album);
-                map.put("written_by", res[15]);
+                map.put("written_by", res[16]);
 
                 subDetail.add(map);
             }
@@ -238,10 +240,11 @@ public class PostsService {
                 map.put("wish_cnts", res[11]);
                 map.put("comment_cnts", res[12]);
                 map.put("isAuth", res[13]);
-                map.put("isMyWish", res[14]);
-                map.put("contact", res[18]);
+                map.put("status", res[14]); //
+                map.put("isMyWish", res[15]);
+                map.put("contact", res[19]);
                 map.put("imgs", album);
-                map.put("written_by", res[15]);
+                map.put("written_by", res[16]);
                 subDetail.add(map);
             }
         }
