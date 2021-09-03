@@ -2,6 +2,7 @@ package com.sogyeong.cbcb.board.model.response;
 
 import java.util.List;
 
+//일반채분팟
 public class ResponseSubDetail1 {
     private long post_id;
     private long user_id;
@@ -17,6 +18,7 @@ public class ResponseSubDetail1 {
     private int wish_cnts;
     private int comment_cnts;
     private int isAuth;
+    private int status;
     private Boolean isMyWish;
     private String  contact;
     private String reg_date;
