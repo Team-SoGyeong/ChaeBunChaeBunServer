@@ -16,7 +16,10 @@ public interface WishRepository extends JpaRepository<Wish,Long> {
     int getLastSeq(); // 찜 삽입전 최신의 댓글 일련 번호를 얻기 위해 필요
 
     @Query(value = "select * from board_wish WHERE post_id = :post and member=:user ", nativeQuery = true)
-    List<Wish> getWish(@Param(value="post") long postID, @Param(value="user") long user); // 찜 삽입전 최신의 댓글 일련 번호를 얻기 위해 필요
+    List<Wish> getWish(@Param(value="post") long postID, @Param(value="user") Long user); // 찜 삽입전 최신의 댓글 일련 번호를 얻기 위해 필요
+
+    @Query(value = "select count(post_id) from board_wish WHERE post_id = :post ", nativeQuery = true)
+    int getWish(@Param(value="post") long postID);
 
     @Modifying
     @Query(value = "DELETE FROM board_wish WHERE post_id = :post and member=:user", nativeQuery = true)

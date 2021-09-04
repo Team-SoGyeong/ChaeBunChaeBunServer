@@ -26,10 +26,11 @@ public class AuthService {
     public long kakaoSignin(UserLoginDTO userLoginDTO, UserInfoDTO userInfoDTO){
         int lastSeq = userLoginRepository.getLastSeq();
         UserLogin userLogin = userLoginRepository.save(userLoginDTO.toEntity());
+        userInfoDTO.setInfoId(userLogin.getSeq());
         UserInfo userInfo = userInfoRepository.save(userInfoDTO.toEntity());
 
         //유저 아이디 반환
-        if(userLogin.getSeq()>lastSeq)
+        if(userLogin.getSeq()>lastSeq && userLogin.getSeq()==userInfo.getSeq())
             return userLogin.getSeq();
         else return -1;
     }

@@ -7,6 +7,7 @@ import com.sogyeong.cbcb.auth.wotoken.service.AuthService;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/auth2")
 public class Auth2Controller {
+
+    @Autowired
     private AuthService authService;
 
     @PostMapping("/signin/kakao")

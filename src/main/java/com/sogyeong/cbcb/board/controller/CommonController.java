@@ -122,17 +122,17 @@ public class CommonController {
                 wDTO.setAuthor_id(author);
                 wDTO.setUser_id(user_id);
 
-                Boolean isSave = cService.storeWish(wDTO);
-                if(isSave)
-                    return  ResponseEntity.ok().body( new CommonResponse(post_id+"번 포스트 찜 하기 성공!"));
+                List isSave = cService.storeWish(wDTO);
+                if(isSave.size()>0)
+                    return  ResponseEntity.ok().body( new CommonResponse(isSave,post_id+"번 포스트 찜 하기 성공!"));
                 else
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body(new ErrorResponse("찜하기 실패"));
             }
             else{
-                Boolean isDelete = cService.deleteWish(post_id,user_id);
-                if(isDelete)
-                    return  ResponseEntity.ok().body( new CommonResponse(post_id+"번 포스트 찜 취소 성공!"));
+                List isDelete = cService.deleteWish(post_id,user_id);
+                if(isDelete.size()>0)
+                    return  ResponseEntity.ok().body( new CommonResponse(isDelete,post_id+"번 포스트 찜 취소 성공!"));
                 else
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body(new ErrorResponse("찜 취소 실패"));

@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,23 +28,36 @@ public class CommonService {
     EntityManager em;
 
     @Transactional(readOnly = false)
-    public Boolean storeWish(WishDTO wDTO) {
+    public List storeWish(WishDTO wDTO) {
+        List res = new LinkedList();
         int lastSeq= wishRepository.getLastSeq();
         Wish wResult = wishRepository.save(wDTO.toEntity());
+
+        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+        map.put("status",1);
+        map.put("wish_cnts", wishRepository.getWish(wDTO.getPost_id()));
+        res.add(map);
+
         if(wResult.getSeq()>lastSeq)
-            return true;
-        else return false;
+            return res;
+        else return res;
     }
 
     @Transactional(readOnly = true)
-    public Boolean deleteWish(long postId, long userId) {
+    public List deleteWish(long postId, long userId) {
         List<Wish> wishResult = wishRepository.getWish(postId,userId);
+        List res = new LinkedList();
 
         if (userId == wishResult.get(0).getMember()) {
             wishRepository.deleteByIdAndMember(postId,userId);
-            return true;
+            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            map.put("status",0);
+            map.put("wish_cnts",wishRepository.getWish(postId));
+            res.add(map);
+
+            return res;
         }
-        return false;
+        return res;
     }
 
     @Transactional

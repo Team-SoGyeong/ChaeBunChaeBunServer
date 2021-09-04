@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Table(name = "user_info")
 public class UserInfo { //extends UserLogin
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name ="info_id")
     private long seq;
 
