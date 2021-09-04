@@ -11,25 +11,21 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Table(name = "user_info")
 public class UserInfo { //extends UserLogin
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name ="info_id")
     private long seq;
 
-    @Column(name ="name")
-    private String name;
-
-    @Column(name ="nickname")
+    @Column(name ="nickname", nullable = false)
     private String nickname;
 
-    @Column(name ="email")
+    @Column(name ="email", nullable = false)
     private String email;
 
     @Column(name ="password")
     private String password;
 
-    @Column(name ="address")
+    @Column(name ="address", nullable = false)
     private long addr;
 
     @Column(name ="profile")
@@ -41,16 +37,24 @@ public class UserInfo { //extends UserLogin
     @Column(name = "join_date")
     private LocalDateTime joinDate;
 
+    @Column(name = "sex")
+    private int sex;
+
+    @Column(name = "age_range")
+    private int ageRange;
 
     @Builder
-    UserInfo(long seq,String name,String nickname, String email, String password,long addr,String url,LocalDateTime joinDate){
-        this.seq=seq;
-        this.name=name;
+    UserInfo(long seq, String nickname, String email, String password, long addr, String url,
+             int isDonated, LocalDateTime joinDate, int sex, int ageRange){
+        this.seq = seq;
         this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.addr = addr;
         this.url = url;
+        this.isDonated = isDonated;
         this.joinDate = joinDate;
+        this.sex = sex;
+        this.ageRange = ageRange;
     }
 }

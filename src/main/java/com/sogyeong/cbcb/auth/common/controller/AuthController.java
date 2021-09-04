@@ -36,8 +36,9 @@ public class AuthController {
     }
 
     private void chooseAuthService(AuthType type) {
-       if(type == AuthType.Kakao) {
+        if(type == AuthType.Kakao) {
             authService = kaKaoAuthService;
         }
     }
 }
+

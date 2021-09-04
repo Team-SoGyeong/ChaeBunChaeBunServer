@@ -1,0 +1,36 @@
+package com.sogyeong.cbcb.auth.wotoken.service;
+
+import com.sogyeong.cbcb.auth.wotoken.model.dto.UserInfoDTO;
+import com.sogyeong.cbcb.auth.wotoken.model.dto.UserLoginDTO;
+import com.sogyeong.cbcb.mypage.entity.UserInfo;
+import com.sogyeong.cbcb.mypage.entity.UserLogin;
+import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
+import com.sogyeong.cbcb.mypage.repository.UserLoginRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+@Service
+@AllArgsConstructor
+public class AuthService {
+    private UserLoginRepository userLoginRepository;
+    private UserInfoRepository userInfoRepository;
+
+    @PersistenceContext
+    EntityManager em;
+
+    @Transactional(readOnly = false)
+    public long kakaoSignin(UserLoginDTO userLoginDTO, UserInfoDTO userInfoDTO){
+        int lastSeq = userLoginRepository.getLastSeq();
+        UserLogin userLogin = userLoginRepository.save(userLoginDTO.toEntity());
+        UserInfo userInfo = userInfoRepository.save(userInfoDTO.toEntity());
+
+        //유저 아이디 반환
+        if(userLogin.getSeq()>lastSeq)
+            return userLogin.getSeq();
+        else return -1;
+    }
+}
