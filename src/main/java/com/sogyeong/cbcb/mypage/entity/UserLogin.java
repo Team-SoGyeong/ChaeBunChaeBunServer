@@ -16,7 +16,7 @@ public class UserLogin {
     @Column(name ="login_id" , unique = true, nullable = false)
     private long seq;
 
-    @Column(name ="login_type")
+    @Column(name ="login_type", nullable = false)
     private String type;
 
     @Column(name = "access_token")
@@ -35,7 +35,7 @@ public class UserLogin {
     private LocalDateTime quitDate;
 
     @Builder
-    UserLogin(long seq, String type,String accessToken, String refreshToken, String deviceToken,LocalDateTime joinDate, LocalDateTime quitDate){
+    UserLogin(long seq, String type,String accessToken, String refreshToken, String deviceToken, LocalDateTime joinDate, LocalDateTime quitDate){
         this.seq = seq;
         this.type = type;
         this.accessToken = accessToken;
