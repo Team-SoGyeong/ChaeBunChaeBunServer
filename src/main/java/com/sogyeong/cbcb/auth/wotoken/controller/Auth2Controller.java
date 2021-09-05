@@ -8,23 +8,27 @@ import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 @RestController
 @RequestMapping("/auth2")
+@AllArgsConstructor
 public class Auth2Controller {
 
     UserInfoRepository userInfoRepository;
-
-    @Autowired
     private AuthService authService;
+
+    @PersistenceContext
+    private EntityManager em;
 
     //카카오 로그인
     @PostMapping("/signin/kakao")

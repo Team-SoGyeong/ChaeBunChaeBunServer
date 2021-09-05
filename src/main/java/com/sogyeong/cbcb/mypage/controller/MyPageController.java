@@ -95,7 +95,6 @@ public class MyPageController {
     @GetMapping("/mypage/mypost/{post_id}/{userId}")
     public ResponseEntity<? extends BasicResponse> getMyPostDetail(@PathVariable("userId") long userId,
                                                                       @PathVariable("post_id") long postId) {
-
         boolean isUser = userInfoRepository.existsById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
