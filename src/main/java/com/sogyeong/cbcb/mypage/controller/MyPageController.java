@@ -68,18 +68,26 @@ public class MyPageController {
     @PutMapping("/mypage/profile")
     public ResponseEntity<? extends BasicResponse> updateProfile(@RequestBody ProfileVO PVO){
         boolean isUser = userInfoRepository.existsById(PVO.getUser_id());
-        Optional<UserInfo> userInfo = userInfoRepository.findById(PVO.getUser_id());
+        //Optional<UserInfo> userInfo = userInfoRepository.findById(PVO.getUser_id());
         if(!isUser){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
         }
         else{
-            Boolean isChange = myPageService.updateProfile(PVO.getUser_id(), PVO.getProfile_img(), PVO.getNickname());
+            //닉네임 중복 확인->이거 HttpStatus.NOT_FOUND 쓰는 게 맞나..
+            boolean isNickname = userInfoRepository.existsByNickname(PVO.getNickname());
+            if(isNickname){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResponse("이미 사용 중인 닉네임 입니다. 다른 닉네임을 입력하세요."));
+            }
+            else{
+                Boolean isChange = myPageService.updateProfile(PVO.getUser_id(), PVO.getProfile_img(), PVO.getNickname());
 
-            if (isChange)
-                return ResponseEntity.ok().body(new CommonResponse("프로필 변경 성공"));
-            else
-                return ResponseEntity.ok().body(new CommonResponse("프로필 변경 실패"));
+                if (isChange)
+                    return ResponseEntity.ok().body(new CommonResponse("프로필 변경 성공"));
+                else
+                    return ResponseEntity.ok().body(new CommonResponse("프로필 변경 실패"));
+            }
         }
     }
 
