@@ -31,17 +31,22 @@ public class UserLogin {
     @Column(name = "join_date")
     private LocalDateTime joinDate;
 
+    @Column(name = "update_date")
+    private LocalDateTime updateDate;
+
     @Column(name = "quit_date")
     private LocalDateTime quitDate;
 
     @Builder
-    UserLogin(long seq, String type,String accessToken, String refreshToken, String deviceToken, LocalDateTime joinDate, LocalDateTime quitDate){
+    UserLogin(long seq, String type, String accessToken, String refreshToken, String deviceToken,
+              LocalDateTime joinDate, LocalDateTime updateDate, LocalDateTime quitDate){
         this.seq = seq;
         this.type = type;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.deviceToken = deviceToken;
         this.joinDate = joinDate;
+        this.updateDate = updateDate;
         this.quitDate = quitDate;
     }
 }

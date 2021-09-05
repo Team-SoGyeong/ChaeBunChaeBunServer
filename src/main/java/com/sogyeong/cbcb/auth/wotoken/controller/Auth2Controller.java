@@ -7,13 +7,11 @@ import com.sogyeong.cbcb.auth.wotoken.service.AuthService;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
+import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -23,9 +21,12 @@ import java.util.List;
 @RequestMapping("/auth2")
 public class Auth2Controller {
 
+    UserInfoRepository userInfoRepository;
+
     @Autowired
     private AuthService authService;
 
+    //카카오 로그인
     @PostMapping("/signin/kakao")
     public ResponseEntity<? extends BasicResponse> kakaoSignin(@RequestBody SigninVO SVO){
         UserLoginDTO userLoginDTO = new UserLoginDTO();
@@ -64,5 +65,23 @@ public class Auth2Controller {
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
                     body(new ErrorResponse("카카오 로그인 실패"));
+    }
+
+    //로그아웃 - 최종 접속 시간 PUT
+    @PutMapping("/signout/{userId}")
+    public ResponseEntity<? extends BasicResponse> signout(@PathVariable("userId") long userId){
+        boolean isUser = userInfoRepository.existsById(userId);
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+        }
+        else{
+            Boolean isChange = authService.updateSignoutDate(userId);
+            if(isChange)
+                return  ResponseEntity.ok().body( new CommonResponse("로그아웃 성공"));
+            else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ErrorResponse("로그아웃 실패"));
+        }
     }
 }
