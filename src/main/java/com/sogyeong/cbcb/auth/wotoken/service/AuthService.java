@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -33,5 +35,15 @@ public class AuthService {
         if(userLogin.getSeq()>lastSeq && userLogin.getSeq()==userInfo.getSeq())
             return userLogin.getSeq();
         else return -1;
+    }
+
+    @Transactional
+    public Boolean updateSignoutDate(long userId){
+        Optional<UserLogin> info = userLoginRepository.findById(userId);
+        info.ifPresent(loginInfo ->{
+            loginInfo.setUpdateDate(LocalDateTime.now());
+            userLoginRepository.save(loginInfo);
+        });
+        return info.stream().count() > 0 ? true : false;
     }
 }
