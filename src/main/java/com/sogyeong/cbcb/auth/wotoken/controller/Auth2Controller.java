@@ -71,6 +71,18 @@ public class Auth2Controller {
                     body(new ErrorResponse("카카오 로그인 실패"));
     }
 
+    //로그인 시 닉네임 중복확인
+    @GetMapping("/signin/kakao/{nickname}")
+    public ResponseEntity<? extends BasicResponse> checkNicknameAtSignin(@PathVariable("nickname") String nickname){
+        boolean isNickname = userInfoRepository.existsByNickname(nickname);
+        if(isNickname){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ErrorResponse("이미 사용 중인 닉네임 입니다. 다른 닉네임을 입력하세요."));
+        }
+        else
+            return ResponseEntity.ok().body(new CommonResponse<>("사용할 수 있는 닉네임 입니다."));
+    }
+
     //로그아웃 - 최종 접속 시간 PUT
     @PutMapping("/signout/{userId}")
     public ResponseEntity<? extends BasicResponse> signout(@PathVariable("userId") long userId){
