@@ -76,7 +76,7 @@ public class Auth2Controller {
     public ResponseEntity<? extends BasicResponse> checkNicknameAtSignin(@PathVariable("nickname") String nickname){
         boolean isNickname = userInfoRepository.existsByNickname(nickname);
         if(isNickname){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("이미 사용 중인 닉네임 입니다. 다른 닉네임을 입력하세요."));
         }
         else
