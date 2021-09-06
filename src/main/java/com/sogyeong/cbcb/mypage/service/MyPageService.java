@@ -54,8 +54,7 @@ public class MyPageService {
         List resultList =  em.createNativeQuery(
                 "select "+
                         "dp.seq as category_id, " +
-                        "dp.name, bw.seq as wish_id, " +
-                        "bp.seq as post_id, " +
+                        "dp.name, bp.seq as postId, " +
                         "bp.title, " +
                         "case "+
                         "when bp.period =0 then '1일 전 구매' " +
@@ -69,8 +68,7 @@ public class MyPageService {
                         "ba.isAuth, ba.img1, " +
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
                         "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff " +
-                        "from board_wish bw " +
-                        "join board_posts bp on  bw.post_id = bp.seq " +
+                        "from board_posts bp " +
                         "join board_comment bc on bc.post_id = bp.seq " +
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
@@ -117,8 +115,7 @@ public class MyPageService {
         List resultList =  em.createNativeQuery(
                 "select "+
                         "dp.seq as category_id, " +
-                        "dp.name, bw.seq as wish_id, " +
-                        "bp.seq as post_id, " +
+                        "dp.name, bp.seq as postId, " +
                         "bp.title, " +
                         "case "+
                         "when bp.period =0 then '1일 전 구매' " +
@@ -132,12 +129,12 @@ public class MyPageService {
                         "ba.isAuth, ba.img1, " +
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
                         "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff " +
-                        "from board_wish bw " +
-                        "join board_posts bp on  bw.post_id = bp.seq " +
+                        "from board_posts bp " +
+                        "join board_wish bw on  bw.post_id = bp.seq " +
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
                         "join user_info ui on bp.author_id = ui.info_id " +
-                        "where  bw.member = :user and " +
+                        "where bw.member = :user and " +
                         "TIMESTAMPDIFF(day,bp.reg_date,now()) < 7 and " +
                         "case when :state=1 then " +
                         "   bp.status = 1 " +
