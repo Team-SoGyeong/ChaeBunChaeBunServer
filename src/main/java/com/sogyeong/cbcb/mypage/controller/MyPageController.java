@@ -68,16 +68,14 @@ public class MyPageController {
     @PutMapping("/mypage/profile")
     public ResponseEntity<? extends BasicResponse> updateProfile(@RequestBody ProfileVO PVO){
         boolean isUser = userInfoRepository.existsById(PVO.getUser_id());
-        //Optional<UserInfo> userInfo = userInfoRepository.findById(PVO.getUser_id());
         if(!isUser){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
         }
         else{
-            //닉네임 중복 확인->이거 HttpStatus.NOT_FOUND 쓰는 게 맞나..
             boolean isNickname = userInfoRepository.existsByNickname(PVO.getNickname());
             if(isNickname){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body(new ErrorResponse("이미 사용 중인 닉네임 입니다. 다른 닉네임을 입력하세요."));
             }
             else{
@@ -116,7 +114,7 @@ public class MyPageController {
             LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
             map.put("category_name",name );
             map.put("address_id", addr_seq);
-            map.put("posts",pService.getSubCategory(post.get().getProdId(),userId,postId));
+            map.put("posts", myPageService.getMySubCategory(post.get().getProdId(), userId, postId));
 
             sub.add(map);
 
