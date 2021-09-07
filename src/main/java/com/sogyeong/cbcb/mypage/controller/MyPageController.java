@@ -12,7 +12,6 @@ import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import com.sogyeong.cbcb.mypage.model.vo.ProfileVO;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import com.sogyeong.cbcb.mypage.service.MyPageService;
-import com.sogyeong.cbcb.mypage.service.MyPostService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,8 +72,8 @@ public class MyPageController {
                     .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
         }
         else{
-            boolean isNickname = userInfoRepository.existsByNickname(PVO.getNickname());
-            if(isNickname){
+            int isNickname = userInfoRepository.existsByNicknameExceptMe(PVO.getUser_id(), PVO.getNickname());
+            if(isNickname==1){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body(new ErrorResponse("이미 사용 중인 닉네임 입니다. 다른 닉네임을 입력하세요."));
             }
