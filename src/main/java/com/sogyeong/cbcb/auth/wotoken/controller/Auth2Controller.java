@@ -2,11 +2,13 @@ package com.sogyeong.cbcb.auth.wotoken.controller;
 
 import com.sogyeong.cbcb.auth.wotoken.model.dto.UserInfoDTO;
 import com.sogyeong.cbcb.auth.wotoken.model.dto.UserLoginDTO;
+import com.sogyeong.cbcb.auth.wotoken.model.vo.CheckSigninVO;
 import com.sogyeong.cbcb.auth.wotoken.model.vo.SigninVO;
 import com.sogyeong.cbcb.auth.wotoken.service.AuthService;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
+import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth2")
@@ -71,16 +74,50 @@ public class Auth2Controller {
                     body(new ErrorResponse("카카오 로그인 실패"));
     }
 
+    //카카오 로그인 내역 확인
+    @PostMapping("/signin/kakao/checkLogin")
+    public ResponseEntity<? extends BasicResponse> checkLoginStatus(@RequestBody CheckSigninVO CVO){
+        int isLogin = userInfoRepository.checkLoginStatus(CVO.getLogin_type(), CVO.getEmail());
+        //boolean isLogin = authService.checkLoginStatus(CVO.getLogin_type(), CVO.getEmail());
+        if (isLogin==0) {
+            List res = new ArrayList();
+            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            map.put("isLogin", false);
+            map.put("userId", null);
+            res.add(map);
+
+            return ResponseEntity.ok().
+                    body(new CommonResponse(res, "로그인 이력이 없는 사용자 입니다. "));
+        }
+        else{
+            long userId = userInfoRepository.findIdByEmail(CVO.getEmail());
+
+            List res = new ArrayList();
+            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            map.put("isLogin", true);
+            map.put("userId", userId);
+            res.add(map);
+
+            return ResponseEntity.ok().
+                    body(new CommonResponse(res, "로그인 이력이 있는 사용자 입니다. "));
+        }
+
+    }
+
     //로그인 시 닉네임 중복확인
     @GetMapping("/signin/kakao/{nickname}")
     public ResponseEntity<? extends BasicResponse> checkNicknameAtSignin(@PathVariable("nickname") String nickname){
         boolean isNickname = userInfoRepository.existsByNickname(nickname);
+
+        LinkedHashMap<String, Object> res = new LinkedHashMap<String, Object>();
         if(isNickname){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("이미 사용 중인 닉네임 입니다. 다른 닉네임을 입력하세요."));
+            res.put("isUsable", false);
+            return ResponseEntity.ok().body(new CommonResponse(res, "사용할 수 없는 닉네임 입니다."));
         }
-        else
-            return ResponseEntity.ok().body(new CommonResponse<>("사용할 수 있는 닉네임 입니다."));
+        else{
+            res.put("isUsable", true);
+            return ResponseEntity.ok().body(new CommonResponse(res, "사용할 수 있는 닉네임 입니다."));
+        }
     }
 
     //로그아웃 - 최종 접속 시간 PUT

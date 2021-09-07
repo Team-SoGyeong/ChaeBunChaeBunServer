@@ -224,7 +224,6 @@ public class MyPageService {
                         "join board_album ba on bp.seq = ba.post_id " +
                         "join user_info ui on bp.author_id = ui.info_id " +
                         "where bp.seq = :post and bp.prod_id = :categoryId " +
-                        "and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7 " +
                         "order by diff desc , bp.prod_id ")
                 .setParameter("categoryId", category_id)
                 .setParameter("user", user_id)
