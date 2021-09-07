@@ -8,7 +8,6 @@ import com.sogyeong.cbcb.auth.wotoken.service.AuthService;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
-import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,6 @@ import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth2")
@@ -78,7 +76,7 @@ public class Auth2Controller {
     @PostMapping("/signin/kakao/checkLogin")
     public ResponseEntity<? extends BasicResponse> checkLoginStatus(@RequestBody CheckSigninVO CVO){
         int isLogin = userInfoRepository.checkLoginStatus(CVO.getLogin_type(), CVO.getEmail());
-        //boolean isLogin = authService.checkLoginStatus(CVO.getLogin_type(), CVO.getEmail());
+
         if (isLogin==0) {
             List res = new ArrayList();
             LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
