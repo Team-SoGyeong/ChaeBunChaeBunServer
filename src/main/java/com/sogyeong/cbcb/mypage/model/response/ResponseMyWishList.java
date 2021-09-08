@@ -2,10 +2,11 @@ package com.sogyeong.cbcb.mypage.model.response;
 
 public class ResponseMyWishList {
     private long category_id;
-    private String name;
+    private String category_name;
     private long wish_id;
     private long post_id;
     private String  title;
+    private String author_id;
     private String buy_date;
     private int heads;
     private String price;
