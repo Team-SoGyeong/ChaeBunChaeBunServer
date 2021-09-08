@@ -57,10 +57,10 @@ public class MyPageService {
     public List getMyCommentList(long userId, long platformId, long stateId) {
         // platformId = 1
         List resultList =  em.createNativeQuery(
-                "select "+
+                "select distinct "+
                         "dp.seq as category_id, " +
                         "dp.name, bp.seq as postId, " +
-                        "bp.title, " +
+                        "bp.title, bp.author_id, " +
                         "case "+
                         "when bp.period =0 then '1일 전 구매' " +
                         "when bp.period =1 then '2일 전 구매' " +
@@ -74,6 +74,7 @@ public class MyPageService {
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
                         "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff " +
                         "from board_posts bp " +
+                        "left join default_opinion d_o on bp.seq = d_o.post_id " +
                         "join board_comment bc on bc.post_id = bp.seq " +
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
@@ -87,6 +88,7 @@ public class MyPageService {
                         "   else " +
                         "   1=1 " +
                         "end "+
+                        "and ( d_o.post_id <> bp.seq and d_o.types <>'blind' and d_o.author_id <> :user) " +
                         "order by diff desc , dp.seq ")
                 .setParameter("user", userId)
                 .setParameter("state", stateId)
@@ -102,12 +104,13 @@ public class MyPageService {
             map.put("category_name", res[1]);
             map.put("post_id", res[2]);
             map.put("title", res[3]);
-            map.put("buy_date",res[4]);
-            map.put("members", res[5]);
-            map.put("per_price", res[6].toString()+'원');
-            map.put("isAuth", res[7]);
-            map.put("url", res[8]);
-            map.put("written_by", res[9]);
+            map.put("author_id", res[4]);
+            map.put("buy_date",res[5]);
+            map.put("members", res[6]);
+            map.put("per_price", res[7].toString()+'원');
+            map.put("isAuth", res[8]);
+            map.put("url", res[9]);
+            map.put("written_by", res[10]);
 
             commentLists.add(map);
         }
@@ -122,7 +125,7 @@ public class MyPageService {
                         "dp.seq as category_id, " +
                         "dp.name, bw.seq as wish_id, " +
                         "bp.seq as post_id, " +
-                        "bp.title, " +
+                        "bp.title, bp.author_id, " +
                         "case "+
                         "when bp.period =0 then '1일 전 구매' " +
                         "when bp.period =1 then '2일 전 구매' " +
@@ -136,6 +139,7 @@ public class MyPageService {
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
                         "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff " +
                         "from board_posts bp " +
+                        "left join default_opinion d_o on bp.seq = d_o.post_id " +
                         "join board_wish bw on  bw.post_id = bp.seq " +
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
@@ -149,6 +153,7 @@ public class MyPageService {
                         "   else " +
                         "   1=1 " +
                         "end "+
+                        "and ( d_o.post_id <> bp.seq and d_o.types <>'blind' and d_o.author_id <> :user) " +
                         "order by diff desc , dp.seq ")
                 .setParameter("user", userId)
                 .setParameter("state", stateId)
@@ -165,12 +170,13 @@ public class MyPageService {
             map.put("wish_id", res[2]);
             map.put("post_id", res[3]);
             map.put("title", res[4]);
-            map.put("buy_date",res[5]);
-            map.put("members", res[6]);
-            map.put("per_price", res[7].toString()+'원');
-            map.put("isAuth", res[8]);
-            map.put("url", res[9]);
-            map.put("written_by", res[10]);
+            map.put("author_id", res[5]);
+            map.put("buy_date",res[6]);
+            map.put("members", res[7]);
+            map.put("per_price", res[8].toString()+'원');
+            map.put("isAuth", res[9]);
+            map.put("url", res[10]);
+            map.put("written_by", res[11]);
 
             wishLists.add(map);
         }
