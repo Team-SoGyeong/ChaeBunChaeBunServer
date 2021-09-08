@@ -166,12 +166,12 @@ public class HomeListService {
                                 "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff " +
                                 "from board_wish bw " +
                                 "join board_posts bp on  bw.post_id = bp.seq " +
-                                "left join default_opinion d_o on bp.seq = d_o.post_id " +
                                 "join default_products dp on bp.prod_id = dp.seq " +
                                 "join board_album ba on bp.seq = ba.post_id " +
                                 "join user_info ui on bp.author_id = ui.info_id " +
                                 "where  bw.member = :user and bp.status = 0 and bw.author_id <> :user " +
-                                "and ( d_o.post_id <> bp.seq and d_o.types <>'blind' and d_o.author_id <> :user) " +
+                                "and bw.post_id not in (select post_id from default_opinion  where types ='blind' and author_id = :user) " +
+                                "and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7 " +
                                 "order by diff desc , dp.seq " +
                                 "limit 3")
                 .setParameter("user", user)
@@ -262,7 +262,8 @@ public class HomeListService {
                                 "bp.headcount as headcount , " +
                                 "FORMAT(bp.per_price,0) as price, " +
                                 "ba.isAuth, ba.img1, " +
-                                "date_format(bp.reg_date,'%m/%d') as dates " +
+                                "date_format(bp.reg_date,'%m/%d') as dates, " +
+                                "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff " +
                                 "from board_posts bp " +
                                 "join default_products dp on bp.prod_id = dp.seq " +
                                 "join board_album ba on bp.seq = ba.post_id " +
@@ -271,7 +272,8 @@ public class HomeListService {
                                 "bp.title like concat('%', :searchStr, '%') or " +
                                 "bp.contents like concat('%', :searchStr, '%') or " +
                                 "dp.name like concat('%', :searchStr, '%') )" +
-                                "order by dates desc, dp.seq ")
+                                "and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7 " +
+                                "order by diff desc, dp.seq ")
                 .setParameter("addrId", addrSeq)
                 .setParameter("searchStr", search_str)
                 .getResultList();

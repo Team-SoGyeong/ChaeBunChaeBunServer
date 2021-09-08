@@ -74,7 +74,7 @@ public class MyPageService {
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
                         "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff " +
                         "from board_posts bp " +
-                        //"left join default_opinion d_o on bp.seq = d_o.post_id " +
+                        "left join default_opinion d_o on bp.seq = d_o.post_id " +
                         "join board_comment bc on bc.post_id = bp.seq " +
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
@@ -88,7 +88,7 @@ public class MyPageService {
                         "   else " +
                         "   1=1 " +
                         "end "+
-                        //"and ( d_o.post_id <> bp.seq and d_o.types <>'blind' and d_o.author_id <> :user) " +
+                        "and bc.post_id not in (select post_id from default_opinion  where types ='blind' and author_id = :user) " +
                         "order by diff desc , dp.seq ")
                 .setParameter("user", userId)
                 .setParameter("state", stateId)
@@ -139,7 +139,6 @@ public class MyPageService {
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
                         "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff " +
                         "from board_posts bp " +
-                        //"left join default_opinion do on bp.seq = do.post_id " +
                         "join board_wish bw on  bw.post_id = bp.seq " +
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
@@ -153,7 +152,7 @@ public class MyPageService {
                         "   else " +
                         "   1=1 " +
                         "end "+
-                        //"and ( do.post_id <> bp.seq and do.types <>'blind' and do.author_id <> :user) " +
+                        "and bw.post_id not in (select post_id from default_opinion  where types ='blind' and author_id = :user) " +
                         "order by diff desc , dp.seq ")
                 .setParameter("user", userId)
                 .setParameter("state", stateId)
