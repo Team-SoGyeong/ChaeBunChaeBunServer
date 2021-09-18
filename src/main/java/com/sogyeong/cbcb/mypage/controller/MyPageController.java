@@ -7,6 +7,7 @@ import com.sogyeong.cbcb.defaults.entity.Products;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
+import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
 import com.sogyeong.cbcb.defaults.repository.ProductsRepository;
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import com.sogyeong.cbcb.mypage.model.vo.ProfileVO;
@@ -45,7 +46,7 @@ public class MyPageController {
         Optional<UserInfo> userInfo = userInfoRepository.findById(userId);
         if(!isUser){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         else{
             String profile = userInfo.stream().findFirst().get().getUrl();
@@ -59,7 +60,7 @@ public class MyPageController {
 
             profileInfo.add(map);
 
-            return ResponseEntity.ok().body( new CommonResponse(profileInfo,"프로필 조회 성공"));
+            return ResponseEntity.ok().body( new CommonResponse(profileInfo,ResultMessage.RESULT_OK.getVal("프로필")));
         }
     }
 
@@ -69,21 +70,21 @@ public class MyPageController {
         boolean isUser = userInfoRepository.existsById(PVO.getUser_id());
         if(!isUser){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         else{
             int isNickname = userInfoRepository.existsByNicknameExceptMe(PVO.getUser_id(), PVO.getNickname());
             if(isNickname==1){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body(new ErrorResponse("이미 사용 중인 닉네임 입니다. 다른 닉네임을 입력하세요."));
+                        .body(new ErrorResponse(ResultMessage.ALREADY_USED_NIK.getVal()));
             }
             else{
                 Boolean isChange = myPageService.updateProfile(PVO.getUser_id(), PVO.getProfile_img(), PVO.getNickname());
 
                 if (isChange)
-                    return ResponseEntity.ok().body(new CommonResponse("프로필 변경 성공"));
+                    return ResponseEntity.ok().body(new CommonResponse(ResultMessage.UPDATE_OK.getVal("프로필")));
                 else
-                    return ResponseEntity.ok().body(new CommonResponse("프로필 변경 실패"));
+                    return ResponseEntity.ok().body(new CommonResponse(ResultMessage.UPDATE_FAILED.getVal("프로필")));
             }
         }
     }
@@ -95,11 +96,11 @@ public class MyPageController {
         boolean isUser = userInfoRepository.existsById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         if (!postsRepository.existsById(postId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
         } else{
             Optional<Posts> post = postsRepository.findById(postId);
             Optional<Products> products = productsRepository.findById(post.get().getProdId());
@@ -117,8 +118,8 @@ public class MyPageController {
 
             sub.add(map);
 
-            String msg = seq >10 ? "내가 쓴 기타 채분 게시글 표출 성공" : "내가 쓴 일반 채분 게시글 표출 성공";
-            return ResponseEntity.ok().body( new CommonResponse(sub,msg));
+            String msg = seq >10 ? "내가 쓴 기타 채분 게시글" : "내가 쓴 일반 채분 게시글";
+            return ResponseEntity.ok().body( new CommonResponse(sub,ResultMessage.RESULT_OK.getVal(msg)));
         }
 
     }
@@ -131,21 +132,21 @@ public class MyPageController {
         boolean isUser = userInfoRepository.existsById(userId);
         if(!isUser){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         if(platformId == 0) { // 채분페이지인 경우
             if(stateId>2){
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse("잘못된 상태 값입니다. 다시 시도 부탁드립니다."));
+                        .body(new ErrorResponse(ResultMessage.UNDEFINE_INPUT.getVal()));
             }
             else return ResponseEntity.ok().body(new CommonResponse
-                    (myPageService.getMyCommentList(userId, platformId, stateId),"내가 쓴 댓글 목록 출력 성공"));
+                    (myPageService.getMyCommentList(userId, platformId, stateId),ResultMessage.RESULT_OK.getVal("내가 쓴 댓글 목록")));
         }//커뮤니티는 추후 개발
         else if(platformId == 1)
-            return ResponseEntity.ok().body(new CommonResponse("커뮤니티 서비스는 추후에 오픈됩니다."));
+            return ResponseEntity.ok().body(new CommonResponse(ResultMessage.COMING_SOON.getVal()));
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("잘못된 플랫폼 타입입니다. 다시 시도 부탁드립니다."));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_INPUT.getVal()));
 
     }
 
@@ -157,11 +158,11 @@ public class MyPageController {
         boolean isUser = userInfoRepository.existsById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         if (!postsRepository.existsById(postId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
         } else{
             Optional<Posts> post = postsRepository.findById(postId);
             Optional<Products> products = productsRepository.findById(post.get().getProdId());
@@ -179,8 +180,8 @@ public class MyPageController {
 
             sub.add(map);
 
-            String msg = seq >10 ? "내가 쓴 댓글 기타 채분 게시글 표출 성공" : "내가 쓴 댓글 일반 채분 게시글 표출 성공";
-            return ResponseEntity.ok().body( new CommonResponse(sub,msg));
+            String msg = seq >10 ? "내가 쓴 댓글 기타 채분 게시글 " : "내가 쓴 댓글 일반 채분 게시글 ";
+            return ResponseEntity.ok().body( new CommonResponse(sub,ResultMessage.RESULT_OK.getVal(msg)));
         }
 
     }
@@ -194,22 +195,22 @@ public class MyPageController {
         boolean isUser = userInfoRepository.existsById(userId);
         if(!isUser){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         else{
             if(platformId == 0) { // 채분페이지인 경우
                 if(stateId>2){
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(new ErrorResponse("잘못된 상태 값입니다. 다시 시도 부탁드립니다."));
+                            .body(new ErrorResponse(ResultMessage.UNDEFINE_INPUT.getVal()));
                 }
                 else return ResponseEntity.ok().body(new CommonResponse
-                        (myPageService.getScrapList(userId, platformId, stateId),"찜목록 출력 성공"));
+                        (myPageService.getScrapList(userId, platformId, stateId),ResultMessage.RESULT_OK.getVal("찜한 목록")));
             }//커뮤니티는 추후 개발
             else if(platformId == 1)
-                return ResponseEntity.ok().body(new CommonResponse("커뮤니티 서비스는 추후에 오픈됩니다."));
+                return ResponseEntity.ok().body(new CommonResponse(ResultMessage.COMING_SOON.getVal()));
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse("잘못된 플랫폼 타입입니다. 다시 시도 부탁드립니다."));
+                        .body(new ErrorResponse(ResultMessage.UNDEFINE_INPUT.getVal()));
         }
     }
 
@@ -221,11 +222,11 @@ public class MyPageController {
         boolean isUser = userInfoRepository.existsById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         if (!postsRepository.existsById(postId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
         } else{
             Optional<Posts> post = postsRepository.findById(postId);
             Optional<Products> products = productsRepository.findById(post.get().getProdId());
@@ -243,8 +244,8 @@ public class MyPageController {
 
             sub.add(map);
 
-            String msg = seq >10 ? "기타 찜 채분 게시글 표출 성공" : "일반 찜 채분 게시글 표출 성공";
-            return ResponseEntity.ok().body( new CommonResponse(sub,msg));
+            String msg = seq >10 ? "기타 찜 채분 게시글 " : "일반 찜 채분 게시글 ";
+            return ResponseEntity.ok().body( new CommonResponse(sub,ResultMessage.RESULT_OK.getVal(msg)));
         }
 
     }
@@ -255,15 +256,15 @@ public class MyPageController {
         boolean isUser = userInfoRepository.existsById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         else{
             Boolean isChange = myPageService.updateUserQuitDate(userId);
             if(isChange)
-                return  ResponseEntity.ok().body( new CommonResponse("탈퇴 성공"));
+                return  ResponseEntity.ok().body( new CommonResponse(ResultMessage.SUCCESS_QUIT.getVal()));
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse("탈퇴 실패"));
+                        .body(new ErrorResponse(ResultMessage.FAILED_QUIT.getVal()));
         }
     }
 }

@@ -5,6 +5,7 @@ import com.sogyeong.cbcb.board.service.HomeListService;
 import com.sogyeong.cbcb.defaults.entity.Address;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
+import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
 import com.sogyeong.cbcb.defaults.repository.AddressRepository;
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
@@ -37,7 +38,7 @@ public class HomeController {
     //카테고리리스트
     @GetMapping("/home/category")
     public ResponseEntity<? extends BasicResponse> getCategory() {
-        return ResponseEntity.ok().body( new CommonResponse(homeListService.getCategoryList(),"카테고리 리스트 출력 성공"));
+        return ResponseEntity.ok().body( new CommonResponse(homeListService.getCategoryList(), ResultMessage.RESULT_OK.getVal()));
     }
 
     //홈구성통합
@@ -48,7 +49,7 @@ public class HomeController {
         Optional<UserInfo> userInfo = userInfoRepository.findById(userId);
         if(!isUser){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         else{
 
@@ -68,7 +69,7 @@ public class HomeController {
             //유저의 마감직전 리스트로 바꿔야함
             homeInfo.add(map);
 
-            return ResponseEntity.ok().body( new CommonResponse(homeInfo,"홈 구성 정보 표츌 성공"));
+            return ResponseEntity.ok().body( new CommonResponse(homeInfo,ResultMessage.RESULT_OK.getVal()));
         }
     }
 
@@ -78,14 +79,14 @@ public class HomeController {
         boolean isAddr = addressRepository.existsById(addr_seq);
         if(!isAddr){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("입력된 주소 일련번호는 존재하지 않습니다. "));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_ADDRESS.getVal()));
         }
         else{
             List newList = homeListService.getNewList(addr_seq,userId);
             if(newList.size()>0)
-                return ResponseEntity.ok().body( new CommonResponse(newList,"신규 채분 리스트 출력 성공"));
+                return ResponseEntity.ok().body( new CommonResponse(newList,ResultMessage.RESULT_OK.getVal()));
             else
-                return ResponseEntity.ok().body( new CommonResponse(newList,"아직 최신 채분이 없어요. 직접 채분을 시작해 신선함을 나눠보세요!"));
+                return ResponseEntity.ok().body( new CommonResponse(newList,ResultMessage.FAILED_NEW_LIST.getVal()));
         }
     }
 
@@ -95,14 +96,14 @@ public class HomeController {
         boolean isAddr = addressRepository.existsById(addr_seq);
         if(!isAddr){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("입력된 주소 일련번호는 존재하지 않습니다. "));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_ADDRESS.getVal()));
         }
         else{
             List deadlineList = homeListService.getDeadlineList(addr_seq,userId);
             if(deadlineList.size()>0)
-                return ResponseEntity.ok().body( new CommonResponse(deadlineList,"마감 직전 채분 리스트 출력 성공"));
+                return ResponseEntity.ok().body( new CommonResponse(deadlineList,ResultMessage.RESULT_OK.getVal()));
             else
-                return ResponseEntity.ok().body( new CommonResponse(deadlineList,"마감 직전인 채분이 없어요. 직접 채분을 시작해 신선함을 나눠보세요!"));
+                return ResponseEntity.ok().body( new CommonResponse(deadlineList,ResultMessage.FAILED_ENDED_LIST.getVal()));
         }
     }
 
@@ -113,14 +114,14 @@ public class HomeController {
         Optional<UserInfo> userInfo = userInfoRepository.findById(userId);
         if(!isUser){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         else{
             List wishList = homeListService.getMyLikeList(userId);
             if(wishList.size()>0)
-                return ResponseEntity.ok().body( new CommonResponse(wishList,"찜한 채분 리스트 출력 성공"));
+                return ResponseEntity.ok().body( new CommonResponse(wishList,ResultMessage.RESULT_OK.getVal()));
             else
-                return ResponseEntity.ok().body( new CommonResponse(wishList,"찜한 채분이 없어요. 참여하고 싶은 채분을 탐색해 찜해보세요."));
+                return ResponseEntity.ok().body( new CommonResponse(wishList,ResultMessage.FAILED_SCRAP_LIST.getVal()));
         }
     }
 
@@ -130,13 +131,13 @@ public class HomeController {
         Optional<UserInfo> userInfo = userInfoRepository.findById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         } else {
             List list = myPostService.getMyDeadlineList(userId);
             if (list.size() > 0)
-                return ResponseEntity.ok().body(new CommonResponse(list, "나의 마감채분 알럿 출력 성공"));
+                return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.RESULT_OK.getVal()));
             else
-                return ResponseEntity.ok().body(new CommonResponse(list, "나의 마감직전 채분 없음"));
+                return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.FAILED_ENDED_LIST.getVal()));
         }
     }
 
@@ -149,7 +150,7 @@ public class HomeController {
         boolean isAddr = addressRepository.existsById(addr_seq);
         if(!isAddr){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("입력된 주소 일련번호는 존재하지 않습니다. "));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_ADDRESS.getVal()));
         }
         else{
             //1차: 제목 - 2차: 내용 - 3차: 카테고리 검색
@@ -157,13 +158,13 @@ public class HomeController {
 
             if(searchStr.equals("")||searchStr.length()<2){
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse("두글자 이상 입력 바랍니다."));
+                        .body(new ErrorResponse(ResultMessage.SEARCH_OVER_TWO.getVal()));
             }
             else{
                 if (searchList.size() > 0)
-                    return ResponseEntity.ok().body(new CommonResponse(searchList, "게시글 검색 성공"));
+                    return ResponseEntity.ok().body(new CommonResponse(searchList, ResultMessage.RESULT_OK.getVal()));
                 else
-                    return ResponseEntity.ok().body(new CommonResponse(searchList, searchStr+"에 대한 검색결과가 없어요! 다시 시도해주세요!"));
+                    return ResponseEntity.ok().body(new CommonResponse(searchList, ResultMessage.NOTHING_SEARCH.getVal(searchStr)));
             }
         }
     }
@@ -176,12 +177,12 @@ public class HomeController {
 
         if(addr_str.equals("")||addr_str.length()<2){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("두글자 이상 입력 바랍니다."));
+                    .body(new ErrorResponse(ResultMessage.SEARCH_OVER_TWO.getVal()));
         }
         if (addressList.size() > 0)
-            return ResponseEntity.ok().body(new CommonResponse(addressList, "주소 검색 출력 성공"));
+            return ResponseEntity.ok().body(new CommonResponse(addressList, ResultMessage.RESULT_OK.getVal()));
         else
-            return ResponseEntity.ok().body(new CommonResponse(addressList, addr_str+"에 대한 검색결과가 없어요! 다시 시도해주세요!"));
+            return ResponseEntity.ok().body(new CommonResponse(addressList, ResultMessage.NOTHING_SEARCH.getVal(addr_str)));
     }
 
     //위치 수정
@@ -191,13 +192,13 @@ public class HomeController {
         Optional<UserInfo> userInfo = userInfoRepository.findById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. "));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         } else {
             Boolean isChange = myPostService.updateAddr(userId,addr_seq);
             if (isChange)
-                return ResponseEntity.ok().body(new CommonResponse("주소 변경 성공"));
+                return ResponseEntity.ok().body(new CommonResponse(ResultMessage.UPDATE_OK.getVal()));
             else
-                return ResponseEntity.ok().body(new CommonResponse("주소 변경 실패"));
+                return ResponseEntity.ok().body(new CommonResponse(ResultMessage.UPDATE_FAILED.getVal()));
         }
     }
 

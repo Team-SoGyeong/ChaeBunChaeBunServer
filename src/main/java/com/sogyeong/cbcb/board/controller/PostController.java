@@ -17,6 +17,7 @@ import com.sogyeong.cbcb.defaults.entity.Products;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
+import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
 import com.sogyeong.cbcb.defaults.repository.AddressRepository;
 import com.sogyeong.cbcb.defaults.repository.ProductsRepository;
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
@@ -55,11 +56,11 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(PVO.getAuthor_id());
         if(!isCategory){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("입력된 카테고리 정보는 정확하지 않습니다."));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_CATEGORY.getVal()));
         }
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
 
         PostDTO postDTO = new PostDTO();
@@ -99,11 +100,11 @@ public class PostController {
 
             sub.add(map);
 
-            return ResponseEntity.ok().body(new CommonResponse(sub,"일반 게시글 작성 성공"));
+            return ResponseEntity.ok().body(new CommonResponse(sub,ResultMessage.WRITE_OK.getVal("일반 게시글")));
         }
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("일반 게시글 작성 실패"));
+                    .body(new ErrorResponse(ResultMessage.WRITE_FAILED.getVal("일반 게시글")));
     }
 
     // 기타 품목 게시글 저장
@@ -113,11 +114,11 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(PVO.getAuthor_id());
         if(!isCategory){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("입력된 카테고리 정보는 정확하지 않습니다."));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_CATEGORY.getVal()));
         }
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
 
         PostDTO postDTO = new PostDTO();
@@ -157,11 +158,11 @@ public class PostController {
             // 세부 카테고리 페이지를 불러서 붙인다.
             sub.add(map);
 
-            return ResponseEntity.ok().body(new CommonResponse(sub,"기타 게시글 작성 성공"));
+            return ResponseEntity.ok().body(new CommonResponse(sub,ResultMessage.WRITE_OK.getVal("기타 게시글")));
         }
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("기타 게시글 작성 실패"));
+                    .body(new ErrorResponse(ResultMessage.WRITE_FAILED.getVal("기타 게시글")));
     }
 
     //게시글 수정
@@ -171,11 +172,15 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(PVO.getAuthor_id());
         if(!isCategory){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("입력된 카테고리 정보는 정확하지 않습니다."));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_CATEGORY.getVal()));
+        }
+        if (!postsRepository.existsById(PVO.getPost_id())) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
         }
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
 
 
@@ -196,11 +201,11 @@ public class PostController {
 
             sub.add(map);
 
-            return ResponseEntity.ok().body(new CommonResponse(sub,"게시글 수정 성공"));
+            return ResponseEntity.ok().body(new CommonResponse(sub,ResultMessage.UPDATE_OK.getVal("게시글")));
         }
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("기타 수정 작성 실패"));
+                    .body(new ErrorResponse(ResultMessage.UPDATE_FAILED.getVal("게시글")));
     }
 
     //게시글 삭제
@@ -209,25 +214,25 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(user_id);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         if (!postsRepository.existsById(post_id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
         }
         else{
             Optional<Posts> post  = postsRepository.findById(post_id);
             if(post.get().getAuthorId()==user_id){
                 Boolean isDelete = pService.deletePost(post_id);
                 if(isDelete)
-                    return  ResponseEntity.ok().body( new CommonResponse("게시글 삭제 성공"));
+                    return  ResponseEntity.ok().body( new CommonResponse(ResultMessage.DELETE_OK.getVal("게시글")));
                 else
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(new ErrorResponse("게시글 삭제 실패"));
+                            .body(new ErrorResponse(ResultMessage.DELETE_FAILED.getVal("게시글")));
             }
             else{
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new ErrorResponse("타인의 글을 삭제할 수 없습니다. 다시 시도 해주세요"));
+                        .body(new ErrorResponse(ResultMessage.NOT_DELETE_OTHERS.getVal()));
             }
         }
     }
@@ -239,11 +244,11 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(user_id);
         if(!isCategory || category_id>11){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("입력된 카테고리 정보는 정확하지 않습니다. "));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_CATEGORY.getVal()));
         }
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         else{
             Optional<Products> products = productsRepository.findById(category_id);
@@ -263,7 +268,7 @@ public class PostController {
 
             subList.add(map);
 
-            return ResponseEntity.ok().body( new CommonResponse(subList,"하위 카테고리 리스트 출력 성공"));
+            return ResponseEntity.ok().body( new CommonResponse(subList,ResultMessage.RESULT_OK.getVal()));
         }
 
     }
@@ -275,11 +280,11 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(user_id);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         if (!postsRepository.existsById(post_id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
         } else{
             Optional<Posts> post = postsRepository.findById(post_id);
             Optional<Products> products = productsRepository.findById(post.get().getProdId());
@@ -297,8 +302,8 @@ public class PostController {
 
             sub.add(map);
 
-            String msg = seq >10 ? "기타 채분 게시글 표출 성공" : "일반 채분 게시글 표출 성공";
-            return ResponseEntity.ok().body( new CommonResponse(sub,msg));
+            String msg = seq >10 ? "기타 채분 게시글 " : "일반 채분 게시글 ";
+            return ResponseEntity.ok().body( new CommonResponse(sub,ResultMessage.RESULT_OK.getVal(msg)));
         }
 
     }
@@ -310,11 +315,11 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(CVO.getUser_id());
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         else if (!postsRepository.existsById(CVO.getPost_id())) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
         }
         else{
             CommentDTO commentDTO = new CommentDTO();
@@ -331,12 +336,12 @@ public class PostController {
                 map.put("post_id", CVO.getPost_id());
                 map.put("cmts", pService.getComments(CVO.getPost_id()) );
                 list.add(map);
-                return  ResponseEntity.ok().body( new CommonResponse(list,"댓글 작성 성공"));
+                return  ResponseEntity.ok().body( new CommonResponse(list,ResultMessage.WRITE_OK.getVal("댓글")));
             }
 
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse("댓글 작성 실패"));
+                        .body(new ErrorResponse(ResultMessage.WRITE_FAILED.getVal("댓글")));
         }
     }
 
@@ -347,19 +352,19 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(user_id);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         else if (!commentRepository.existsById(comment_id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 댓글 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_COMMENT.getVal()));
         }
         else{
             Boolean isDelete = pService.deleteComments(comment_id,user_id);
             if(isDelete)
-                return  ResponseEntity.ok().body( new CommonResponse("댓글 삭제 성공"));
+                return  ResponseEntity.ok().body( new CommonResponse(ResultMessage.DELETE_OK.getVal("댓글")));
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse("댓글 삭제 실패"));
+                        .body(new ErrorResponse(ResultMessage.DELETE_FAILED.getVal("댓글")));
         }
     }
 
@@ -368,7 +373,7 @@ public class PostController {
     public ResponseEntity<? extends BasicResponse> getCommentsList(@PathVariable("post_id") long post_id){
         if (!postsRepository.existsById(post_id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
         }
         else{
             List list = new ArrayList();
@@ -378,9 +383,9 @@ public class PostController {
             list.add(map);
 
             if (pService.getComments(post_id).size() > 0)
-                return ResponseEntity.ok().body(new CommonResponse(list, "댓글리스트 알럿 출력 성공"));
+                return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.RESULT_OK.getVal("댓글들")));
             else
-                return ResponseEntity.ok().body(new CommonResponse(list, "해당 게시글에 댓글 없음"));
+                return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.RESULT_FAILED.getVal("댓글")));
         }
     }
 

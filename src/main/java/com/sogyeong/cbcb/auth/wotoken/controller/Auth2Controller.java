@@ -8,6 +8,7 @@ import com.sogyeong.cbcb.auth.wotoken.service.AuthService;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
+import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -65,11 +66,11 @@ public class Auth2Controller {
             map.put("user_id", isSave);
             list.add(map);
 
-            return ResponseEntity.ok().body(new CommonResponse<>(list, "카카오 로그인 성공"));
+            return ResponseEntity.ok().body(new CommonResponse<>(list, ResultMessage.SUCCESS_KAKAO.getVal()));
         }
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
-                    body(new ErrorResponse("카카오 로그인 실패"));
+                    body(new ErrorResponse(ResultMessage.FAILED_KAKAO.getVal()));
     }
 
     //카카오 로그인 내역 확인
@@ -85,7 +86,7 @@ public class Auth2Controller {
             res.add(map);
 
             return ResponseEntity.ok().
-                    body(new CommonResponse(res, "로그인 이력이 없는 사용자 입니다. "));
+                    body(new CommonResponse(res, ResultMessage.NOT_FOUND_LOG.getVal()));
         }
         else{
             long userId = userInfoRepository.findIdByEmail(CVO.getEmail());
@@ -97,7 +98,7 @@ public class Auth2Controller {
             res.add(map);
 
             return ResponseEntity.ok().
-                    body(new CommonResponse(res, "로그인 이력이 있는 사용자 입니다. "));
+                    body(new CommonResponse(res, ResultMessage.FOUND_LOG.getVal()));
         }
 
     }
@@ -110,11 +111,11 @@ public class Auth2Controller {
         LinkedHashMap<String, Object> res = new LinkedHashMap<String, Object>();
         if(isNickname){
             res.put("isUsable", false);
-            return ResponseEntity.ok().body(new CommonResponse(res, "사용할 수 없는 닉네임 입니다."));
+            return ResponseEntity.ok().body(new CommonResponse(res, ResultMessage.CAN_UES_NIK.getVal()));
         }
         else{
             res.put("isUsable", true);
-            return ResponseEntity.ok().body(new CommonResponse(res, "사용할 수 있는 닉네임 입니다."));
+            return ResponseEntity.ok().body(new CommonResponse(res, ResultMessage.CANT_USE_NIK.getVal()));
         }
     }
 
@@ -124,15 +125,15 @@ public class Auth2Controller {
         boolean isUser = userInfoRepository.existsById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         else{
             Boolean isChange = authService.updateSignoutDate(userId);
             if(isChange)
-                return  ResponseEntity.ok().body( new CommonResponse("로그아웃 성공"));
+                return  ResponseEntity.ok().body( new CommonResponse(ResultMessage.SUCCESS_LOGOUT.getVal()));
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse("로그아웃 실패"));
+                        .body(new ErrorResponse(ResultMessage.FAILED_LOGOUT.getVal()));
         }
     }
 }

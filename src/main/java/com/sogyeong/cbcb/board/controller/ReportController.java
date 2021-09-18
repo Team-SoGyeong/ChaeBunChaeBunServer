@@ -7,6 +7,7 @@ import com.sogyeong.cbcb.board.service.ReportService;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
+import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
 import com.sogyeong.cbcb.defaults.repository.ProductsRepository;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import lombok.AllArgsConstructor;
@@ -32,17 +33,18 @@ public class ReportController {
     @PersistenceContext
     private EntityManager em;
 
+    // 게시글 신고
     @PostMapping("/posts/report")
     public ResponseEntity<? extends BasicResponse> saveReport(@RequestBody ReportVO RVO) {
 
         boolean isUser = userInfoRepository.existsById(RVO.getAuthor_id());
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         else if (!postsRepository.existsById(RVO.getPost_id())) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
         }
         else{
             ReportDTO report = new ReportDTO();
@@ -56,10 +58,10 @@ public class ReportController {
 
             Boolean isSave = reportService.storeReport(report);
             if(isSave)
-                return  ResponseEntity.ok().body( new CommonResponse("게시글신고 하기 성공"));
+                return  ResponseEntity.ok().body( new CommonResponse(ResultMessage.REPORT_OK.getVal("게시글")));
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse("게시글 신고 하기 실패"));
+                        .body(new ErrorResponse(ResultMessage.REPORT_FAILED.getVal("게시글")));
         }
     }
 
@@ -69,11 +71,11 @@ public class ReportController {
         boolean isUser = userInfoRepository.existsById(RVO.getAuthor_id());
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         else if (!postsRepository.existsById(RVO.getPost_id())) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
         }
         else{
             ReportDTO report = new ReportDTO();
@@ -87,10 +89,10 @@ public class ReportController {
 
             Boolean isSave = reportService.storeReport(report);
             if(isSave)
-                return  ResponseEntity.ok().body( new CommonResponse("댓글 신고 하기 성공"));
+                return  ResponseEntity.ok().body( new CommonResponse(ResultMessage.REPORT_OK.getVal("댓글")));
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse("댓글 신고 하기 실패"));
+                        .body(new ErrorResponse(ResultMessage.REPORT_FAILED.getVal("댓글")));
         }
     }
 
@@ -100,11 +102,11 @@ public class ReportController {
         boolean isUser = userInfoRepository.existsById(RVO.getAuthor_id());
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 사용자 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
         }
         else if (!postsRepository.existsById(RVO.getPost_id())) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("존재하지 않는 게시글 입니다. 다시 시도 해주세요"));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
         }
         else{
             ReportDTO report = new ReportDTO();
@@ -118,10 +120,10 @@ public class ReportController {
 
             Boolean isSave = reportService.storeReport(report);
             if(isSave)
-                return  ResponseEntity.ok().body( new CommonResponse("더이상 안보이게 하기 성공"));
+                return  ResponseEntity.ok().body( new CommonResponse(ResultMessage.BLIND_OK.getVal()));
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse("더이상 안보이게 하기 실패"));
+                        .body(new ErrorResponse(ResultMessage.BLIND_FAILED.getVal()));
         }
     }
 }
