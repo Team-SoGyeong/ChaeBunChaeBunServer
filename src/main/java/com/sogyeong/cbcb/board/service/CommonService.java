@@ -2,7 +2,7 @@ package com.sogyeong.cbcb.board.service;
 
 import com.sogyeong.cbcb.board.entity.Posts;
 import com.sogyeong.cbcb.board.entity.Wish;
-import com.sogyeong.cbcb.board.model.response.WishDTO;
+import com.sogyeong.cbcb.board.model.dto.WishDTO;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
 import com.sogyeong.cbcb.board.repository.WishRepository;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;

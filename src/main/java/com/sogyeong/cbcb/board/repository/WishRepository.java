@@ -1,8 +1,6 @@
 package com.sogyeong.cbcb.board.repository;
 
-import com.sogyeong.cbcb.board.entity.Comment;
 import com.sogyeong.cbcb.board.entity.Wish;
-import com.sogyeong.cbcb.board.model.response.WishDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

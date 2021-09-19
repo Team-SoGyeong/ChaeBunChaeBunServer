@@ -2,7 +2,7 @@ package com.sogyeong.cbcb.board.controller;
 
 
 import com.sogyeong.cbcb.board.entity.Wish;
-import com.sogyeong.cbcb.board.model.response.WishDTO;
+import com.sogyeong.cbcb.board.model.dto.WishDTO;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
 import com.sogyeong.cbcb.board.repository.WishRepository;
 import com.sogyeong.cbcb.board.service.CommonService;
@@ -44,11 +44,11 @@ public class CommonController {
 
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else if (!postsRepository.existsById(post_id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_POST.getVal()));
         }
         else if(author==user_id){
             Boolean isDone = cService.setPostStatus(post_id);
@@ -74,11 +74,11 @@ public class CommonController {
 
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else if (!postsRepository.existsById(post_id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_POST.getVal()));
         }
         else if(author==user_id){
             Boolean isDonated = cService.setPostDonated(post_id);
@@ -105,11 +105,11 @@ public class CommonController {
 
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else if (!postsRepository.existsById(post_id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_POST.getVal()));
         }
         else if(author==user_id){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -133,7 +133,7 @@ public class CommonController {
             else{
                 List isDelete = cService.deleteWish(post_id,user_id);
                 if(isDelete.size()>0)
-                    return  ResponseEntity.ok().body( new CommonResponse(isDelete,ResultMessage.SCRAP_CANCEL.getVal()));
+                    return  ResponseEntity.ok().body( new CommonResponse(isDelete,ResultMessage.SCRAP_CANCEL_OK.getVal()));
                 else
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body(new ErrorResponse(ResultMessage.SCRAP_CANCEL_FAILED.getVal()));

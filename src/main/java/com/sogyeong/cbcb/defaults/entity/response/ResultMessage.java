@@ -6,7 +6,7 @@ public enum ResultMessage {
     SUCCESS_KAKAO("카카오 로그인 성공"),
     NOT_FOUND_LOG("로그인 이력이 없는 사용자 입니다."),
     FOUND_LOG("로그인 이력이 있는 사용자 입니다. "),
-    CAN_UES_NIK("사용할 수 없는 닉네임 입니다."),
+    CAN_USE_NIK("사용할 수 없는 닉네임 입니다."),
     CANT_USE_NIK("사용할 수 있는 닉네임 입니다."),
     SUCCESS_LOGOUT("로그아웃 성공"),
     FAILED_LOGOUT("로그아웃 실패"),
@@ -15,11 +15,11 @@ public enum ResultMessage {
 
     // 1. 홈
 
-    FAILED_NEW_LIST("아직 최신 채분이 없어요. 직접 채분을 시작해 신선함을 나눠보세요!"),
-    FAILED_SCRAP_LIST("찜한 채분이 없어요. 참여하고 싶은 채분을 탐색해 찜해보세요!"),
-    FAILED_ENDED_LIST("마감 직전인 채분이 없어요. 아직 많은 채분이 신선함을 유지하고 있어요!"),
+    NO_NEW_LIST("아직 최신 채분이 없어요. 직접 채분을 시작해 신선함을 나눠보세요!"),
+    NO_SCRAP_LIST("찜한 채분이 없어요. 참여하고 싶은 채분을 탐색해 찜해보세요!"),
+    NO_ENDED_LIST("마감 직전인 채분이 없어요. 아직 많은 채분이 신선함을 유지하고 있어요!"),
     SEARCH_OVER_TWO("두글자 이상 입력 바랍니다."),
-    NOTHING_SEARCH("에 대한 검색결과가 없어요! 다시 시도해주세요!"),
+    NO_SEARCH_RES("에 대한 검색결과가 없어요! 다시 시도해주세요!"),
 
 
     // 2. 게시글
@@ -33,7 +33,7 @@ public enum ResultMessage {
 
     SCRAP_OK("찜하기 성공"),
     SCRAP_FAILED("찜하기 실패"),
-    SCRAP_CANCEL("찜 취소 성공"),
+    SCRAP_CANCEL_OK("찜 취소 성공"),
     SCRAP_CANCEL_FAILED("찜 취소 실패"),
     NOT_SCRAP_SELF("자신의 글을 찜할 수 없습니다."),
 
@@ -53,11 +53,11 @@ public enum ResultMessage {
     // 4. 커뮤니티
 
     // 5. 공통
-    UNDEFINE_USER("존재하지 않는 사용자 입니다. 다시 시도 해주세요"),
-    UNDEFINE_ADDRESS("입력된 주소 일련번호는 존재하지 않습니다. 다시 시도 해주세요"),
-    UNDEFINE_POST("존재하지 않는 게시글 입니다. 다시 시도 해주세요"),
-    UNDEFINE_CATEGORY("입력된 카테고리 정보는 정확하지 않습니다. 다시 시도 해주세요"),
-    UNDEFINE_INPUT("입력 정보가 부정확합니다. 다시 시도 부탁드립니다."),
+    UNDEFINED_USER("존재하지 않는 사용자 입니다. 다시 시도 해주세요"),
+    UNDEFINED_ADDRESS("입력된 주소 일련번호는 존재하지 않습니다. 다시 시도 해주세요"),
+    UNDEFINED_POST("존재하지 않는 게시글 입니다. 다시 시도 해주세요"),
+    UNDEFINED_CATEGORY("입력된 카테고리 정보는 정확하지 않습니다. 다시 시도 해주세요"),
+    UNDEFINED_INPUT("입력 정보가 부정확합니다. 다시 시도 부탁드립니다."),
     COMING_SOON("커뮤니티 서비스는 추후에 오픈됩니다."),
     WRITE_OK("작성 성공"),
     WRITE_FAILED("작성 실패"),

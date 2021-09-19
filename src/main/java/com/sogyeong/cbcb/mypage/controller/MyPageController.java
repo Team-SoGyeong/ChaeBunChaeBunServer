@@ -13,6 +13,7 @@ import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import com.sogyeong.cbcb.mypage.model.vo.ProfileVO;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import com.sogyeong.cbcb.mypage.service.MyPageService;
+import com.sogyeong.cbcb.mypage.service.MyPostService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,7 @@ public class MyPageController {
     private EntityManager em;
 
     private PostsService pService;
+    private MyPostService myPostService;
 
     //프로필 조회
     @GetMapping("/mypage/profile/{userId}")
@@ -46,7 +48,7 @@ public class MyPageController {
         Optional<UserInfo> userInfo = userInfoRepository.findById(userId);
         if(!isUser){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else{
             String profile = userInfo.stream().findFirst().get().getUrl();
@@ -70,7 +72,7 @@ public class MyPageController {
         boolean isUser = userInfoRepository.existsById(PVO.getUser_id());
         if(!isUser){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else{
             int isNickname = userInfoRepository.existsByNicknameExceptMe(PVO.getUser_id(), PVO.getNickname());
@@ -89,6 +91,34 @@ public class MyPageController {
         }
     }
 
+    //내가 쓴 글 목록 조회
+    @GetMapping("/mypage/mypost/{user_id}/{platform_id}/{state_id}")
+    public ResponseEntity<? extends BasicResponse> getMyPost(
+            @PathVariable("user_id") long userId,
+            @PathVariable("platform_id") int platform,
+            @PathVariable("state_id") int state) {
+        boolean isUser = userInfoRepository.existsById(userId);
+
+        if(!isUser){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
+        }
+        else{
+            if(platform == 0) { // 채분페이지인경우
+                if(state>2){
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(new ErrorResponse(ResultMessage.UNDEFINED_INPUT.getVal()));
+                }
+                else return ResponseEntity.ok().body( new CommonResponse(myPostService.getMyPostList(platform,state,userId),ResultMessage.RESULT_OK.getVal("내가 쓴글 리스트")));
+            }//커뮤니티는 추후 개발
+            else if(platform == 1)
+                return ResponseEntity.ok().body(new CommonResponse(ResultMessage. COMING_SOON.getVal()));
+            else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ErrorResponse(ResultMessage.UNDEFINED_INPUT.getVal()));
+        }
+    }
+
     //내가 쓴 글 상세조회
     @GetMapping("/mypage/mypost/{post_id}/{userId}")
     public ResponseEntity<? extends BasicResponse> getMyPostDetail(@PathVariable("userId") long userId,
@@ -96,11 +126,11 @@ public class MyPageController {
         boolean isUser = userInfoRepository.existsById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         if (!postsRepository.existsById(postId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_POST.getVal()));
         } else{
             Optional<Posts> post = postsRepository.findById(postId);
             Optional<Products> products = productsRepository.findById(post.get().getProdId());
@@ -132,12 +162,12 @@ public class MyPageController {
         boolean isUser = userInfoRepository.existsById(userId);
         if(!isUser){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         if(platformId == 0) { // 채분페이지인 경우
             if(stateId>2){
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse(ResultMessage.UNDEFINE_INPUT.getVal()));
+                        .body(new ErrorResponse(ResultMessage.UNDEFINED_INPUT.getVal()));
             }
             else return ResponseEntity.ok().body(new CommonResponse
                     (myPageService.getMyCommentList(userId, platformId, stateId),ResultMessage.RESULT_OK.getVal("내가 쓴 댓글 목록")));
@@ -146,7 +176,7 @@ public class MyPageController {
             return ResponseEntity.ok().body(new CommonResponse(ResultMessage.COMING_SOON.getVal()));
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_INPUT.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_INPUT.getVal()));
 
     }
 
@@ -158,11 +188,11 @@ public class MyPageController {
         boolean isUser = userInfoRepository.existsById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         if (!postsRepository.existsById(postId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_POST.getVal()));
         } else{
             Optional<Posts> post = postsRepository.findById(postId);
             Optional<Products> products = productsRepository.findById(post.get().getProdId());
@@ -195,13 +225,13 @@ public class MyPageController {
         boolean isUser = userInfoRepository.existsById(userId);
         if(!isUser){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else{
             if(platformId == 0) { // 채분페이지인 경우
                 if(stateId>2){
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(new ErrorResponse(ResultMessage.UNDEFINE_INPUT.getVal()));
+                            .body(new ErrorResponse(ResultMessage.UNDEFINED_INPUT.getVal()));
                 }
                 else return ResponseEntity.ok().body(new CommonResponse
                         (myPageService.getScrapList(userId, platformId, stateId),ResultMessage.RESULT_OK.getVal("찜한 목록")));
@@ -210,7 +240,7 @@ public class MyPageController {
                 return ResponseEntity.ok().body(new CommonResponse(ResultMessage.COMING_SOON.getVal()));
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse(ResultMessage.UNDEFINE_INPUT.getVal()));
+                        .body(new ErrorResponse(ResultMessage.UNDEFINED_INPUT.getVal()));
         }
     }
 
@@ -222,11 +252,11 @@ public class MyPageController {
         boolean isUser = userInfoRepository.existsById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         if (!postsRepository.existsById(postId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_POST.getVal()));
         } else{
             Optional<Posts> post = postsRepository.findById(postId);
             Optional<Products> products = productsRepository.findById(post.get().getProdId());
@@ -256,7 +286,7 @@ public class MyPageController {
         boolean isUser = userInfoRepository.existsById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else{
             Boolean isChange = myPageService.updateUserQuitDate(userId);

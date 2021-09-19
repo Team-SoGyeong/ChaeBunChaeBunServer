@@ -1,4 +1,4 @@
-package com.sogyeong.cbcb.board.model.response;
+package com.sogyeong.cbcb.board.model.dto;
 
 import com.sogyeong.cbcb.board.entity.Comment;
 import com.sogyeong.cbcb.board.entity.Wish;

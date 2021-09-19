@@ -56,11 +56,11 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(PVO.getAuthor_id());
         if(!isCategory){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_CATEGORY.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_CATEGORY.getVal()));
         }
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
 
         PostDTO postDTO = new PostDTO();
@@ -114,11 +114,11 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(PVO.getAuthor_id());
         if(!isCategory){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_CATEGORY.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_CATEGORY.getVal()));
         }
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
 
         PostDTO postDTO = new PostDTO();
@@ -172,15 +172,15 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(PVO.getAuthor_id());
         if(!isCategory){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_CATEGORY.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_CATEGORY.getVal()));
         }
         if (!postsRepository.existsById(PVO.getPost_id())) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_POST.getVal()));
         }
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
 
 
@@ -214,11 +214,11 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(user_id);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         if (!postsRepository.existsById(post_id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_POST.getVal()));
         }
         else{
             Optional<Posts> post  = postsRepository.findById(post_id);
@@ -244,11 +244,11 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(user_id);
         if(!isCategory || category_id>11){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_CATEGORY.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_CATEGORY.getVal()));
         }
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else{
             Optional<Products> products = productsRepository.findById(category_id);
@@ -280,11 +280,11 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(user_id);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         if (!postsRepository.existsById(post_id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_POST.getVal()));
         } else{
             Optional<Posts> post = postsRepository.findById(post_id);
             Optional<Products> products = productsRepository.findById(post.get().getProdId());
@@ -315,11 +315,11 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(CVO.getUser_id());
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else if (!postsRepository.existsById(CVO.getPost_id())) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_POST.getVal()));
         }
         else{
             CommentDTO commentDTO = new CommentDTO();
@@ -352,7 +352,7 @@ public class PostController {
         boolean isUser = userInfoRepository.existsById(user_id);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else if (!commentRepository.existsById(comment_id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -373,7 +373,7 @@ public class PostController {
     public ResponseEntity<? extends BasicResponse> getCommentsList(@PathVariable("post_id") long post_id){
         if (!postsRepository.existsById(post_id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_POST.getVal()));
         }
         else{
             List list = new ArrayList();
