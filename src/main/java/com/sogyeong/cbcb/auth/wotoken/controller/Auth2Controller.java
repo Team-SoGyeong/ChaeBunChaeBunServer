@@ -111,7 +111,7 @@ public class Auth2Controller {
         LinkedHashMap<String, Object> res = new LinkedHashMap<String, Object>();
         if(isNickname){
             res.put("isUsable", false);
-            return ResponseEntity.ok().body(new CommonResponse(res, ResultMessage.CAN_UES_NIK.getVal()));
+            return ResponseEntity.ok().body(new CommonResponse(res, ResultMessage.CAN_USE_NIK.getVal()));
         }
         else{
             res.put("isUsable", true);
@@ -125,7 +125,7 @@ public class Auth2Controller {
         boolean isUser = userInfoRepository.existsById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else{
             Boolean isChange = authService.updateSignoutDate(userId);

@@ -40,11 +40,11 @@ public class ReportController {
         boolean isUser = userInfoRepository.existsById(RVO.getAuthor_id());
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else if (!postsRepository.existsById(RVO.getPost_id())) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_POST.getVal()));
         }
         else{
             ReportDTO report = new ReportDTO();
@@ -71,11 +71,11 @@ public class ReportController {
         boolean isUser = userInfoRepository.existsById(RVO.getAuthor_id());
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else if (!postsRepository.existsById(RVO.getPost_id())) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_POST.getVal()));
         }
         else{
             ReportDTO report = new ReportDTO();
@@ -102,11 +102,11 @@ public class ReportController {
         boolean isUser = userInfoRepository.existsById(RVO.getAuthor_id());
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else if (!postsRepository.existsById(RVO.getPost_id())) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_POST.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_POST.getVal()));
         }
         else{
             ReportDTO report = new ReportDTO();

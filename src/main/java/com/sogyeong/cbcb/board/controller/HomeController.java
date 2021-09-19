@@ -49,7 +49,7 @@ public class HomeController {
         Optional<UserInfo> userInfo = userInfoRepository.findById(userId);
         if(!isUser){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else{
 
@@ -79,14 +79,14 @@ public class HomeController {
         boolean isAddr = addressRepository.existsById(addr_seq);
         if(!isAddr){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_ADDRESS.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_ADDRESS.getVal()));
         }
         else{
             List newList = homeListService.getNewList(addr_seq,userId);
             if(newList.size()>0)
                 return ResponseEntity.ok().body( new CommonResponse(newList,ResultMessage.RESULT_OK.getVal()));
             else
-                return ResponseEntity.ok().body( new CommonResponse(newList,ResultMessage.FAILED_NEW_LIST.getVal()));
+                return ResponseEntity.ok().body( new CommonResponse(newList,ResultMessage.NO_NEW_LIST.getVal()));
         }
     }
 
@@ -96,14 +96,14 @@ public class HomeController {
         boolean isAddr = addressRepository.existsById(addr_seq);
         if(!isAddr){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_ADDRESS.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_ADDRESS.getVal()));
         }
         else{
             List deadlineList = homeListService.getDeadlineList(addr_seq,userId);
             if(deadlineList.size()>0)
                 return ResponseEntity.ok().body( new CommonResponse(deadlineList,ResultMessage.RESULT_OK.getVal()));
             else
-                return ResponseEntity.ok().body( new CommonResponse(deadlineList,ResultMessage.FAILED_ENDED_LIST.getVal()));
+                return ResponseEntity.ok().body( new CommonResponse(deadlineList,ResultMessage.NO_ENDED_LIST.getVal()));
         }
     }
 
@@ -114,14 +114,14 @@ public class HomeController {
         Optional<UserInfo> userInfo = userInfoRepository.findById(userId);
         if(!isUser){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
         else{
             List wishList = homeListService.getMyLikeList(userId);
             if(wishList.size()>0)
                 return ResponseEntity.ok().body( new CommonResponse(wishList,ResultMessage.RESULT_OK.getVal()));
             else
-                return ResponseEntity.ok().body( new CommonResponse(wishList,ResultMessage.FAILED_SCRAP_LIST.getVal()));
+                return ResponseEntity.ok().body( new CommonResponse(wishList,ResultMessage.NO_SCRAP_LIST.getVal()));
         }
     }
 
@@ -131,13 +131,13 @@ public class HomeController {
         Optional<UserInfo> userInfo = userInfoRepository.findById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         } else {
             List list = myPostService.getMyDeadlineList(userId);
             if (list.size() > 0)
                 return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.RESULT_OK.getVal()));
             else
-                return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.FAILED_ENDED_LIST.getVal()));
+                return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.NO_ENDED_LIST.getVal()));
         }
     }
 
@@ -150,7 +150,7 @@ public class HomeController {
         boolean isAddr = addressRepository.existsById(addr_seq);
         if(!isAddr){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_ADDRESS.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_ADDRESS.getVal()));
         }
         else{
             //1차: 제목 - 2차: 내용 - 3차: 카테고리 검색
@@ -164,7 +164,7 @@ public class HomeController {
                 if (searchList.size() > 0)
                     return ResponseEntity.ok().body(new CommonResponse(searchList, ResultMessage.RESULT_OK.getVal()));
                 else
-                    return ResponseEntity.ok().body(new CommonResponse(searchList, ResultMessage.NOTHING_SEARCH.getVal(searchStr)));
+                    return ResponseEntity.ok().body(new CommonResponse(searchList, ResultMessage.NO_SEARCH_RES.getVal(searchStr)));
             }
         }
     }
@@ -182,7 +182,7 @@ public class HomeController {
         if (addressList.size() > 0)
             return ResponseEntity.ok().body(new CommonResponse(addressList, ResultMessage.RESULT_OK.getVal()));
         else
-            return ResponseEntity.ok().body(new CommonResponse(addressList, ResultMessage.NOTHING_SEARCH.getVal(addr_str)));
+            return ResponseEntity.ok().body(new CommonResponse(addressList, ResultMessage.NO_SEARCH_RES.getVal(addr_str)));
     }
 
     //위치 수정
@@ -192,7 +192,7 @@ public class HomeController {
         Optional<UserInfo> userInfo = userInfoRepository.findById(userId);
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(ResultMessage.UNDEFINE_USER.getVal()));
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         } else {
             Boolean isChange = myPostService.updateAddr(userId,addr_seq);
             if (isChange)
