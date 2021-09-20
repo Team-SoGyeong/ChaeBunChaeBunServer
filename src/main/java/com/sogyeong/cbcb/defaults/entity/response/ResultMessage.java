@@ -35,6 +35,7 @@ public enum ResultMessage {
     SCRAP_FAILED("찜하기 실패"),
     SCRAP_CANCEL_OK("찜 취소 성공"),
     SCRAP_CANCEL_FAILED("찜 취소 실패"),
+    UNDEFINE_SCRAP("존재하지 않는 찜내역 입니다. 다시 시도 해주세요"),
     NOT_SCRAP_SELF("자신의 글을 찜할 수 없습니다."),
 
     NOT_DELETE_OTHERS("타인의 글을 삭제할 수 없습니다. 다시 시도 해주세요"),

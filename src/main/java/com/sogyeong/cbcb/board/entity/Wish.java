@@ -27,15 +27,20 @@ public class Wish {
     @Column(name = "member")
     private long member;
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "host_chk")
+    private String host_chk;
+
     @Column(name = "reg_date")
     private LocalDateTime regDate;
 
     @Builder
-    Wish(long seq,long postId,long authorId,long member, LocalDateTime regDate){
+    Wish(long seq,long postId,long authorId,long member, String host_chk,LocalDateTime regDate){
         this.seq = seq;
         this.postId = postId;
         this.authorId = authorId;
         this.member = member;
+        this.host_chk =host_chk;
         this.regDate = regDate;
     }
 }

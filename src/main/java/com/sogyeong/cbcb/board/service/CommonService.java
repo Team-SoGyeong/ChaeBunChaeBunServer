@@ -1,8 +1,10 @@
 package com.sogyeong.cbcb.board.service;
 
+import com.sogyeong.cbcb.board.entity.Comment;
 import com.sogyeong.cbcb.board.entity.Posts;
 import com.sogyeong.cbcb.board.entity.Wish;
 import com.sogyeong.cbcb.board.model.dto.WishDTO;
+import com.sogyeong.cbcb.board.repository.CommentRepository;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
 import com.sogyeong.cbcb.board.repository.WishRepository;
 import lombok.AllArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.Optional;
 public class CommonService {
 
     private WishRepository wishRepository;
+    private CommentRepository cRepository;
     private PostsRepository postsRepository;
 
     @PersistenceContext
@@ -41,6 +44,27 @@ public class CommonService {
             return res;
         else return res;
     }
+
+    @Transactional(readOnly = false)
+    public int hostClickByScrap(long seq){
+        Optional<Wish> wishs = wishRepository.findById(seq);
+        wishs.ifPresent(updateWish->{
+            updateWish.setHost_chk("Y");
+            wishRepository.save(updateWish);
+        });
+        return wishs.stream().count()==1 ? 1:-1;
+    }
+
+    @Transactional(readOnly = false)
+    public int hostClickByComment(long seq){
+        Optional<Comment> cmts = cRepository.findById(seq);
+        cmts.ifPresent(updateCmt->{
+            updateCmt.setHost_chk("Y");
+            cRepository.save(updateCmt);
+        });
+        return cmts.stream().count()==1 ? 1:-1;
+    }
+
 
     @Transactional(readOnly = true)
     public List deleteWish(long postId, long userId) {

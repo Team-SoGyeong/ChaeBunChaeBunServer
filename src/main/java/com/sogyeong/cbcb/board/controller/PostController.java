@@ -327,6 +327,7 @@ public class PostController {
             commentDTO.setPost_id(CVO.getPost_id());
             commentDTO.setUser_id(CVO.getUser_id());
             commentDTO.setCmts(CVO.getCmts());
+            commentDTO.setHost_chk("N");
             
             Boolean isSave = pService.saveComments(commentDTO);
 

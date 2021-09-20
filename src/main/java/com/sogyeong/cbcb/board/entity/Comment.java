@@ -26,15 +26,20 @@ public class Comment {
     @Column(name = "contents")
     private String content;
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "host_chk")
+    private String host_chk;
+
     @Column(name = "reg_date")
     private LocalDateTime regDate;
 
     @Builder
-    Comment(long seq,long postId,long member,String content, LocalDateTime regDate){
+    Comment(long seq,long postId,long member,String content, String host_chk,LocalDateTime regDate){
         this.seq = seq;
         this.postId = postId;
         this.member = member;
         this.content = content;
+        this.host_chk =host_chk;
         this.regDate = regDate;
     }
 }

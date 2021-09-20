@@ -18,6 +18,7 @@ public class WishDTO {
     private long post_id;
     private long user_id;
     private long author_id;
+    private String host_chk;
     private String regDate;
 
     public WishDTO(Wish w){
@@ -25,6 +26,7 @@ public class WishDTO {
         this.post_id = w.getPostId();
         this.user_id = w.getMember();
         this.author_id = w.getAuthorId();
+        this.host_chk= "N";
         this.regDate = w.getRegDate().format(DateTimeFormatter.ofPattern("MM-dd HH:mm"));
 
     }
@@ -34,6 +36,7 @@ public class WishDTO {
                 .postId(post_id)
                 .authorId(author_id)
                 .member(user_id)
+                .host_chk(host_chk)
                 .regDate(LocalDateTime.now())
                 .build();
     }
