@@ -207,7 +207,7 @@ public class HomeListService {
                             "from default_address " +
                             "where district like concat('%', :addr1, '%') " +
                             "and neighborhood like concat('%', :addr2, '%') " +
-                            "and city in ('서울특별시')")
+                            "and city in ('서울특별시') and district in ('성북구') ")
                     .setParameter("addr1", addr_str[1])
                     .setParameter("addr2", addr_str[2])
                     .getResultList();
@@ -218,7 +218,7 @@ public class HomeListService {
                                 "from default_address " +
                                 "where district like concat('%', :addr2, '%') " +
                                 "or neighborhood like concat('%', :addr2, '%') " +
-                                "and city in ('서울특별시')")
+                                "and city in ('서울특별시') and district in ('성북구') ")
                         .setParameter("addr2", addr_str[1])
                         .getResultList();
             }else{//2-2. 두단어인데 구,동로 입력했다고 가정
@@ -227,7 +227,7 @@ public class HomeListService {
                                         "from default_address " +
                                         "where district like concat('%', :addr1, '%') " +
                                         "and neighborhood like concat('%', :addr2, '%') " +
-                                        "and city in ('서울특별시')")
+                                        "and city in ('서울특별시') and district in ('성북구') ")
                         .setParameter("addr1", addr_str[0])
                         .setParameter("addr2", addr_str[1])
                         .getResultList();
@@ -239,7 +239,7 @@ public class HomeListService {
                                     "from default_address " +
                                     "where district like concat('%', :addr, '%') " +
                                     "or neighborhood like concat('%', :addr, '%') " +
-                                    "and city in ('서울특별시')")
+                                    "and city in ('서울특별시') and district in ('성북구')")
                     .setParameter("addr", addr_str[0])
                     .getResultList();
         }
