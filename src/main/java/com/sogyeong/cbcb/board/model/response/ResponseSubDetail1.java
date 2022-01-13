@@ -13,6 +13,8 @@ public class ResponseSubDetail1 {
     private String buy_date;
     private int headcounts;
     private String amount;
+    private String amount_num;
+    private String amount_type;
     private String total_price;
     private String per_price;
     private int wish_cnts;

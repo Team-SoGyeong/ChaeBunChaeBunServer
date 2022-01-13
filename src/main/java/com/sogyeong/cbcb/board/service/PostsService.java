@@ -148,7 +148,7 @@ public class PostsService {
                         "else '2주일 이내 구매' " +
                         "end as buy_date, " +
                         "bp.headcount , " +
-                        "concat(bp.amount,bp.unit) as amount, " +
+                        "concat(bp.amount,bp.unit) as amounts, " +
                         "FORMAT(bp.total_price,0) , " +
                         "FORMAT(bp.per_price,0) as price," +
                         "( select IFNULL(count(seq),0)" +
@@ -171,7 +171,7 @@ public class PostsService {
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
                         "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff," +
                         "dp.name ," +
-                        "bp.contact "+
+                        "bp.contact, bp.amount, bp.unit "+
                         "from board_posts bp " +
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
@@ -209,6 +209,8 @@ public class PostsService {
                 map.put("buy_date", res[6]);
                 map.put("headcounts", res[7].toString() + '명');
                 map.put("amount", res[8]);
+                map.put("amount_num", res[20]);
+                map.put("amount_type", res[21]);
                 map.put("total_price", res[9].toString() + '원');
                 map.put("per_price", res[10].toString() + '원');
                 map.put("wish_cnts", res[11]);
@@ -235,6 +237,8 @@ public class PostsService {
                 map.put("buy_date", res[6]);
                 map.put("headcounts", res[7].toString() + '명');
                 map.put("amount", res[8]);
+                map.put("amount_num", res[20]);
+                map.put("amount_type", res[21]);
                 map.put("total_price", res[9].toString() + '원');
                 map.put("per_price", res[10].toString() + '원');
                 map.put("wish_cnts", res[11]);
