@@ -149,7 +149,7 @@ public class PostsService {
                         "end as buy_date, " +
                         "bp.headcount , " +
                         "concat(bp.amount,bp.unit) as amounts, " +
-                        "bp.total_price, " +
+                        "FORMAT(bp.total_price,0), " +
                         "FORMAT(bp.per_price,0) as price," +
                         "( select IFNULL(count(seq),0)" +
                         "   from  board_wish" +
@@ -171,7 +171,7 @@ public class PostsService {
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
                         "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff," +
                         "dp.name ," +
-                        "bp.contact, bp.amount, bp.unit "+
+                        "bp.contact, bp.amount, bp.unit, bp.total_price "+
                         "from board_posts bp " +
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
@@ -211,7 +211,8 @@ public class PostsService {
                 map.put("amount", res[8]);
                 map.put("amount_num", res[20]);
                 map.put("amount_type", res[21]);
-                map.put("total_price", res[9].toString());
+                map.put("total_price", res[9].toString() + '원');
+                map.put("total_price_num", res[22].toString());
                 map.put("per_price", res[10].toString() + '원');
                 map.put("wish_cnts", res[11]);
                 map.put("comment_cnts", res[12]);
@@ -239,7 +240,8 @@ public class PostsService {
                 map.put("amount", res[8]);
                 map.put("amount_num", res[20]);
                 map.put("amount_type", res[21]);
-                map.put("total_price", res[9].toString());
+                map.put("total_price", res[9].toString() + '원');
+                map.put("total_price_num", res[22].toString());
                 map.put("per_price", res[10].toString() + '원');
                 map.put("wish_cnts", res[11]);
                 map.put("comment_cnts", res[12]);
