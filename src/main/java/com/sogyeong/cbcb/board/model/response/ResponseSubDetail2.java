@@ -17,6 +17,7 @@ public class ResponseSubDetail2 {
     private String amount_num;
     private String amount_type;
     private String total_price;
+    private String total_price_num;
     private String per_price;
     private int wish_cnts;
     private int comment_cnts;
