@@ -149,7 +149,7 @@ public class PostsService {
                         "end as buy_date, " +
                         "bp.headcount , " +
                         "concat(bp.amount,bp.unit) as amounts, " +
-                        "FORMAT(bp.total_price,0) , " +
+                        "bp.total_price, " +
                         "FORMAT(bp.per_price,0) as price," +
                         "( select IFNULL(count(seq),0)" +
                         "   from  board_wish" +
@@ -211,7 +211,7 @@ public class PostsService {
                 map.put("amount", res[8]);
                 map.put("amount_num", res[20]);
                 map.put("amount_type", res[21]);
-                map.put("total_price", res[9].toString() + '원');
+                map.put("total_price", res[9].toString());
                 map.put("per_price", res[10].toString() + '원');
                 map.put("wish_cnts", res[11]);
                 map.put("comment_cnts", res[12]);
@@ -239,7 +239,7 @@ public class PostsService {
                 map.put("amount", res[8]);
                 map.put("amount_num", res[20]);
                 map.put("amount_type", res[21]);
-                map.put("total_price", res[9].toString() + '원');
+                map.put("total_price", res[9].toString());
                 map.put("per_price", res[10].toString() + '원');
                 map.put("wish_cnts", res[11]);
                 map.put("comment_cnts", res[12]);
