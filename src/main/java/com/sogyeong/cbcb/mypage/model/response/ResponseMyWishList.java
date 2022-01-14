@@ -6,6 +6,7 @@ public class ResponseMyWishList {
     private long wish_id;
     private long post_id;
     private String  title;
+    private String  contents;
     private String author_id;
     private String buy_date;
     private int heads;

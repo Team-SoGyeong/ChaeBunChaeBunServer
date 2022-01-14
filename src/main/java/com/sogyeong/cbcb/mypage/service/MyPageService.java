@@ -137,7 +137,8 @@ public class MyPageService {
                         "FORMAT(bp.per_price,0) as price, " +
                         "ba.isAuth, ba.img1, " +
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
-                        "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff " +
+                        "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff," +
+                        "bp.contents " +
                         "from board_posts bp " +
                         "join board_wish bw on  bw.post_id = bp.seq " +
                         "join default_products dp on bp.prod_id = dp.seq " +
@@ -169,6 +170,7 @@ public class MyPageService {
             map.put("wish_id", res[2]);
             map.put("post_id", res[3]);
             map.put("title", res[4]);
+            map.put("contents", res[13]);
             map.put("author_id", res[5]);
             map.put("buy_date",res[6]);
             map.put("members", res[7]);

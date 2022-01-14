@@ -6,6 +6,7 @@ public class ResponseHomeList {
     private long post_id;
     private long author_id;
     private String  title;
+    private String  contents;
     private String buy_date;
     private int heads;
     private String price;

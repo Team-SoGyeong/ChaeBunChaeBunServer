@@ -137,18 +137,22 @@ public class MyPostService {
                                 "       when bp.period =3 then '1주일 이내 구매' " +
                                 "       else '2주일 이내 구매' " +
                                 "   end as buy_date, " +
-                                "   concat(bp.amount,bp.unit) as amount, " +
                                 "   concat(format(bp.total_price,0),\"원\") as total_price, " +
                                 "   date_format(bp.reg_date,'%m/%d') as dates," +
                                 "   date_format(bw.reg_date,'%m/%d') as w_dates,  " +
                                 "   bw.reg_date as times, " +
                                 "   bw.host_chk as isClick," +
-                                "   bw.seq " +
+                                "   bw.seq, " +
+                                "   ba.isAuth," +
+                                "   (select nickname from user_info where info_id=bw.author_id ) as nickname, " +
+                                "   ba.img1, " +
+                                "   bp.contents " +
                                 "from user_info ui " +
                                 "join board_wish bw on ui.info_id=bw.author_id " +
                                 "join board_posts bp on bp.seq=bw.post_id " +
+                                "join board_album ba on bp.seq = ba.post_id " +
                                 "where  TIMESTAMPDIFF(day,bp.reg_date,now()) < 8 and bp.status =0 " +
-                                "and ui.info_id = :user " +
+                                "and ui.info_id = :user and bw.member <> bw.author_id " +
                                 "" +
                                 "union " +
                                 "" +
@@ -161,17 +165,22 @@ public class MyPostService {
                                 "       when bp.period =3 then '1주일 이내 구매' " +
                                 "       else '2주일 이내 구매' " +
                                 "   end as buy_date, " +
-                                "   concat(bp.amount,bp.unit) as amount, " +
                                 "   concat(format(bp.total_price,0),\"원\") as total_price, " +
                                 "   date_format(bp.reg_date,'%m/%d') as w_dates," +
                                 "   date_format(bc.reg_date,'%m/%d') as dates, " +
                                 "   bc.reg_date as times, " +
                                 "   bc.host_chk as isClick," +
-                                "   bc.seq " +
+                                "   bc.seq, " +
+                                "   ba.isAuth, " +
+                                "   ui.nickname, " +
+                                "   ba.img1," +
+                                "   bp.contents " +
                                 "from board_comment bc " +
+                                "join user_info ui on ui.info_id = bc.member " +
                                 "join board_posts bp on bp.seq=bc.post_id " +
+                                "join board_album ba on bp.seq = ba.post_id " +
                                 "where  TIMESTAMPDIFF(day,bp.reg_date,now()) < 8 and bp.status =0  " +
-                                "and bp.author_id = :user " +
+                                "and bp.author_id = :user and bc.member <> bp.author_id " +
                                 ")" +
                                 "" +
                                 "select *, " +
@@ -188,15 +197,18 @@ public class MyPostService {
 
             LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 
-            map.put("notice_id", res[9]);
+            map.put("notice_id", res[8]);
             map.put("caseBy", res[0]);
+            map.put("nickname", res[10]);
             map.put("title", res[1]);
+            map.put("img1", res[11]);
+            map.put("contents", res[12]);
             map.put("buy_date", res[2]);
-            map.put("amount", res[3]);
-            map.put("total_price", res[4]);
-            map.put("dates", res[6]);
-            map.put("isClick", res[8]);
-            map.put("isNew", res[10]);
+            map.put("total_price", res[3]);
+            map.put("dates", res[5]);
+            map.put("isClick", res[7]);
+            map.put("isNew", res[13]);
+            map.put("isAuth", res[9]);
 
 
             noticeList.add(map);
