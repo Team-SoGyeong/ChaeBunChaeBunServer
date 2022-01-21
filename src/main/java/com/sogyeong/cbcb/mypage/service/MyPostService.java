@@ -44,7 +44,8 @@ public class MyPostService {
                         "FORMAT(bp.per_price,0) as price, " +
                         "ba.isAuth, ba.img1, " +
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
-                        "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff " +
+                        "TIMESTAMPDIFF(day,bp.reg_date,now()) as diff, " +
+                        "bp.contents " +
                         "from board_posts bp " +
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
@@ -72,6 +73,7 @@ public class MyPostService {
             map.put("category_name", res[1]);
             map.put("post_id", res[2]);
             map.put("title", res[3]);
+            map.put("contents", res[11]);
             map.put("buy_date",res[4]);
             map.put("members", res[5]);
             map.put("per_price", res[6].toString()+'원');
