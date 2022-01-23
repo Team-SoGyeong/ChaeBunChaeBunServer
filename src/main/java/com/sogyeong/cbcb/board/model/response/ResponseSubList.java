@@ -10,8 +10,10 @@ public class ResponseSubList {
     private String  title;
     private String  contents;
     private String buy_date;
-    private int heads;
-    private String price;
+    //private int heads;
+    //private String price;
+    private String total_amount;
+    private String total_price;
     private int wish_cnts;
     private int comment_cnts;
     private int isAuth;
