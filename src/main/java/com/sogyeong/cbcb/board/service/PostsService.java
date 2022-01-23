@@ -61,9 +61,9 @@ public class PostsService {
                                 "when bp.period =3 then '1주일 이내 구매' " +
                                 "else '2주일 이내 구매' " +
                                 "end as buy_date, " +
-                                "bp.amount, " + //총양
+                                "bp.amount, " +
                                 "bp.unit, " +
-                                "FORMAT(bp.total_price,0) as total_price," + //총가격
+                                "FORMAT(bp.total_price,0) as total_price," +
                                 "( select IFNULL(count(seq),0)" +
                                 "   from  board_wish" +
                                 "   where post_id =bp.seq" +
@@ -115,10 +115,8 @@ public class PostsService {
             map.put("title", res[4]);
             map.put("contents",res[5]);
             map.put("buy_date", res[6]);
-            map.put("total_amount", res[7].toString()+res[8].toString()); //총양(숫자+단위 붙여서)
-            map.put("total_price", res[9].toString()+'원'); //총가격
-            //map.put("headcounts", res[7].toString()+'명');
-            //map.put("per_price", res[8].toString()+'원');
+            map.put("total_amount", res[7].toString()+res[8].toString());
+            map.put("total_price", res[9].toString()+'원');
             map.put("wish_cnts", res[10]);
             map.put("comment_cnts", res[11]);
             map.put("isAuth", res[12]);

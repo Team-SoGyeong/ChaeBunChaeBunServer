@@ -8,6 +8,7 @@ public class SigninVO {
     private String nickname;
     private long address_seq;
     private String profile;
+    private String set_image;
     private String email;
     private String sex;
     private String age_range;
