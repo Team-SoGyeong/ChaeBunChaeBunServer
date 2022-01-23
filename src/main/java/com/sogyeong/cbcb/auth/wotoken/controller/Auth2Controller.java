@@ -42,6 +42,7 @@ public class Auth2Controller {
         userInfoDTO.setNickname(SVO.getNickname());
         userInfoDTO.setAddress(SVO.getAddress_seq());
         userInfoDTO.setProfile(SVO.getProfile());
+        userInfoDTO.setSet_image(SVO.getSet_image());
         userInfoDTO.setEmail(SVO.getEmail());
 
         if(SVO.getAge_range().contains("1~9")) userInfoDTO.setAgeRange(0);

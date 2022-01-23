@@ -18,6 +18,7 @@ public class UserInfoDTO {
     private String password;
     private long address;
     private String profile;
+    private String set_image;
     private int isDonated;
     private String joinDate;
     private int sex;
@@ -30,6 +31,7 @@ public class UserInfoDTO {
         this.password = userInfo.getPassword();
         this.address = userInfo.getAddr();
         this.profile = userInfo.getUrl();
+        this.set_image = userInfo.getSet_image();
         this.isDonated = userInfo.getIsDonated();
         this.joinDate = userInfo.getJoinDate().format(DateTimeFormatter.ofPattern("MM-dd HH:mm"));
         this.sex = userInfo.getSex();
@@ -44,6 +46,7 @@ public class UserInfoDTO {
                 .password(password)
                 .addr(address)
                 .url(profile)
+                .set_image(set_image)
                 .isDonated(isDonated)
                 .joinDate(LocalDateTime.now())
                 .sex(sex)
