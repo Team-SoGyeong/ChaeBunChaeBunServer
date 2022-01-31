@@ -148,7 +148,7 @@ public class MyPostService {
                                 "   ba.isAuth," +
                                 "   (select nickname from user_info where info_id=bw.author_id ) as nickname, " +
                                 "   ba.img1, " +
-                                "   bp.contents " +
+                                "   bp.contents, bp.seq, bp.prod_id " +
                                 "from user_info ui " +
                                 "join board_wish bw on ui.info_id=bw.author_id " +
                                 "join board_posts bp on bp.seq=bw.post_id " +
@@ -176,7 +176,7 @@ public class MyPostService {
                                 "   ba.isAuth, " +
                                 "   ui.nickname, " +
                                 "   ba.img1," +
-                                "   bp.contents " +
+                                "   bp.contents, bp.seq, bp.prod_id  " +
                                 "from board_comment bc " +
                                 "join user_info ui on ui.info_id = bc.member " +
                                 "join board_posts bp on bp.seq=bc.post_id " +
@@ -202,6 +202,8 @@ public class MyPostService {
             map.put("notice_id", res[8]);
             map.put("caseBy", res[0]);
             map.put("nickname", res[10]);
+            map.put("post_id", res[13]);
+            map.put("category_id", res[14]);
             map.put("title", res[1]);
             map.put("img1", res[11]);
             map.put("contents", res[12]);
@@ -209,7 +211,7 @@ public class MyPostService {
             map.put("total_price", res[3]);
             map.put("dates", res[5]);
             map.put("isClick", res[7]);
-            map.put("isNew", res[13]);
+            map.put("isNew", res[15]);
             map.put("isAuth", res[9]);
 
 

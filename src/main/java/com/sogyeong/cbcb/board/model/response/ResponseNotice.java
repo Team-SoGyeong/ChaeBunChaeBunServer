@@ -2,6 +2,8 @@ package com.sogyeong.cbcb.board.model.response;
 
 public class ResponseNotice {
     private long notice_id;
+    private long post_id;
+    private long category_id;
     private String caseBy;
     private String nickname;
     private String title;
