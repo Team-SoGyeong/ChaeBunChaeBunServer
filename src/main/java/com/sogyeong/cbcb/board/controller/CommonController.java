@@ -148,7 +148,7 @@ public class CommonController {
     @GetMapping("/common/notice/{user_id}")
     public ResponseEntity<? extends BasicResponse> getNoticeList(@PathVariable("user_id") long user_id){
         boolean isUser = userInfoRepository.existsById(user_id);
-        List<ResponseNotice> list = pService.getMyNotice(user_id);
+        List list = pService.getMyNotice(user_id);
 
         if (!isUser) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

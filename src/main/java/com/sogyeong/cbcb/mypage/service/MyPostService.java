@@ -126,7 +126,7 @@ public class MyPostService {
     }
 
     @Transactional(readOnly = false)
-    public List getMyNotice(long user_id ) {
+    public List<LinkedHashMap<String, Object>> getMyNotice(long user_id ) {
 
         List resultList =  em.createNativeQuery(
                         "with notice as (" +
@@ -148,7 +148,7 @@ public class MyPostService {
                                 "   ba.isAuth," +
                                 "   (select nickname from user_info where info_id=bw.author_id ) as nickname, " +
                                 "   ba.img1, " +
-                                "   bp.contents, bp.seq, bp.prod_id " +
+                                "   bp.contents, bp.seq as post_id, bp.prod_id " +
                                 "from user_info ui " +
                                 "join board_wish bw on ui.info_id=bw.author_id " +
                                 "join board_posts bp on bp.seq=bw.post_id " +
@@ -176,7 +176,7 @@ public class MyPostService {
                                 "   ba.isAuth, " +
                                 "   ui.nickname, " +
                                 "   ba.img1," +
-                                "   bp.contents, bp.seq, bp.prod_id  " +
+                                "   bp.contents, bp.seq as post_id, bp.prod_id  " +
                                 "from board_comment bc " +
                                 "join user_info ui on ui.info_id = bc.member " +
                                 "join board_posts bp on bp.seq=bc.post_id " +

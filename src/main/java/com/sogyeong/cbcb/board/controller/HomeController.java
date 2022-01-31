@@ -61,6 +61,7 @@ public class HomeController {
             LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 
             map.put("user_id", userInfo.stream().findFirst().get().getSeq());
+            map.put("isNew", myPostService.getMyNotice(userId).stream().filter(n->n.get("isNew").equals("Y")).count());
             map.put("nickname", userInfo.stream().findFirst().get().getNickname());
             map.put("address_id", userInfo.stream().findFirst().get().getAddr());
             map.put("full_address", addrInfo);
