@@ -64,7 +64,7 @@ public class HomeListService {
                         "where ui.address = :addrId and bp.status = 0 " +
                         "and case when d_o.post_id = bp.seq  then d_o.types <>'blind' and d_o.author_id <> :user else 1=1 end  " +
                         "and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7 " +
-                        "order by diff desc , dp.seq " +
+                        "order by dates desc , dp.seq " +
                         "limit 3 ")
                 .setParameter("addrId", addrSeq)
                 .setParameter("user", user_id)
@@ -178,7 +178,7 @@ public class HomeListService {
                                 "where  bw.member = :user and bp.status = 0 and bw.author_id <> :user " +
                                 "and bw.post_id not in (select post_id from default_opinion  where types ='blind' and author_id = :user) " +
                                 "and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7 " +
-                                "order by diff desc , dp.seq " +
+                                "order by dates desc , dp.seq " +
                                 "limit 3")
                 .setParameter("user", user)
                 .getResultList();
@@ -281,7 +281,7 @@ public class HomeListService {
                                 "bp.contents like concat('%', :searchStr, '%') or " +
                                 "dp.name like concat('%', :searchStr, '%') )" +
                                 "and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7 " +
-                                "order by diff desc, dp.seq ")
+                                "order by dates desc, dp.seq ")
                 .setParameter("addrId", addrSeq)
                 .setParameter("searchStr", search_str)
                 .getResultList();
