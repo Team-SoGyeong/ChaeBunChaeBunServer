@@ -146,7 +146,7 @@ public class MyPostService {
                                 "   bw.host_chk as isClick," +
                                 "   bw.seq, " +
                                 "   ba.isAuth," +
-                                "   (select nickname from user_info where info_id=bw.author_id ) as nickname, " +
+                                "   (select nickname from user_info where info_id=bw.member ) as nickname, " +
                                 "   ba.img1, " +
                                 "   bp.contents, bp.seq as post_id, bp.prod_id " +
                                 "from user_info ui " +
