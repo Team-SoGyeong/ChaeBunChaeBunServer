@@ -55,7 +55,7 @@ public class HomeListService {
                         "FORMAT(bp.per_price,0) as price, " +
                         "ba.isAuth, ba.img1, " +
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
-                        "bp.contents as contents " +
+                        "bp.contents as contents, TIMESTAMPDIFF(day,bp.reg_date,now()) as diff " +
                         "from board_posts bp " +
                         "left join default_opinion d_o on bp.seq = d_o.post_id " +
                         "join default_products dp on bp.prod_id = dp.seq " +
@@ -63,7 +63,8 @@ public class HomeListService {
                         "join user_info ui on bp.author_id = ui.info_id " +
                         "where ui.address = :addrId and bp.status = 0 " +
                         "and case when d_o.post_id = bp.seq  then d_o.types <>'blind' and d_o.author_id <> :user else 1=1 end  " +
-                        "order by dates desc, dp.seq " +
+                        "and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7 " +
+                        "order by diff desc , dp.seq " +
                         "limit 3 ")
                 .setParameter("addrId", addrSeq)
                 .setParameter("user", user_id)
