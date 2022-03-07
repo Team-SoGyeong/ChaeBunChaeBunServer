@@ -84,7 +84,7 @@ public enum ResultMessage {
     public String getVal() {
         return this.value;
     }
-    public String getVal(String e) {
-        return this.value = e+this.value;
+    public String getEditVal(String e) {
+        return  e+this.value;
     }
 }

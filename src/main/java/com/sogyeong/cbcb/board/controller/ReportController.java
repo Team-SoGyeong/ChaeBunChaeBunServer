@@ -58,10 +58,10 @@ public class ReportController {
 
             Boolean isSave = reportService.storeReport(report);
             if(isSave)
-                return  ResponseEntity.ok().body( new CommonResponse(ResultMessage.REPORT_OK.getVal("게시글")));
+                return  ResponseEntity.ok().body( new CommonResponse(ResultMessage.REPORT_OK.getEditVal("게시글")));
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse(ResultMessage.REPORT_FAILED.getVal("게시글")));
+                        .body(new ErrorResponse(ResultMessage.REPORT_FAILED.getEditVal("게시글")));
         }
     }
 
@@ -89,10 +89,10 @@ public class ReportController {
 
             Boolean isSave = reportService.storeReport(report);
             if(isSave)
-                return  ResponseEntity.ok().body( new CommonResponse(ResultMessage.REPORT_OK.getVal("댓글")));
+                return  ResponseEntity.ok().body( new CommonResponse(ResultMessage.REPORT_OK.getEditVal("댓글")));
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse(ResultMessage.REPORT_FAILED.getVal("댓글")));
+                        .body(new ErrorResponse(ResultMessage.REPORT_FAILED.getEditVal("댓글")));
         }
     }
 

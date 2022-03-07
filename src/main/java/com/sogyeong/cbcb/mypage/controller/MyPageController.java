@@ -62,7 +62,7 @@ public class MyPageController {
 
             profileInfo.add(map);
 
-            return ResponseEntity.ok().body( new CommonResponse(profileInfo,ResultMessage.RESULT_OK.getVal("프로필")));
+            return ResponseEntity.ok().body( new CommonResponse(profileInfo,ResultMessage.RESULT_OK.getEditVal("프로필")));
         }
     }
 
@@ -84,9 +84,9 @@ public class MyPageController {
                 Boolean isChange = myPageService.updateProfile(PVO.getUser_id(), PVO.getProfile_img(), PVO.getNickname());
 
                 if (isChange)
-                    return ResponseEntity.ok().body(new CommonResponse(ResultMessage.UPDATE_OK.getVal("프로필")));
+                    return ResponseEntity.ok().body(new CommonResponse(ResultMessage.UPDATE_OK.getEditVal("프로필")));
                 else
-                    return ResponseEntity.ok().body(new CommonResponse(ResultMessage.UPDATE_FAILED.getVal("프로필")));
+                    return ResponseEntity.ok().body(new CommonResponse(ResultMessage.UPDATE_FAILED.getEditVal("프로필")));
             }
         }
     }
@@ -109,7 +109,7 @@ public class MyPageController {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body(new ErrorResponse(ResultMessage.UNDEFINED_INPUT.getVal()));
                 }
-                else return ResponseEntity.ok().body( new CommonResponse(myPostService.getMyPostList(platform,state,userId),ResultMessage.RESULT_OK.getVal("내가 쓴글 리스트")));
+                else return ResponseEntity.ok().body( new CommonResponse(myPostService.getMyPostList(platform,state,userId),ResultMessage.RESULT_OK.getEditVal("내가 쓴글 리스트")));
             }//커뮤니티는 추후 개발
             else if(platform == 1)
                 return ResponseEntity.ok().body(new CommonResponse(ResultMessage. COMING_SOON.getVal()));
@@ -149,7 +149,7 @@ public class MyPageController {
             sub.add(map);
 
             String msg = seq >10 ? "내가 쓴 기타 채분 게시글" : "내가 쓴 일반 채분 게시글";
-            return ResponseEntity.ok().body( new CommonResponse(sub,ResultMessage.RESULT_OK.getVal(msg)));
+            return ResponseEntity.ok().body( new CommonResponse(sub,ResultMessage.RESULT_OK.getEditVal(msg)));
         }
 
     }
@@ -170,7 +170,7 @@ public class MyPageController {
                         .body(new ErrorResponse(ResultMessage.UNDEFINED_INPUT.getVal()));
             }
             else return ResponseEntity.ok().body(new CommonResponse
-                    (myPageService.getMyCommentList(userId, platformId, stateId),ResultMessage.RESULT_OK.getVal("내가 쓴 댓글 목록")));
+                    (myPageService.getMyCommentList(userId, platformId, stateId),ResultMessage.RESULT_OK.getEditVal("내가 쓴 댓글 목록")));
         }//커뮤니티는 추후 개발
         else if(platformId == 1)
             return ResponseEntity.ok().body(new CommonResponse(ResultMessage.COMING_SOON.getVal()));
@@ -211,7 +211,7 @@ public class MyPageController {
             sub.add(map);
 
             String msg = seq >10 ? "내가 쓴 댓글 기타 채분 게시글 " : "내가 쓴 댓글 일반 채분 게시글 ";
-            return ResponseEntity.ok().body( new CommonResponse(sub,ResultMessage.RESULT_OK.getVal(msg)));
+            return ResponseEntity.ok().body( new CommonResponse(sub,ResultMessage.RESULT_OK.getEditVal(msg)));
         }
 
     }
@@ -234,7 +234,7 @@ public class MyPageController {
                             .body(new ErrorResponse(ResultMessage.UNDEFINED_INPUT.getVal()));
                 }
                 else return ResponseEntity.ok().body(new CommonResponse
-                        (myPageService.getScrapList(userId, platformId, stateId),ResultMessage.RESULT_OK.getVal("찜한 목록")));
+                        (myPageService.getScrapList(userId, platformId, stateId),ResultMessage.RESULT_OK.getEditVal("찜한 목록")));
             }//커뮤니티는 추후 개발
             else if(platformId == 1)
                 return ResponseEntity.ok().body(new CommonResponse(ResultMessage.COMING_SOON.getVal()));
@@ -275,7 +275,7 @@ public class MyPageController {
             sub.add(map);
 
             String msg = seq >10 ? "기타 찜 채분 게시글 " : "일반 찜 채분 게시글 ";
-            return ResponseEntity.ok().body( new CommonResponse(sub,ResultMessage.RESULT_OK.getVal(msg)));
+            return ResponseEntity.ok().body( new CommonResponse(sub,ResultMessage.RESULT_OK.getEditVal(msg)));
         }
 
     }

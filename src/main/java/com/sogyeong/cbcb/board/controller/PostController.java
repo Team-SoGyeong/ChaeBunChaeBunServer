@@ -100,11 +100,11 @@ public class PostController {
 
             sub.add(map);
 
-            return ResponseEntity.ok().body(new CommonResponse(sub,ResultMessage.WRITE_OK.getVal("일반 게시글")));
+            return ResponseEntity.ok().body(new CommonResponse(sub,ResultMessage.WRITE_OK.getEditVal("일반 게시글")));
         }
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(ResultMessage.WRITE_FAILED.getVal("일반 게시글")));
+                    .body(new ErrorResponse(ResultMessage.WRITE_FAILED.getEditVal("일반 게시글")));
     }
 
     // 기타 품목 게시글 저장
@@ -158,11 +158,11 @@ public class PostController {
             // 세부 카테고리 페이지를 불러서 붙인다.
             sub.add(map);
 
-            return ResponseEntity.ok().body(new CommonResponse(sub,ResultMessage.WRITE_OK.getVal("기타 게시글")));
+            return ResponseEntity.ok().body(new CommonResponse(sub,ResultMessage.WRITE_OK.getEditVal("기타 게시글")));
         }
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(ResultMessage.WRITE_FAILED.getVal("기타 게시글")));
+                    .body(new ErrorResponse(ResultMessage.WRITE_FAILED.getEditVal("기타 게시글")));
     }
 
     //게시글 수정
@@ -201,11 +201,11 @@ public class PostController {
 
             sub.add(map);
 
-            return ResponseEntity.ok().body(new CommonResponse(sub,ResultMessage.UPDATE_OK.getVal("게시글")));
+            return ResponseEntity.ok().body(new CommonResponse(sub,ResultMessage.UPDATE_OK.getEditVal("게시글")));
         }
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(ResultMessage.UPDATE_FAILED.getVal("게시글")));
+                    .body(new ErrorResponse(ResultMessage.UPDATE_FAILED.getEditVal("게시글")));
     }
 
     //게시글 삭제
@@ -225,10 +225,10 @@ public class PostController {
             if(post.get().getAuthorId()==user_id){
                 Boolean isDelete = pService.deletePost(post_id);
                 if(isDelete)
-                    return  ResponseEntity.ok().body( new CommonResponse(ResultMessage.DELETE_OK.getVal("게시글")));
+                    return  ResponseEntity.ok().body( new CommonResponse(ResultMessage.DELETE_OK.getEditVal("게시글")));
                 else
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(new ErrorResponse(ResultMessage.DELETE_FAILED.getVal("게시글")));
+                            .body(new ErrorResponse(ResultMessage.DELETE_FAILED.getEditVal("게시글")));
             }
             else{
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -242,7 +242,7 @@ public class PostController {
     public ResponseEntity<? extends BasicResponse> getSubCategoryList(@PathVariable("categoryId") long category_id,@PathVariable("user_id") long user_id) {
         boolean isCategory = productsRepository.existsById(category_id);
         boolean isUser = userInfoRepository.existsById(user_id);
-        if(!isCategory || category_id>11){
+        if(!isCategory){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse(ResultMessage.UNDEFINED_CATEGORY.getVal()));
         }
@@ -303,7 +303,7 @@ public class PostController {
             sub.add(map);
 
             String msg = seq >10 ? "기타 채분 게시글 " : "일반 채분 게시글 ";
-            return ResponseEntity.ok().body( new CommonResponse(sub,ResultMessage.RESULT_OK.getVal(msg)));
+            return ResponseEntity.ok().body( new CommonResponse(sub,ResultMessage.RESULT_OK.getEditVal(msg)));
         }
 
     }
@@ -337,12 +337,12 @@ public class PostController {
                 map.put("post_id", CVO.getPost_id());
                 map.put("cmts", pService.getComments(CVO.getPost_id()) );
                 list.add(map);
-                return  ResponseEntity.ok().body( new CommonResponse(list,ResultMessage.WRITE_OK.getVal("댓글")));
+                return  ResponseEntity.ok().body( new CommonResponse(list,ResultMessage.WRITE_OK.getEditVal("댓글")));
             }
 
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse(ResultMessage.WRITE_FAILED.getVal("댓글")));
+                        .body(new ErrorResponse(ResultMessage.WRITE_FAILED.getEditVal("댓글")));
         }
     }
 
@@ -362,10 +362,10 @@ public class PostController {
         else{
             Boolean isDelete = pService.deleteComments(comment_id,user_id);
             if(isDelete)
-                return  ResponseEntity.ok().body( new CommonResponse(ResultMessage.DELETE_OK.getVal("댓글")));
+                return  ResponseEntity.ok().body( new CommonResponse(ResultMessage.DELETE_OK.getEditVal("댓글")));
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse(ResultMessage.DELETE_FAILED.getVal("댓글")));
+                        .body(new ErrorResponse(ResultMessage.DELETE_FAILED.getEditVal("댓글")));
         }
     }
 
@@ -384,9 +384,9 @@ public class PostController {
             list.add(map);
 
             if (pService.getComments(post_id).size() > 0)
-                return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.RESULT_OK.getVal("댓글들")));
+                return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.RESULT_OK.getEditVal("댓글들")));
             else
-                return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.RESULT_FAILED.getVal("댓글")));
+                return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.RESULT_FAILED.getEditVal("댓글")));
         }
     }
 

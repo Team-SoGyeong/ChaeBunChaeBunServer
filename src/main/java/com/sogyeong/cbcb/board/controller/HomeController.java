@@ -166,7 +166,7 @@ public class HomeController {
                 if (searchList.size() > 0)
                     return ResponseEntity.ok().body(new CommonResponse(searchList, ResultMessage.RESULT_OK.getVal()));
                 else
-                    return ResponseEntity.ok().body(new CommonResponse(searchList, ResultMessage.NO_SEARCH_RES.getVal(searchStr)));
+                    return ResponseEntity.ok().body(new CommonResponse(searchList, ResultMessage.NO_SEARCH_RES.getEditVal(searchStr)));
             }
         }
     }
@@ -184,7 +184,7 @@ public class HomeController {
         if (addressList.size() > 0)
             return ResponseEntity.ok().body(new CommonResponse(addressList, ResultMessage.RESULT_OK.getVal()));
         else
-            return ResponseEntity.ok().body(new CommonResponse(addressList, ResultMessage.NO_SEARCH_RES.getVal(addr_str)));
+            return ResponseEntity.ok().body(new CommonResponse(addressList, ResultMessage.NO_SEARCH_RES.getEditVal(addr_str)));
     }
 
     //위치 수정

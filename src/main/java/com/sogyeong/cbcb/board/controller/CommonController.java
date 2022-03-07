@@ -159,7 +159,7 @@ public class CommonController {
             if (list.size() > 0)
                 return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.RESULT_OK.getVal()));
             else
-                return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.RESULT_FAILED.getVal("게시글 관련 알림")));
+                return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.RESULT_FAILED.getEditVal("게시글 관련 알림")));
         }
     }
 
