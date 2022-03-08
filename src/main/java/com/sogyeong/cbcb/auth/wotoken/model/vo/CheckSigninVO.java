@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class CheckSigninVO {
     private String login_type;
-    private String email;
+    private long kakao_id;
 }

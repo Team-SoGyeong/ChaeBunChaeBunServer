@@ -60,7 +60,7 @@ public class MyPageService {
                 "select distinct "+
                         "dp.seq as category_id, " +
                         "dp.name, bp.seq as postId, " +
-                        "bp.title, bp.author_id, " +
+                        "bp.title, bp.author_id, bp.contents, " +
                         "case "+
                         "when bp.period =0 then '1일 전 구매' " +
                         "when bp.period =1 then '2일 전 구매' " +
@@ -105,12 +105,13 @@ public class MyPageService {
             map.put("post_id", res[2]);
             map.put("title", res[3]);
             map.put("author_id", res[4]);
-            map.put("buy_date",res[5]);
-            map.put("members", res[6]);
-            map.put("per_price", res[7].toString()+'원');
-            map.put("isAuth", res[8]);
-            map.put("url", res[9]);
-            map.put("written_by", res[10]);
+            map.put("contents", res[5]); //
+            map.put("buy_date",res[6]);
+            map.put("members", res[7]);
+            map.put("per_price", res[8].toString()+'원');
+            map.put("isAuth", res[9]);
+            map.put("url", res[10]);
+            map.put("written_by", res[11]);
 
             commentLists.add(map);
         }

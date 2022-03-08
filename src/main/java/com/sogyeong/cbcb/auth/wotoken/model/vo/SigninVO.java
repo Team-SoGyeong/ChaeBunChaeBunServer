@@ -10,6 +10,7 @@ public class SigninVO {
     private String profile;
     private String set_image;
     private String email;
+    private long kakao_id;
     private String sex;
     private String age_range;
 }

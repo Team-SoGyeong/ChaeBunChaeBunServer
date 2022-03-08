@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 public class UserLoginDTO {
     private long loginId;
     private String loginType;
+    private long kakaoId;
     private String accessToken;
     private String refreshToken;
     private String deviceToken;
@@ -22,6 +23,7 @@ public class UserLoginDTO {
     public UserLoginDTO(UserLogin userLogin){
         this.loginId = userLogin.getSeq();
         this.loginType = userLogin.getType();
+        this.kakaoId = userLogin.getKakaoId();
         this.accessToken = userLogin.getAccessToken();
         this.refreshToken = userLogin.getRefreshToken();
         this.deviceToken = userLogin.getDeviceToken();
@@ -32,6 +34,7 @@ public class UserLoginDTO {
         return new UserLogin().builder()
                 .seq(loginId)
                 .type(loginType)
+                .kakaoId(kakaoId)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .deviceToken(deviceToken)

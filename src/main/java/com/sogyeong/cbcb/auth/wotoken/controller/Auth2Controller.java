@@ -39,6 +39,7 @@ public class Auth2Controller {
         UserInfoDTO userInfoDTO = new UserInfoDTO();
 
         userLoginDTO.setLoginType(SVO.getLogin_type());
+        userLoginDTO.setKakaoId(SVO.getKakao_id());
         userInfoDTO.setNickname(SVO.getNickname());
         userInfoDTO.setAddress(SVO.getAddress_seq());
         userInfoDTO.setProfile(SVO.getProfile());
@@ -77,7 +78,7 @@ public class Auth2Controller {
     //카카오 로그인 내역 확인
     @PostMapping("/signin/kakao/checkLogin")
     public ResponseEntity<? extends BasicResponse> checkLoginStatus(@RequestBody CheckSigninVO CVO){
-        int isLogin = userInfoRepository.checkLoginStatus(CVO.getLogin_type(), CVO.getEmail());
+        int isLogin = userInfoRepository.checkLoginStatus(CVO.getLogin_type(), CVO.getKakao_id());
 
         if (isLogin==0) {
             List res = new ArrayList();
@@ -90,7 +91,7 @@ public class Auth2Controller {
                     body(new CommonResponse(res, ResultMessage.NOT_FOUND_LOG.getVal()));
         }
         else{
-            long userId = userInfoRepository.findIdByEmail(CVO.getEmail());
+            long userId = userInfoRepository.findIdByKakaoId(CVO.getKakao_id());
 
             List res = new ArrayList();
             LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();

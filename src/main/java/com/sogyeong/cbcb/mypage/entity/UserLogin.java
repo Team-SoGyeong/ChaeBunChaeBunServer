@@ -19,6 +19,9 @@ public class UserLogin {
     @Column(name ="login_type", nullable = false)
     private String type;
 
+    @Column(name = "kakao_id")
+    private long kakaoId;
+
     @Column(name = "access_token")
     private String accessToken;
 
@@ -38,10 +41,11 @@ public class UserLogin {
     private LocalDateTime quitDate;
 
     @Builder
-    UserLogin(long seq, String type, String accessToken, String refreshToken, String deviceToken,
+    UserLogin(long seq, String type, long kakaoId, String accessToken, String refreshToken, String deviceToken,
               LocalDateTime joinDate, LocalDateTime updateDate, LocalDateTime quitDate){
         this.seq = seq;
         this.type = type;
+        this.kakaoId = kakaoId;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.deviceToken = deviceToken;
