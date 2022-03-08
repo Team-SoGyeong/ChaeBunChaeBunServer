@@ -12,10 +12,10 @@ public interface UserInfoRepository extends JpaRepository<UserInfo,Long> {
 
     Boolean existsByNickname(String nickname);
 
-    @Query(value = "select info_id from user_info where email = :email", nativeQuery = true)
-    Long findIdByEmail(String email);
+    @Query(value = "select login_id from user_login where kakao_id = :kakaoId", nativeQuery = true)
+    Long findIdByKakaoId(long kakaoId);
 
-    @Query(value = "select EXISTS (select * from user_info ui join user_login ul on ui.`info_id`=ul.`login_id`  where email = :email and ul.`login_type`= :loginType limit 1)", nativeQuery = true)
-    Integer checkLoginStatus(String loginType, String email);
+    @Query(value = "select EXISTS (select * from user_info ui join user_login ul on ui.`info_id`=ul.`login_id`  where kakao_id = :kakaoId and ul.`login_type`= :loginType limit 1)", nativeQuery = true)
+    Integer checkLoginStatus(String loginType, long kakaoId);
 
 }
