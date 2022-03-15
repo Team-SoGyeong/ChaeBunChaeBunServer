@@ -7,7 +7,7 @@ public class ResponseMyCommentList {
     private String title;
     private long  author_id;
     private String buy_date;
-    private int heads;
+    private long post_addr;
     private String price;
     private int isAuth;
     private String profile;

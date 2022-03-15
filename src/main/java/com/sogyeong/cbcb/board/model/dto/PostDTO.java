@@ -17,7 +17,7 @@ public class PostDTO {
     private long author_id;
     private String contents;
     private String title;
-    private int headcount;
+    private long post_addr;
     private int period;
     private int amount;
     private String unit;
@@ -34,7 +34,7 @@ public class PostDTO {
         this.author_id = posts.getAuthorId();
         this.contents = posts.getContents();
         this.title = posts.getTitle();
-        this.headcount = posts.getPeoples();
+        this.post_addr = posts.getPost_addr();
         this.period = posts.getPeriod();
         this.amount = posts.getAmount();
         this.unit = posts.getUnit();
@@ -53,7 +53,7 @@ public class PostDTO {
                 .authorId(author_id)
                 .contents(contents)
                 .title(title)
-                .peoples(headcount)
+                .post_addr(post_addr)
                 .period(period)
                 .amount(amount)
                 .unit(unit)

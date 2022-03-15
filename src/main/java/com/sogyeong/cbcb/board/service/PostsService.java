@@ -87,7 +87,7 @@ public class PostsService {
                                 "join default_products dp on bp.prod_id = dp.seq " +
                                 "join board_album ba on bp.seq = ba.post_id " +
                                 "join user_info ui on bp.author_id = ui.info_id " +
-                                "where ui.address = :addrId and " +
+                                "where bp.addr = :addrId and " +
                                 "case when :categoryId > 10 then bp.prod_id >=11 else bp.prod_id = :categoryId end " +
                                 "and bp.status = 0 " + // 소분이 완료되지않는경우만 나오게 하기
                                 "and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7 " +
@@ -148,7 +148,7 @@ public class PostsService {
                         "when bp.period =3 then '1주일 이내 구매' " +
                         "else '2주일 이내 구매' " +
                         "end as buy_date, " +
-                        "bp.headcount , " +
+                        "bp.addr as post_addr , " +
                         "concat(bp.amount,bp.unit) as amounts, " +
                         "FORMAT(bp.total_price,0), " +
                         "FORMAT(bp.per_price,0) as price," +
@@ -208,7 +208,7 @@ public class PostsService {
                 map.put("title", res[4]);
                 map.put("contents", res[5]);
                 map.put("buy_date", res[6]);
-                map.put("headcounts", res[7].toString() + '명');
+                map.put("post_addr", res[7]);
                 map.put("amount", res[8]);
                 map.put("amount_num", res[20]);
                 map.put("amount_type", res[21]);
@@ -237,7 +237,7 @@ public class PostsService {
                 map.put("title", res[4]);
                 map.put("contents", res[5]);
                 map.put("buy_date", res[6]);
-                map.put("headcounts", res[7].toString() + '명');
+                map.put("post_addr", res[7]);
                 map.put("amount", res[8]);
                 map.put("amount_num", res[20]);
                 map.put("amount_type", res[21]);

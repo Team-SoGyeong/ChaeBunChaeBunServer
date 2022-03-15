@@ -51,7 +51,7 @@ public class HomeListService {
                         "when bp.period =3 then '1주일 이내 구매' " +
                         "else '2주일 이내 구매' " +
                         "end as buy_date, " +
-                        "bp.headcount as headcount , " +
+                        "bp.addr as post_addr , " +
                         "FORMAT(bp.per_price,0) as price, " +
                         "ba.isAuth, ba.img1, " +
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
@@ -61,10 +61,10 @@ public class HomeListService {
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
                         "join user_info ui on bp.author_id = ui.info_id " +
-                        "where ui.address = :addrId and bp.status = 0 " +
+                        "where bp.addr = :addrId and bp.status = 0 " +
                         "and case when d_o.post_id = bp.seq  then d_o.types <>'blind' and d_o.author_id <> :user else 1=1 end  " +
                         "and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7 " +
-                        "order by dates desc , dp.seq " +
+                        "order by bp.reg_date desc , dp.seq " +
                         "limit 3 ")
                 .setParameter("addrId", addrSeq)
                 .setParameter("user", user_id)
@@ -83,7 +83,7 @@ public class HomeListService {
             map.put("title", res[4]);
             map.put("contents", res[11]);
             map.put("buy_date",res[5]);
-            map.put("members", res[6].toString()+'명');
+            map.put("post_addr", res[6]);
             map.put("per_price", res[7].toString()+'원');
             map.put("isAuth", res[8]);
             map.put("url", res[9]);
@@ -106,7 +106,7 @@ public class HomeListService {
                         "when bp.period =3 then '1주일 이내 구매' " +
                         "else '2주일 이내 구매' " +
                         "end as buy_date, " +
-                        "bp.headcount+'명' as headcount , " +
+                        "bp.addr as post_addr , " +
                         "FORMAT(bp.per_price,0) as price, " +
                         "ba.isAuth, ba.img1, " +
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
@@ -117,10 +117,10 @@ public class HomeListService {
                         "join default_products dp on bp.prod_id = dp.seq " +
                         "join board_album ba on bp.seq = ba.post_id " +
                         "join user_info ui on bp.author_id = ui.info_id " +
-                        "where ui.address = :addrId and bp.status = 0 " + // 소분이 완료되지않는경우만 나오게 하기
+                        "where bp.addr = :addrId and bp.status = 0 " + // 소분이 완료되지않는경우만 나오게 하기
                         "and (TIMESTAMPDIFF(day,bp.reg_date,now()) > 4 and TIMESTAMPDIFF(day,bp.reg_date,now()) < 7)" +
                         "and case when d_o.post_id = bp.seq  then d_o.types <>'blind' and d_o.author_id <> :user else 1=1 end  " +
-                        "order by diff desc , dp.seq  " +
+                        "order by bp.reg_date desc , dp.seq  " +
                         "limit 3 ")
                 .setParameter("addrId", addrSeq)
                 .setParameter("user", user_id)
@@ -139,7 +139,7 @@ public class HomeListService {
             map.put("title", res[4]);
             map.put("contents", res[12]);
             map.put("buy_date",res[5]);
-            map.put("members", res[6]);
+            map.put("post_addr", res[6]);
             map.put("per_price", res[7].toString()+'원');
             map.put("isAuth", res[8]);
             map.put("url", res[9]);
@@ -164,7 +164,7 @@ public class HomeListService {
                                 "when bp.period =3 then '1주일 이내 구매' " +
                                 "else '2주일 이내 구매' " +
                                 "end as buy_date, " +
-                                "bp.headcount+'명' as headcount , " +
+                                "bp.addr as post_addr , " +
                                 "FORMAT(bp.per_price,0) as price, " +
                                 "ba.isAuth, ba.img1, " +
                                 "date_format(bp.reg_date,'%m/%d') as dates, " +
@@ -196,7 +196,7 @@ public class HomeListService {
             map.put("title", res[4]);
             map.put("contents", res[12]);
             map.put("buy_date",res[5]);
-            map.put("members", res[6]);
+            map.put("post_addr", res[6]);
             map.put("per_price", res[7].toString()+'원');
             map.put("isAuth", res[8]);
             map.put("url", res[9]);
@@ -266,7 +266,7 @@ public class HomeListService {
                                 "when bp.period =3 then '1주일 이내 구매' " +
                                 "else '2주일 이내 구매' " +
                                 "end as buy_date, " +
-                                "bp.headcount as headcount , " +
+                                "bp.addr as post_addr , " +
                                 "FORMAT(bp.per_price,0) as price, " +
                                 "ba.isAuth, ba.img1, " +
                                 "date_format(bp.reg_date,'%m/%d') as dates, " +
@@ -276,7 +276,7 @@ public class HomeListService {
                                 "join default_products dp on bp.prod_id = dp.seq " +
                                 "join board_album ba on bp.seq = ba.post_id " +
                                 "join user_info ui on bp.author_id = ui.info_id " +
-                                "where ui.address = :addrId and bp.status <> 1 and ( " +
+                                "where bp.addr = :addrId and bp.status <> 1 and ( " +
                                 "bp.title like concat('%', :searchStr, '%') or " +
                                 "bp.contents like concat('%', :searchStr, '%') or " +
                                 "dp.name like concat('%', :searchStr, '%') )" +
@@ -299,7 +299,7 @@ public class HomeListService {
             map.put("title", res[4]);
             map.put("contents", res[12]);
             map.put("buy_date",res[5]);
-            map.put("members", res[6].toString()+'명');
+            map.put("post_addr", res[6]);
             map.put("per_price", res[7].toString()+'원');
             map.put("isAuth", res[8]);
             map.put("url", res[9]);

@@ -80,7 +80,7 @@ public class PostController {
         postDTO.setAmount(PVO.getAmount());
         postDTO.setUnit(PVO.getUnit());
         postDTO.setTotal_price(PVO.getTotal_price());
-        postDTO.setHeadcount(PVO.getHeadcount());
+        postDTO.setPost_addr(PVO.getPost_addr());
         postDTO.setPer_price(PVO.getPer_price());
         postDTO.setContact(PVO.getContact());
 
@@ -138,7 +138,7 @@ public class PostController {
         postDTO.setAmount(PVO.getAmount());
         postDTO.setUnit(PVO.getUnit());
         postDTO.setTotal_price(PVO.getTotal_price());
-        postDTO.setHeadcount(PVO.getHeadcount());
+        postDTO.setPost_addr(PVO.getPost_addr());
         postDTO.setPer_price(PVO.getPer_price());
         postDTO.setContact(PVO.getContact());
 

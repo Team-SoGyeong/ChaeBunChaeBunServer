@@ -13,7 +13,7 @@ public class PostEctVO {
     private int amount;
     private String unit;
     private int total_price;
-    private int headcount;
+    private long post_addr;
     private int per_price;
     private String contact;
     private AlbumVO imgs;

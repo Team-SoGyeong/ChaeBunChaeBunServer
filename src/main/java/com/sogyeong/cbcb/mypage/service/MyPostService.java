@@ -40,7 +40,7 @@ public class MyPostService {
                         "when bp.period =3 then '1주일 이내 구매' " +
                         "else '2주일 이내 구매' " +
                         "end as buy_date, " +
-                        "bp.headcount+'명' as headcount , " +
+                        "bp.addr as post_addr , " +
                         "FORMAT(bp.per_price,0) as price, " +
                         "ba.isAuth, ba.img1, " +
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
@@ -75,7 +75,7 @@ public class MyPostService {
             map.put("title", res[3]);
             map.put("contents", res[11]);
             map.put("buy_date",res[4]);
-            map.put("members", res[5]);
+            map.put("post_addr", res[5]);
             map.put("per_price", res[6].toString()+'원');
             map.put("isAuth", res[7]);
             map.put("url", res[8]);

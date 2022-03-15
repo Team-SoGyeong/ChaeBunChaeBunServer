@@ -28,8 +28,8 @@ public class Posts {
     @Column(name = "contents")
     private String contents;
 
-    @Column(name = "headcount")
-    private int peoples;
+    @Column(name = "addr")
+    private long post_addr;
 
     @Column(name = "period")
     private int period;
@@ -59,7 +59,7 @@ public class Posts {
     private LocalDateTime regDate;
 
     @Builder
-    Posts(long seq,long prodId,long authorId ,String title,String contents,int peoples
+    Posts(long seq,long prodId,long authorId ,String title,String contents,long post_addr
         ,int period,int amount,String unit,int totalPrice,int perPrice,String contact,int status
         ,int isDonated,LocalDateTime regDate) {
 
@@ -68,7 +68,7 @@ public class Posts {
         this.authorId=authorId;
         this.title=title;
         this.contents=contents;
-        this.peoples=peoples;
+        this.post_addr=post_addr;
         this.period=period;
         this.amount=amount;
         this.unit =  unit;

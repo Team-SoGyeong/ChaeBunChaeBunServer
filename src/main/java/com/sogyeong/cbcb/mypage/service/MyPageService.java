@@ -68,7 +68,7 @@ public class MyPageService {
                         "when bp.period =3 then '1주일 이내 구매' " +
                         "else '2주일 이내 구매' " +
                         "end as buy_date, " +
-                        "bp.headcount+'명' as headcount , " +
+                        "bp.addr+'명' as post_addr , " +
                         "FORMAT(bp.per_price,0) as price, " +
                         "ba.isAuth, ba.img1, " +
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
@@ -107,7 +107,7 @@ public class MyPageService {
             map.put("author_id", res[4]);
             map.put("contents", res[5]); //
             map.put("buy_date",res[6]);
-            map.put("members", res[7]);
+            map.put("post_addr", res[7]);
             map.put("per_price", res[8].toString()+'원');
             map.put("isAuth", res[9]);
             map.put("url", res[10]);
@@ -134,7 +134,7 @@ public class MyPageService {
                         "when bp.period =3 then '1주일 이내 구매' " +
                         "else '2주일 이내 구매' " +
                         "end as buy_date, " +
-                        "bp.headcount+'명' as headcount , " +
+                        "bp.addr as post_addr , " +
                         "FORMAT(bp.per_price,0) as price, " +
                         "ba.isAuth, ba.img1, " +
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
@@ -174,7 +174,7 @@ public class MyPageService {
             map.put("contents", res[13]);
             map.put("author_id", res[5]);
             map.put("buy_date",res[6]);
-            map.put("members", res[7]);
+            map.put("post_addr", res[7]);
             map.put("per_price", res[8].toString()+'원');
             map.put("isAuth", res[9]);
             map.put("url", res[10]);
@@ -203,7 +203,7 @@ public class MyPageService {
                         "when bp.period =3 then '1주일 이내 구매' " +
                         "else '2주일 이내 구매' " +
                         "end as buy_date, " +
-                        "bp.headcount , " +
+                        "bp.addr as post_addr , " +
                         "concat(bp.amount,bp.unit) as amount, " +
                         "FORMAT(bp.total_price,0) , " +
                         "FORMAT(bp.per_price,0) as price," +
@@ -261,7 +261,7 @@ public class MyPageService {
                 map.put("title", res[4]);
                 map.put("contents", res[5]);
                 map.put("buy_date", res[6]);
-                map.put("headcounts", res[7].toString() + '명');
+                map.put("post_addr", res[7]);
                 map.put("amount", res[8]);
                 map.put("total_price", res[9].toString() + '원');
                 map.put("per_price", res[10].toString() + '원');
@@ -287,7 +287,7 @@ public class MyPageService {
                 map.put("title", res[4]);
                 map.put("contents", res[5]);
                 map.put("buy_date", res[6]);
-                map.put("headcounts", res[7].toString() + '명');
+                map.put("post_addr", res[7]);
                 map.put("amount", res[8]);
                 map.put("total_price", res[9].toString() + '원');
                 map.put("per_price", res[10].toString() + '원');

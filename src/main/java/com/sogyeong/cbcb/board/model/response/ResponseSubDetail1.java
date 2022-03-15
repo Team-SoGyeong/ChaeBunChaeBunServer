@@ -11,7 +11,7 @@ public class ResponseSubDetail1 {
     private String  title;
     private String  contents;
     private String buy_date;
-    private int headcounts;
+    private long post_addr;
     private String amount;
     private String amount_num;
     private String amount_type;
