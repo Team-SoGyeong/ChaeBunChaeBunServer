@@ -68,7 +68,7 @@ public class MyPageService {
                         "when bp.period =3 then '1주일 이내 구매' " +
                         "else '2주일 이내 구매' " +
                         "end as buy_date, " +
-                        "bp.addr+'명' as post_addr , " +
+                        "bp.addr as post_addr , " +
                         "FORMAT(bp.per_price,0) as price, " +
                         "ba.isAuth, ba.img1, " +
                         "date_format(bp.reg_date,'%m/%d') as dates, " +
