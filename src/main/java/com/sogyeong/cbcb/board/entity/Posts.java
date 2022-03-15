@@ -28,7 +28,7 @@ public class Posts {
     @Column(name = "contents")
     private String contents;
 
-    @Column(name = "addr")
+    @Column(name = "addr") // headcounts 에서 변경
     private long post_addr;
 
     @Column(name = "period")
