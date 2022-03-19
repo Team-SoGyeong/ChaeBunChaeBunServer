@@ -11,12 +11,15 @@ import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,7 +37,7 @@ public class Auth2Controller {
 
     //카카오 로그인
     @PostMapping("/signin/kakao")
-    public ResponseEntity<? extends BasicResponse> kakaoSignin(@RequestBody SigninVO SVO){
+    public ResponseEntity<? extends BasicResponse> kakaoSignin(@RequestBody SigninVO SVO) throws IOException {
         UserLoginDTO userLoginDTO = new UserLoginDTO();
         UserInfoDTO userInfoDTO = new UserInfoDTO();
 
@@ -42,8 +45,17 @@ public class Auth2Controller {
         userLoginDTO.setKakaoId(SVO.getKakao_id());
         userInfoDTO.setNickname(SVO.getNickname());
         userInfoDTO.setAddress(SVO.getAddress_seq());
-        userInfoDTO.setProfile(SVO.getProfile());
-        userInfoDTO.setSet_image(SVO.getSet_image());
+        //프로필 이미지 - 5가지 중 하나로 저장하기
+        if(SVO.getSet_image().equals("potato"))
+            userInfoDTO.setProfile("https://sogyeong-cbcb-deploy.s3.ap-northeast-2.amazonaws.com/profile/setinfo_image_potato.png");
+        else if(SVO.getSet_image().equals("carrot"))
+            userInfoDTO.setProfile("https://sogyeong-cbcb-deploy.s3.ap-northeast-2.amazonaws.com/profile/setinfo_image_carrot.png");
+        else if(SVO.getSet_image().equals("onion"))
+            userInfoDTO.setProfile("https://sogyeong-cbcb-deploy.s3.ap-northeast-2.amazonaws.com/profile/setinfo_image_onion.png");
+        else if(SVO.getSet_image().equals("corn"))
+            userInfoDTO.setProfile("https://sogyeong-cbcb-deploy.s3.ap-northeast-2.amazonaws.com/profile/setinfo_image_corn.png");
+        else if(SVO.getSet_image().equals("tomato"))
+            userInfoDTO.setProfile("https://sogyeong-cbcb-deploy.s3.ap-northeast-2.amazonaws.com/profile/setinfo_image_tomato.png");
         userInfoDTO.setEmail(SVO.getEmail());
 
         if(SVO.getAge_range().contains("1~9")) userInfoDTO.setAgeRange(0);

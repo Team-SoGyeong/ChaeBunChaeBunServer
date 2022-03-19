@@ -7,7 +7,7 @@ public class SigninVO {
     private String login_type;
     private String nickname;
     private long address_seq;
-    private String profile;
+    //private String profile;
     private String set_image;
     private String email;
     private long kakao_id;
