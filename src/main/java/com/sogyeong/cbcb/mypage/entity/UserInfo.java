@@ -30,8 +30,8 @@ public class UserInfo { //extends UserLogin
     @Column(name ="profile")
     private String url;
 
-    @Column(name ="set_image")
-    private String set_image;
+//    @Column(name ="set_image")
+//    private String set_image;
 
     @Column(name = "isDonated")
     private int isDonated;
@@ -46,7 +46,7 @@ public class UserInfo { //extends UserLogin
     private int ageRange;
 
     @Builder
-    UserInfo(long seq, String nickname, String email, String password, long addr, String url, String set_image,
+    UserInfo(long seq, String nickname, String email, String password, long addr, String url,
              int isDonated, LocalDateTime joinDate, int sex, int ageRange){
         this.seq = seq;
         this.nickname = nickname;
@@ -54,7 +54,7 @@ public class UserInfo { //extends UserLogin
         this.password = password;
         this.addr = addr;
         this.url = url;
-        this.set_image = set_image;
+        //this.set_image = set_image;
         this.isDonated = isDonated;
         this.joinDate = joinDate;
         this.sex = sex;
