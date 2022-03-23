@@ -183,9 +183,28 @@ public class PostController {
                     .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
         }
 
+        PostDTO postDTO = new PostDTO();
+        AlbumDTO albumDTO = new AlbumDTO();
+
+        postDTO.setCategory_id(PVO.getCategory_id());
+        postDTO.setAuthor_id(PVO.getAuthor_id());
+        postDTO.setContents(PVO.getContents());
+        postDTO.setTitle(PVO.getTitle());
+
+        if(PVO.getBuy_date().contains("1일")) postDTO.setPeriod(0);
+        if(PVO.getBuy_date().contains("2일")) postDTO.setPeriod(1);
+        if(PVO.getBuy_date().contains("3일")) postDTO.setPeriod(2);
+        if(PVO.getBuy_date().contains("일주일")) postDTO.setPeriod(3);
+        if(PVO.getBuy_date().contains("2주일"))postDTO.setPeriod(4);
+
+        postDTO.setAmount(PVO.getAmount());
+        postDTO.setUnit(PVO.getUnit());
+        postDTO.setTotal_price(PVO.getTotal_price());
+        postDTO.setPer_price(PVO.getPer_price());
+        postDTO.setContact(PVO.getContact());
 
         Optional<Products> prod = productsRepository.findById(PVO.getCategory_id());
-        long isSave = pService.updatePosts(PVO.getPost_id(),PVO);
+        long isSave = pService.updatePosts(PVO.getPost_id(),postDTO,PVO.getImgs());
         long category = prod.get().getSeq();
         if(isSave!=-1) {
             Optional<UserInfo> user = userInfoRepository.findById(PVO.getAuthor_id());

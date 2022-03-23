@@ -282,13 +282,29 @@ public class PostsService {
     }
 
     @Transactional
-    public long updatePosts(long postId, UpdatePostVO post){
-
+    public long updatePosts(long postId, PostDTO postDTO, AlbumVO imgs){
         Optional<Posts> posts = postsRepository.findById(postId);
         posts.ifPresent(updatePost->{
-            updatePost.setContents(post.getContents());
-            updatePost.setContact(post.getContact());
+            updatePost.setTitle(postDTO.getTitle());
+            updatePost.setContents(postDTO.getContents());
+            updatePost.setAmount(postDTO.getAmount());
+            updatePost.setUnit(postDTO.getUnit());
+            updatePost.setPeriod(postDTO.getPeriod());
+            updatePost.setTotalPrice(postDTO.getTotal_price());
+            updatePost.setPerPrice(postDTO.getPer_price());
+            updatePost.setContact(postDTO.getContact());
             postsRepository.save(updatePost);
+        });
+        Optional<Album> album = albumRepository.findById(postId);
+        album.ifPresent(updateAlbum->{
+            updateAlbum.setBill1(imgs.getBill1());
+            updateAlbum.setBill2(imgs.getBill2());
+            updateAlbum.setImg1(imgs.getImg1());
+            updateAlbum.setImg2(imgs.getImg2());
+            updateAlbum.setImg3(imgs.getImg3());
+            updateAlbum.setImg4(imgs.getImg4());
+            updateAlbum.setImg5(imgs.getImg5());
+            albumRepository.save(updateAlbum);
         });
         return posts.stream().count()==1 ? 1:-1;
 
