@@ -389,7 +389,7 @@ public class PostsService {
                                 "        ui.nickname, " +
                                 "        ui.profile," +
                                 "        bc.contents," +
-                                "        date_format(bc.reg_date,'%m/%d %H:%m') as dates " +
+                                "        date_format(bc.reg_date,'%m/%d %H:%i') as dates " +
                                 "from board_posts bp " +
                                 "left join board_comment bc on bp.seq = bc.post_id " +
                                 "join user_info ui on bc.member = ui.info_id " +
