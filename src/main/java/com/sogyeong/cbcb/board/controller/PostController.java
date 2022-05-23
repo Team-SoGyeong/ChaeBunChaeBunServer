@@ -152,7 +152,7 @@ public class PostController {
 
             List sub = new ArrayList();
             LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-            map.put("category_name","기타");
+            map.put("category_name",PVO.getEct_name());
             map.put("address_id", addr_seq);
             map.put("posts",pService.getSubCategory(category,PVO.getAuthor_id(),isSave));
             // 세부 카테고리 페이지를 불러서 붙인다.
@@ -209,7 +209,7 @@ public class PostController {
         if(isSave!=-1) {
             Optional<UserInfo> user = userInfoRepository.findById(PVO.getAuthor_id());
             long addr_seq = user.stream().findFirst().get().getAddr();
-            String name = category>10 ? "기타" : prod.get().getName();
+            String name = prod.get().getName();
 
             List sub = new ArrayList();
             LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
@@ -311,11 +311,12 @@ public class PostController {
 
             long addr_seq = user.stream().findFirst().get().getAddr();
             long seq =products.stream().findFirst().get().getSeq();
-            String name = seq <11 ? products.stream().findFirst().get().getName() : "기타";
+            String name = products.stream().findFirst().get().getName() ;
 
             List sub = new ArrayList();
             LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
             map.put("category_name",name );
+            if(seq>10)  map.put("category_id",seq );
             map.put("address_id", addr_seq);
             map.put("posts",pService.getSubCategory(post.get().getProdId(),user_id,post_id));
 
