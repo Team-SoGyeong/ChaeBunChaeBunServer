@@ -5,28 +5,27 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-@Table(name = "c_board_comment")
-public class Comment {
+@Table(name = "community_like")
+public class CLike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name ="seq")
     private long seq;
 
-    @NonNull
-    @Column(name = "post_id")
-    private long postId;
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private CPosts post;
+
+    @Column(name = "author_id")
+    private long authorId;
 
     @Column(name = "member")
     private long member;
 
-    @Column(name = "contents")
-    private String content;
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "host_chk")
     private String host_chk;
 
@@ -34,11 +33,11 @@ public class Comment {
     private LocalDateTime regDate;
 
     @Builder
-    Comment(long seq,long postId,long member,String content, String host_chk,LocalDateTime regDate){
+    public CLike(long seq, CPosts post, long authorId, long member, String host_chk, LocalDateTime regDate){
         this.seq = seq;
-        this.postId = postId;
+        this.post = post;
+        this.authorId = authorId;
         this.member = member;
-        this.content = content;
         this.host_chk =host_chk;
         this.regDate = regDate;
     }

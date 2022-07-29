@@ -1,21 +1,29 @@
 package com.sogyeong.cbcb.community.controller;
 
+import com.sogyeong.cbcb.community.response.CPostsDTO;
+import com.sogyeong.cbcb.community.service.CPostsService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @RestController
-@RequestMapping(value = "community")
+@RequestMapping("/community")
 @AllArgsConstructor
-
 public class CommunityController {
-    @PersistenceContext
-    private EntityManager em;
+
+    private CPostsService cPostsService;
 
     //커뮤니티 글 목록
+    @GetMapping("{userId}")
+    public ResponseEntity<List<CPostsDTO>> getCommunityPosts(@PathVariable Long userId){
+        return ResponseEntity.ok().body(cPostsService.getAllCPosts(userId));
+    }
+
     //커뮤니티 글 상세
     //커뮤니티 글 쓰기
     //커뮤니티 글 수정
