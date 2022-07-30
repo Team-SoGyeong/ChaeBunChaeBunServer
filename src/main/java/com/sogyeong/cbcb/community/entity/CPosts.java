@@ -1,6 +1,7 @@
 package com.sogyeong.cbcb.community.entity;
 
 import com.sogyeong.cbcb.community.response.CPostsDTO;
+import com.sogyeong.cbcb.community.response.MypageCPostDTO;
 import com.sogyeong.cbcb.defaults.entity.Address;
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import lombok.*;
@@ -29,7 +30,19 @@ import java.time.LocalDateTime;
                 }
         )
 )
-
+@SqlResultSetMapping(
+        name = "MypageCPostsDTOMapping",
+        classes = @ConstructorResult(
+                targetClass = MypageCPostDTO.class,
+                columns = {
+                        @ColumnResult(name = "postId", type = Long.class),
+                        @ColumnResult(name = "userId", type = Long.class),
+                        @ColumnResult(name = "contents", type = String.class),
+                        @ColumnResult(name = "like_count", type = Integer.class),
+                        @ColumnResult(name = "comm_count", type = Integer.class),
+                }
+        )
+)
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)

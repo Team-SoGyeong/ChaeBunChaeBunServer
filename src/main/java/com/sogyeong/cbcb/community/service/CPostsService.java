@@ -2,6 +2,7 @@ package com.sogyeong.cbcb.community.service;
 
 import com.sogyeong.cbcb.community.repository.CPostsRepository;
 import com.sogyeong.cbcb.community.response.CPostsDTO;
+import com.sogyeong.cbcb.community.response.MypageCPostDTO;
 import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import lombok.AllArgsConstructor;
@@ -21,5 +22,12 @@ public class CPostsService {
         if(userInfoRepository.findById(userId).isEmpty())
             throw new IllegalArgumentException(ResultMessage.UNDEFINED_USER.getVal());
         return cPostsRepository.getAllCPosts(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MypageCPostDTO> getMypageCPosts(String type, Long userId){
+        if(userInfoRepository.findById(userId).isEmpty())
+            throw new IllegalArgumentException(ResultMessage.UNDEFINED_USER.getVal());
+        return cPostsRepository.getMypageCPosts(type,userId);
     }
 }

@@ -1,7 +1,11 @@
 package com.sogyeong.cbcb.community.controller;
 
 import com.sogyeong.cbcb.community.response.CPostsDTO;
+import com.sogyeong.cbcb.community.response.MypageCPostDTO;
 import com.sogyeong.cbcb.community.service.CPostsService;
+import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
+import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
+import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,16 +24,20 @@ public class CommunityController {
 
     //커뮤니티 글 목록
     @GetMapping("{userId}")
-    public ResponseEntity<List<CPostsDTO>> getCommunityPosts(@PathVariable Long userId){
-        return ResponseEntity.ok().body(cPostsService.getAllCPosts(userId));
+    public ResponseEntity<? extends BasicResponse> getCommunityPosts(@PathVariable Long userId){
+        return ResponseEntity.ok().body( new CommonResponse(cPostsService.getAllCPosts(userId), ResultMessage.RESULT_OK.getVal()));
     }
 
     //커뮤니티 글 상세
     //커뮤니티 글 쓰기
     //커뮤니티 글 수정
     //커뮤니티 글 삭제
-    //내가 쓴 댓글리스트
-    //내가 쓴 글 리스트
+
+    //내가 쓴 댓글리스트 & 내가 쓴 글 리스트
+    @GetMapping("/{type}/{userId}")
+    public ResponseEntity<? extends BasicResponse> getMypageCommunityPosts(@PathVariable String type, @PathVariable Long userId){
+        return ResponseEntity.ok().body( new CommonResponse(cPostsService.getMypageCPosts(type,userId), ResultMessage.RESULT_OK.getVal()));
+    }
     //커뮤니티 댓글 리스트
     //커뮤니티 댓글 수정
     //커뮤니티 댓글 삭제
