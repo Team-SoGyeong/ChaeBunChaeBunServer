@@ -39,6 +39,10 @@ public class CommunityController {
         return ResponseEntity.ok().body( new CommonResponse(cPostsService.getMypageCPosts(type,userId), ResultMessage.RESULT_OK.getVal()));
     }
     //커뮤니티 댓글 리스트
+    @GetMapping("/comment/{postId}")
+    public ResponseEntity<? extends BasicResponse> getCommentTOPosts(@PathVariable Long postId){
+        return ResponseEntity.ok().body( new CommonResponse(cPostsService.getCommToPost(postId), ResultMessage.RESULT_OK.getVal()));
+    }
     //커뮤니티 댓글 수정
     //커뮤니티 댓글 삭제
     //글 숨기기

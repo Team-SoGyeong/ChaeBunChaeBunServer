@@ -22,6 +22,7 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
                         "from community_posts cp " +
                         "join user_info ui on cp.user_id = ui.info_id " +
                         "join default_address da on cp.address_id = da.local_code " +
+                        "where cp.seq not in (select post_id from community_opinion  where types ='blind' and author_id = :userId) "+
                         "order by cp.create_date desc", "CPostsDTOMapping")
                 .setParameter("userId", userId)
                 .getResultList();
@@ -44,8 +45,8 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
             query = "select cp.seq as postId, ui.info_id as userId, cp.contents, " +
                     "(select count(*) from community_like cl where cp.seq = cl.post_id and cl.author_id <> :userId ) as like_count, " +
                     "(select count(*) from  community_comment cc where cp.seq = cc.post_id ) as comm_count " +
-                    "from community_comment cc " +
-                    "join community_posts cp on cc.post_id = cp.seq " +
+                    "from community_posts cp  " +
+                    "left join community_comment cc on cc.post_id = cp.seq " +
                     "join user_info ui on cp.user_id = ui.info_id " +
                     "where cc.member =:userId and cp.seq not in (select post_id from community_opinion  where types ='blind' and author_id = :userId) " +
                     "order by cp.create_date desc";

@@ -43,6 +43,7 @@ import java.time.LocalDateTime;
                 }
         )
 )
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
