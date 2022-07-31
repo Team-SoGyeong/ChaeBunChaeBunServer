@@ -52,6 +52,7 @@ public enum ResultMessage {
     ALREADY_USED_NIK("이미 사용 중인 닉네임 입니다. 다른 닉네임을 입력하세요."),
 
     // 4. 커뮤니티
+    TYPE_ERROR("잘못된 타입명 입력했습니다. post/comm을 입력해주세요."),
 
     // 5. 공통
     UNDEFINED_USER("존재하지 않는 사용자 입니다. 다시 시도 해주세요"),

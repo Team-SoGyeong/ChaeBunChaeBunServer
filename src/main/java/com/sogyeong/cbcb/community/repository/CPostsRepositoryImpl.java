@@ -18,7 +18,8 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
                         "date_format(cp.create_date,'%m/%d') as create_date, " +
                         "cp.img1, cp.img2, cp.img3, cp.img4, cp.img5, " +
                         "(select count(*) from community_like cl where cp.seq = cl.post_id) as like_count, " +
-                        "exists(select * from community_like cl where cl.member = :userId and cl.post_id = cp.seq) as is_like " +
+                        "exists(select * from community_like cl where cl.member = :userId and cl.post_id = cp.seq) as is_like, " +
+                        "(select count(*) from  community_comment cc where cp.seq = cc.post_id) as comm_count " +
                         "from community_posts cp " +
                         "join user_info ui on cp.user_id = ui.info_id " +
                         "join default_address da on cp.address_id = da.local_code " +
@@ -41,7 +42,7 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
                     "where cp.user_id =:userId and cp.seq not in (select post_id from community_opinion  where types ='blind' and author_id = :userId) " +
                     "order by cp.create_date desc";
         }
-        if(type.equals("comm")){
+        else if(type.equals("comm")){
             query = "select cp.seq as postId, ui.info_id as userId, cp.contents, " +
                     "(select count(*) from community_like cl where cp.seq = cl.post_id and cl.author_id <> :userId ) as like_count, " +
                     "(select count(*) from  community_comment cc where cp.seq = cc.post_id ) as comm_count " +

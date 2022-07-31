@@ -29,6 +29,8 @@ public class CPostsService {
 
     @Transactional(readOnly = true)
     public List<MypageCPostDTO> getMypageCPosts(String type, Long userId){
+        if (!(type.equals("post") || type.equals("comm")))
+            throw new IllegalArgumentException(ResultMessage.TYPE_ERROR.getVal());
         if(userInfoRepository.findById(userId).isEmpty())
             throw new IllegalArgumentException(ResultMessage.UNDEFINED_USER.getVal());
         return cPostsRepository.getMypageCPosts(type,userId);
