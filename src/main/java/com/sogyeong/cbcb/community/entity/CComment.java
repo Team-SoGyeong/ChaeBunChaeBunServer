@@ -1,10 +1,25 @@
 package com.sogyeong.cbcb.community.entity;
 
+import com.sogyeong.cbcb.community.response.CCommentDTO;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@SqlResultSetMapping(
+        name = "CCommentDTOMapping",
+        classes = @ConstructorResult(
+                targetClass = CCommentDTO.class,
+                columns = {
+                        @ColumnResult(name = "postId", type = Long.class),
+                        @ColumnResult(name = "commId", type = Long.class),
+                        @ColumnResult(name = "profile", type = String.class),
+                        @ColumnResult(name = "nickname", type = String.class),
+                        @ColumnResult(name = "contents", type = String.class),
+                        @ColumnResult(name = "create_date", type = String.class),
+                }
+        )
+)
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
