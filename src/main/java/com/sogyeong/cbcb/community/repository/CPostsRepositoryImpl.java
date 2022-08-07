@@ -1,5 +1,7 @@
 package com.sogyeong.cbcb.community.repository;
 
+import com.sogyeong.cbcb.community.entity.CComment;
+import com.sogyeong.cbcb.community.entity.CPosts;
 import com.sogyeong.cbcb.community.response.CPostsDTO;
 import com.sogyeong.cbcb.community.response.MypageCPostDTO;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +14,7 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
     private final EntityManager em;
 
     @Override
-    public List<CPostsDTO> getAllCPosts(Long userId) {
+    public List<CPostsDTO> getAllCPosts(Long postId, Long userId) {
         return em.createNativeQuery(
                 "select cp.seq, ui.profile, ui.nickname, da.neighborhood, cp.contents, " +
                         "date_format(cp.create_date,'%m/%d') as create_date, " +
@@ -24,8 +26,10 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
                         "join user_info ui on cp.user_id = ui.info_id " +
                         "join default_address da on cp.address_id = da.local_code " +
                         "where cp.seq not in (select post_id from community_opinion  where types ='blind' and author_id = :userId) "+
+                        "and (case when :postId>0 then cp.seq else 1 end ) = (case when :postId>0 then :postId  else 1 end ) "+
                         "order by cp.create_date desc", "CPostsDTOMapping")
                 .setParameter("userId", userId)
+                .setParameter("postId",postId.intValue())
                 .getResultList();
     }
 
@@ -57,6 +61,18 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
                         query, "MypageCPostsDTOMapping")
                 .setParameter("userId", userId)
                 .getResultList();
+    }
+    @Override
+    public boolean delPostById(Long postId)
+    {
+        try {
+            em.createNativeQuery("DELETE FROM community_posts WHERE seq = ?", CPosts.class)
+                    .setParameter(1, postId)
+                    .executeUpdate();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
 
