@@ -30,10 +30,15 @@ public class CommunityController {
     @ApiOperation("커뮤니티 글 목록")
     @GetMapping("{userId}")
     public CommonResponse<List<CPostsDTO>, String> getCommunityPosts(@PathVariable Long userId){
-        return new CommonResponse(cPostsService.getAllCPosts(userId), ResultMessage.RESULT_OK.getVal());
+        return new CommonResponse(cPostsService.getAllCPosts(0L, userId), ResultMessage.RESULT_OK.getVal());
     }
 
     //커뮤니티 글 상세
+    @ApiOperation("커뮤니티 글 상세")
+    @GetMapping("/detail/{postId}/{userId}")
+    public CommonResponse<List<CPostsDTO>, String> getCommunityPostsDetail(@PathVariable Long postId,@PathVariable Long userId){
+        return new CommonResponse(cPostsService.getAllCPosts(postId , userId), ResultMessage.RESULT_OK.getVal());
+    }
     //커뮤니티 글 쓰기
     //커뮤니티 글 수정
     //커뮤니티 글 삭제

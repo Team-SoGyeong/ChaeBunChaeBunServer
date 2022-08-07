@@ -21,11 +21,16 @@ public class CPostsService {
     private final UserInfoRepository userInfoRepository;
 
     @Transactional(readOnly = true)
-    public List<CPostsDTO> getAllCPosts(Long userId){
+    public List<CPostsDTO> getAllCPosts(Long postId,Long userId){
         if(userInfoRepository.findById(userId).isEmpty())
             throw new IllegalArgumentException(ResultMessage.UNDEFINED_USER.getVal());
-        return cPostsRepository.getAllCPosts(userId);
+        if(postId>0){
+            if(cPostsRepository.findById(postId).isEmpty())
+            throw new IllegalArgumentException(ResultMessage.RESULT_FAILED.getVal());
+        }
+        return cPostsRepository.getAllCPosts(postId,userId);
     }
+
 
     @Transactional(readOnly = true)
     public List<MypageCPostDTO> getMypageCPosts(String type, Long userId){
