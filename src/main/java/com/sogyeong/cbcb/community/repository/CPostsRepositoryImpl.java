@@ -1,5 +1,7 @@
 package com.sogyeong.cbcb.community.repository;
 
+import com.sogyeong.cbcb.community.entity.CComment;
+import com.sogyeong.cbcb.community.entity.CPosts;
 import com.sogyeong.cbcb.community.response.CPostsDTO;
 import com.sogyeong.cbcb.community.response.MypageCPostDTO;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +61,18 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
                         query, "MypageCPostsDTOMapping")
                 .setParameter("userId", userId)
                 .getResultList();
+    }
+    @Override
+    public boolean delPostById(Long postId)
+    {
+        try {
+            em.createNativeQuery("DELETE FROM community_posts WHERE seq = ?", CPosts.class)
+                    .setParameter(1, postId)
+                    .executeUpdate();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
 

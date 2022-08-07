@@ -10,4 +10,6 @@ public interface CPostsRepositoryCustom {
     List<CPostsDTO> getAllCPosts(Long postId, Long userId);
 
     public List<MypageCPostDTO> getMypageCPosts(String type, Long userId);
+
+    boolean delPostById(Long postId);
 }
