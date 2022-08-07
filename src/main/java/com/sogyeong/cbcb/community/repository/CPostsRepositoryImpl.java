@@ -58,6 +58,24 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
                 .setParameter("userId", userId)
                 .getResultList();
     }
+
+    @Override
+    public CPostsDTO getCPostByPostId(Long postId) {
+        return (CPostsDTO) em.createNativeQuery(
+                "select cp.seq, ui.profile, ui.nickname, da.neighborhood, cp.contents, " +
+                        "date_format(cp.create_date,'%m/%d') as create_date, " +
+                        "cp.img1, cp.img2, cp.img3, cp.img4, cp.img5, " +
+                        "(select count(*) from community_like cl where cp.seq = cl.post_id) as like_count, " +
+                        "false as is_like, " +
+                        "(select count(*) from  community_comment cc where cp.seq = cc.post_id) as comm_count " +
+                        "from community_posts cp " +
+                        "join user_info ui on cp.user_id = ui.info_id " +
+                        "join default_address da on cp.address_id = da.local_code " +
+                        "where cp.seq = :postId "+
+                        "order by cp.create_date desc", "CPostsDTOMapping")
+                .setParameter("postId", postId)
+                .getSingleResult();
+    }
 }
 
 
