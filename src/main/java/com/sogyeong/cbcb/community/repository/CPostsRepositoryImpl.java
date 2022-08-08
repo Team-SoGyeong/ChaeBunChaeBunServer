@@ -81,8 +81,7 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
                 .getSingleResult();
                 
     @Override
-    public boolean delPostById(Long postId)
-    {
+    public boolean delPostById(Long postId) {
         try {
             em.createNativeQuery("DELETE FROM community_posts WHERE seq = ?", CPosts.class)
                     .setParameter(1, postId)
