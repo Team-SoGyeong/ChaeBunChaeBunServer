@@ -4,12 +4,14 @@ import com.sogyeong.cbcb.community.entity.CComment;
 import com.sogyeong.cbcb.community.entity.CPosts;
 import com.sogyeong.cbcb.community.repository.CCommentRepository;
 import com.sogyeong.cbcb.community.repository.CPostsRepository;
+import com.sogyeong.cbcb.community.request.CPostRequest;
 import com.sogyeong.cbcb.community.response.CCommentDTO;
 import com.sogyeong.cbcb.community.response.CPostsDTO;
 import com.sogyeong.cbcb.community.response.MypageCPostDTO;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
+import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,6 +40,18 @@ public class CPostsService {
         return cPostsRepository.getAllCPosts(postId,userId);
     }
 
+    @Transactional
+    public CPostsDTO saveCPost(Long authorId, CPostRequest cPostRequest){
+        Optional<UserInfo> user = userInfoRepository.findById(authorId);
+        if(user.isEmpty())
+            throw new IllegalArgumentException(ResultMessage.UNDEFINED_USER.getVal());
+        CPosts newPost = cPostsRepository.save(cPostRequest.newPost(user.get()));
+        return getCPostByPostId(newPost.getSeq());
+    }
+
+    private CPostsDTO getCPostByPostId(Long postId){
+        return cPostsRepository.getCPostByPostId(postId);
+    }
 
     @Transactional(readOnly = true)
     public List<MypageCPostDTO> getMypageCPosts(String type, Long userId){

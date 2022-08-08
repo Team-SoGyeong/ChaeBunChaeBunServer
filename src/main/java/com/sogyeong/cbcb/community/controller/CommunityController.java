@@ -1,10 +1,11 @@
 package com.sogyeong.cbcb.community.controller;
 
+import com.sogyeong.cbcb.community.entity.CPosts;
+import com.sogyeong.cbcb.community.request.CPostRequest;
 import com.sogyeong.cbcb.community.response.CCommentDTO;
 import com.sogyeong.cbcb.community.response.CPostsDTO;
 import com.sogyeong.cbcb.community.response.MypageCPostDTO;
 import com.sogyeong.cbcb.community.service.CPostsService;
-import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
 import io.swagger.annotations.Api;
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -37,6 +39,13 @@ public class CommunityController {
         return new CommonResponse(cPostsService.getAllCPosts(postId , userId), ResultMessage.RESULT_OK.getVal());
     }
     //커뮤니티 글 쓰기
+    @ApiOperation("커뮤니티 글 쓰기")
+    @PostMapping("{userId}")
+    public CommonResponse<CPostsDTO, String> writePost(@PathVariable Long userId,
+                                                       @RequestBody CPostRequest cPostRequest){
+        return new CommonResponse(cPostsService.saveCPost(userId, cPostRequest), ResultMessage.RESULT_OK.getVal());
+    }
+
     //커뮤니티 글 수정
     //커뮤니티 글 삭제
     @ApiOperation("커뮤니티 댓글 삭제")
