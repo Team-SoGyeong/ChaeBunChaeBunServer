@@ -2,6 +2,9 @@ package com.sogyeong.cbcb.community.repository;
 
 import com.sogyeong.cbcb.community.entity.CComment;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 
 public interface CCommentRepository extends JpaRepository<CComment,Long> , CCommentRepositoryCustom {
@@ -10,9 +13,9 @@ public interface CCommentRepository extends JpaRepository<CComment,Long> , CComm
 //    int getLastSeq(); // 댓글 삽입전 최신의 댓글 일련 번호를 얻기 위해 필요
 //
 //    @Modifying
-//    @Query(value = "DELETE FROM board_comment WHERE seq = :commentId", nativeQuery = true)
-//    void deleteById(@Param(value="commentId") long commentId); // 댓글 삭제
-//
+//    @Query(value = "DELETE FROM community_comment WHERE seq = :commentId", nativeQuery = true)
+//    void deleteById(@Param(value="commId") long commentId); // 댓글 삭제
+
 //    @Modifying
 //    @Query(value = "DELETE FROM board_comment WHERE post_id = :postId", nativeQuery = true)
 //    void deleteByPostId(@Param(value="postId")long postId);

@@ -1,5 +1,6 @@
 package com.sogyeong.cbcb.community.repository;
 
+import com.sogyeong.cbcb.community.entity.CComment;
 import com.sogyeong.cbcb.community.response.CCommentDTO;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +24,18 @@ public class CCommentRepositoryImpl implements CCommentRepositoryCustom{
                 .setParameter("postId", postId)
                 .getResultList();
     }
-
+    @Override
+    public boolean delCommentById(Long commId)
+    {
+        try {
+            em.createNativeQuery("DELETE FROM community_comment WHERE seq = ?", CComment.class)
+                    .setParameter(1, commId)
+                    .executeUpdate();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
 
 
