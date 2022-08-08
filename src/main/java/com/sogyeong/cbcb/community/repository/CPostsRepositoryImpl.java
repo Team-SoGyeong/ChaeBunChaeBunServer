@@ -79,6 +79,7 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
                         "order by cp.create_date desc", "CPostsDTOMapping")
                 .setParameter("postId", postId)
                 .getSingleResult();
+    }
                 
     @Override
     public boolean delPostById(Long postId) {
