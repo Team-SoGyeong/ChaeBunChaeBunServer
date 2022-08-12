@@ -1,21 +1,19 @@
 package com.sogyeong.cbcb.community.controller;
 
-import com.sogyeong.cbcb.community.entity.CPosts;
 import com.sogyeong.cbcb.community.request.CPostRequest;
 import com.sogyeong.cbcb.community.response.CCommentDTO;
 import com.sogyeong.cbcb.community.response.CPostsDTO;
 import com.sogyeong.cbcb.community.response.MypageCPostDTO;
 import com.sogyeong.cbcb.community.service.CPostsService;
+import com.sogyeong.cbcb.config.S3Uploader;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -23,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CommunityController {
 
-    private CPostsService cPostsService;
+    private final CPostsService cPostsService;
 
     //커뮤니티 글 목록
     @ApiOperation("커뮤니티 글 목록")
@@ -40,10 +38,11 @@ public class CommunityController {
     }
     //커뮤니티 글 쓰기
     @ApiOperation("커뮤니티 글 쓰기")
-    @PostMapping("{userId}")
+    @PostMapping(path = "{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CommonResponse<CPostsDTO, String> writePost(@PathVariable Long userId,
-                                                       @RequestBody CPostRequest cPostRequest){
-        return new CommonResponse(cPostsService.saveCPost(userId, cPostRequest), ResultMessage.RESULT_OK.getVal());
+                                                       @ModelAttribute CPostRequest request
+                                                       ){
+        return new CommonResponse(cPostsService.saveCPost(userId, request), ResultMessage.RESULT_OK.getVal());
     }
 
     //커뮤니티 글 수정
