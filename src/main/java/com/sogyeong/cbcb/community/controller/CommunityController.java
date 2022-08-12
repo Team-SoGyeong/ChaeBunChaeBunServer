@@ -47,10 +47,10 @@ public class CommunityController {
 
     //커뮤니티 글 수정
     //커뮤니티 글 삭제
-    @ApiOperation("커뮤니티 댓글 삭제")
-    @DeleteMapping("/{posytId}/{userId}")
-    public CommonResponse delPosts(@PathVariable Long posytId,@PathVariable Long userId){
-        return new CommonResponse(cPostsService.delPost(posytId,userId));
+    @ApiOperation("커뮤니티 글 삭제")
+    @DeleteMapping("/{postId}/{userId}")
+    public CommonResponse delPosts(@PathVariable Long postId,@PathVariable Long userId){
+        return new CommonResponse(cPostsService.delPost(postId,userId));
     }
 
     //내가 쓴 댓글리스트 & 내가 쓴 글 리스트
@@ -67,11 +67,11 @@ public class CommunityController {
     public CommonResponse<List<CCommentDTO>, String> getCommentTOPosts(@PathVariable Long postId){
         return new CommonResponse(cPostsService.getCommToPost(postId), ResultMessage.RESULT_OK.getVal());
     }
-    //커뮤니티 댓글 수정
+    //커뮤니티 댓글 작성
     //커뮤니티 댓글 삭제
     @ApiOperation("커뮤니티 댓글 삭제")
     @DeleteMapping("/comment/{commId}/{userId}")
-    public CommonResponse delCommentTOPosts(@PathVariable Long commId,@PathVariable Long userId){
+    public CommonResponse delCommentTOPosts(@PathVariable Long commId, @PathVariable Long userId){
         return new CommonResponse(cPostsService.delCommToPost(commId,userId));
     }
     //글 숨기기
