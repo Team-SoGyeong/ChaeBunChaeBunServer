@@ -1,6 +1,7 @@
 package com.sogyeong.cbcb.community.service;
 
 import com.sogyeong.cbcb.community.entity.CComment;
+import com.sogyeong.cbcb.community.entity.CImages;
 import com.sogyeong.cbcb.community.entity.CPosts;
 import com.sogyeong.cbcb.community.repository.CCommentRepository;
 import com.sogyeong.cbcb.community.repository.CPostsRepository;
@@ -8,26 +9,29 @@ import com.sogyeong.cbcb.community.request.CPostRequest;
 import com.sogyeong.cbcb.community.response.CCommentDTO;
 import com.sogyeong.cbcb.community.response.CPostsDTO;
 import com.sogyeong.cbcb.community.response.MypageCPostDTO;
-import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
-import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
+import com.sogyeong.cbcb.config.S3Uploader;
+import com.sogyeong.cbcb.defaults.entity.Address;
 import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.*;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class CPostsService {
     private final CPostsRepository cPostsRepository;
     private final CCommentRepository cCommRepository;
     private final UserInfoRepository userInfoRepository;
+    private final S3Uploader s3Uploader;
 
     @Transactional(readOnly = true)
     public List<CPostsDTO> getAllCPosts(Long postId,Long userId){
@@ -45,7 +49,30 @@ public class CPostsService {
         Optional<UserInfo> user = userInfoRepository.findById(authorId);
         if(user.isEmpty())
             throw new IllegalArgumentException(ResultMessage.UNDEFINED_USER.getVal());
-        CPosts newPost = cPostsRepository.save(cPostRequest.newPost(user.get()));
+
+        CImages cImages = new CImages();
+        List<MultipartFile> imgs = cPostRequest.getImgs();
+        if (!(imgs == null) && !imgs.isEmpty()){
+            List<String> fileNames = new ArrayList<>();
+            imgs.forEach(file -> {
+                try {
+                    fileNames.add(s3Uploader.upload(file, "community/" + authorId));
+                } catch (IOException e) {
+                    log.info("파일 변환 중 오류: ", e);
+                }
+            });
+            cImages.setCImages(fileNames);
+        }
+        CPosts toSave
+                = CPosts.builder()
+                .cImages(cImages)
+                .contents(cPostRequest.getContent())
+                .user(user.get())
+                .address(Address.builder().seq(user.get().getAddr()).build())
+                .create_date(LocalDateTime.now())
+                .update_date(LocalDateTime.now())
+                .build();
+        CPosts newPost = cPostsRepository.save(toSave);
         return getCPostByPostId(newPost.getSeq());
     }
 
