@@ -2,20 +2,27 @@ package com.sogyeong.cbcb.community.service;
 
 import com.sogyeong.cbcb.community.entity.CComment;
 import com.sogyeong.cbcb.community.entity.CImages;
+import com.sogyeong.cbcb.community.entity.COpinion;
 import com.sogyeong.cbcb.community.entity.CPosts;
 import com.sogyeong.cbcb.community.repository.CCommentRepository;
+import com.sogyeong.cbcb.community.repository.COpinionRepository;
 import com.sogyeong.cbcb.community.repository.CPostsRepository;
 import com.sogyeong.cbcb.community.request.CPostRequest;
+import com.sogyeong.cbcb.community.request.CPostsBlindRequest;
 import com.sogyeong.cbcb.community.response.CCommentDTO;
 import com.sogyeong.cbcb.community.response.CPostsDTO;
 import com.sogyeong.cbcb.community.response.MypageCPostDTO;
 import com.sogyeong.cbcb.config.S3Uploader;
 import com.sogyeong.cbcb.defaults.entity.Address;
+import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
+import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +38,7 @@ public class CPostsService {
     private final CPostsRepository cPostsRepository;
     private final CCommentRepository cCommRepository;
     private final UserInfoRepository userInfoRepository;
+    private final COpinionRepository cOpinionRepository;
     private final S3Uploader s3Uploader;
 
     @Transactional(readOnly = true)
@@ -76,6 +84,33 @@ public class CPostsService {
         return getCPostByPostId(newPost.getSeq());
     }
 
+    @Transactional
+    public String saveBlind(CPostsBlindRequest blindRequest){
+        boolean isUser = userInfoRepository.existsById(blindRequest.getAuthor_id());
+        Optional<CPosts> posts = cPostsRepository.findById(blindRequest.getPost_id());
+        if (!isUser) {
+            return ResultMessage.UNDEFINED_USER.getVal();
+        }
+        else if(posts.isEmpty()) {
+            return ResultMessage.UNDEFINED_POST.getVal();
+        }
+        else{
+            COpinion toSave
+                    = COpinion.builder()
+                    .type(COpinion.Otype.BLIND)
+                    .authorId(blindRequest.getAuthor_id())
+                    .post(posts.get())
+                    .cmtId(blindRequest.getCmt_id())
+                    .reason_num(blindRequest.getReason_num())
+                    .reason(blindRequest.getReason())
+                    .build();
+            COpinion newOpinion = cOpinionRepository.save(toSave);
+            if(newOpinion.getSeq()>0)
+                return  ResultMessage.BLIND_OK.getVal();
+            else
+                return ResultMessage.BLIND_FAILED.getVal();
+        }
+    }
     private CPostsDTO getCPostByPostId(Long postId){
         return cPostsRepository.getCPostByPostId(postId);
     }

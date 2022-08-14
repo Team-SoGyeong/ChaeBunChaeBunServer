@@ -1,17 +1,21 @@
 package com.sogyeong.cbcb.community.controller;
 
+import com.sogyeong.cbcb.board.model.vo.ReportVO;
 import com.sogyeong.cbcb.community.request.CPostRequest;
+import com.sogyeong.cbcb.community.request.CPostsBlindRequest;
 import com.sogyeong.cbcb.community.response.CCommentDTO;
 import com.sogyeong.cbcb.community.response.CPostsDTO;
 import com.sogyeong.cbcb.community.response.MypageCPostDTO;
 import com.sogyeong.cbcb.community.service.CPostsService;
 import com.sogyeong.cbcb.config.S3Uploader;
+import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -75,6 +79,11 @@ public class CommunityController {
         return new CommonResponse(cPostsService.delCommToPost(commId,userId));
     }
     //글 숨기기
+    @ApiOperation("글 숨기기")
+    @PostMapping("/blind")
+    public CommonResponse saveBlind( @ModelAttribute CPostsBlindRequest blindRequest) {
+        return new CommonResponse(cPostsService.saveBlind(blindRequest));
+    }
     //글/댓글 신고
     // 알림 리스트
     // 좋아용 리스트
