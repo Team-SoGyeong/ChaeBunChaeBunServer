@@ -8,19 +8,16 @@ import com.sogyeong.cbcb.community.repository.CPostsRepository;
 import com.sogyeong.cbcb.community.request.CPostRequest;
 import com.sogyeong.cbcb.community.request.CPostsBlindRequest;
 import com.sogyeong.cbcb.community.response.CCommentDTO;
+import com.sogyeong.cbcb.community.response.CLikeStatusDTO;
 import com.sogyeong.cbcb.community.response.CPostsDTO;
 import com.sogyeong.cbcb.community.response.MypageCPostDTO;
 import com.sogyeong.cbcb.config.S3Uploader;
 import com.sogyeong.cbcb.defaults.entity.Address;
-import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
-import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import com.sogyeong.cbcb.mypage.repository.UserInfoRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import static java.lang.Integer.parseInt;
 
 @Slf4j
 @Service
@@ -111,8 +110,49 @@ public class CPostsService {
                 return ResultMessage.BLIND_FAILED.getVal();
         }
     }
+    @Transactional
+    public String saveReport(CPostsBlindRequest blindRequest){
+        boolean isUser = userInfoRepository.existsById(blindRequest.getAuthor_id());
+        Optional<CPosts> posts = cPostsRepository.findById(blindRequest.getPost_id());
+        if (!isUser) {
+            return ResultMessage.UNDEFINED_USER.getVal();
+        }
+        else if(posts.isEmpty()) {
+            return ResultMessage.UNDEFINED_POST.getVal();
+        }
+        else{
+            COpinion.Otype typ = COpinion.Otype.REPORT;
+            String ment = "커뮤니티 글";
+
+            if(parseInt(String.valueOf(blindRequest.getCmt_id()))>0){
+                typ = COpinion.Otype.REPORT_CMT  ;
+                ment = "커뮤니티 댓글";
+            }
+
+            COpinion toSave
+                    = COpinion.builder()
+                    .type(typ)
+                    .authorId(blindRequest.getAuthor_id())
+                    .post(posts.get())
+                    .cmtId(blindRequest.getCmt_id())
+                    .reason_num(blindRequest.getReason_num())
+                    .reason(blindRequest.getReason())
+                    .regDate(LocalDateTime.now())
+                    .build();
+            COpinion newOpinion = cOpinionRepository.save(toSave);
+            if(newOpinion.getSeq()>0)
+                return  ResultMessage.REPORT_OK.getEditVal(ment);
+            else
+                return ResultMessage.REPORT_FAILED.getEditVal(ment);
+        }
+    }
+
     private CPostsDTO getCPostByPostId(Long postId){
         return cPostsRepository.getCPostByPostId(postId);
+    }
+
+    public List<CLikeStatusDTO> getLikeStatus(Long postId, Long userId){
+        return likeRepository.existLikeStatus(postId,userId);
     }
 
     @Transactional(readOnly = true)
@@ -186,8 +226,8 @@ public class CPostsService {
             return ResultMessage.NOT_LIKE_SELF.getVal();
         }
         else{
-            if(likeRepository.existWish(postId,userId)) {
-                if(likeRepository.delWishById(postId,userId)){
+            if(likeRepository.existLike(postId,userId)) {
+                if(likeRepository.delLikeById(postId,userId)){
                     return  ResultMessage.LIKE_CANCEL_OK.getVal();
                 }
                 else return ResultMessage.LIKE_CANCEL_FAILED.getVal();

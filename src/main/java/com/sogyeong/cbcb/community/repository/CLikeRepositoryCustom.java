@@ -1,7 +1,13 @@
 package com.sogyeong.cbcb.community.repository;
 
-public interface CLikeRepositoryCustom {
-    boolean delWishById(Long postId, Long userId);
+import com.sogyeong.cbcb.community.response.CLikeStatusDTO;
 
-    boolean existWish(Long postId, Long userId);
+import java.util.List;
+
+public interface CLikeRepositoryCustom {
+    boolean delLikeById(Long postId, Long userId);
+
+    boolean existLike(Long postId, Long userId);
+
+    List<CLikeStatusDTO> existLikeStatus(Long postId, Long userId);
 }
