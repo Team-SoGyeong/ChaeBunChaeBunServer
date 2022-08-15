@@ -1,9 +1,10 @@
 package com.sogyeong.cbcb.community.repository;
 
 import com.sogyeong.cbcb.community.entity.CLike;
+import com.sogyeong.cbcb.community.entity.CPosts;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CWishRepository extends JpaRepository<CLike,Long> {
+public interface CLikeRepository extends JpaRepository<CLike,Long>, CLikeRepositoryCustom {
 
 //    @Query(value = "select case when count(seq) = 0 then 0 else seq end as lastSeq from board_wish order by seq desc ", nativeQuery = true)
 //    int getLastSeq(); // 찜 삽입전 최신의 댓글 일련 번호를 얻기 위해 필요
@@ -23,4 +24,8 @@ public interface CWishRepository extends JpaRepository<CLike,Long> {
 //    void deleteByPostId(@Param(value="post") long postID);
 //
 //    Boolean existsByPostId(long postId);
+
+    Boolean existsCLikeByPostAndAndAuthorId(CPosts posts, long authorId);
+
+    void deleteCLikeByAuthorIdAndAndPost(long authorId,CPosts posts);
 }

@@ -14,12 +14,12 @@ import javax.validation.constraints.NotNull;
 public class CPostsBlindRequest {
     @NotNull
     private long post_id;
-    @NotNull
+
     private long cmt_id;
     @NotNull
     private long author_id;
     @NotNull
     private int reason_num;
-    @NotNull
+
     private String reason;
 }

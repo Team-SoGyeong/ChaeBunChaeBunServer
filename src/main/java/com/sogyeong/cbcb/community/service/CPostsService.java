@@ -1,10 +1,8 @@
 package com.sogyeong.cbcb.community.service;
 
-import com.sogyeong.cbcb.community.entity.CComment;
-import com.sogyeong.cbcb.community.entity.CImages;
-import com.sogyeong.cbcb.community.entity.COpinion;
-import com.sogyeong.cbcb.community.entity.CPosts;
+import com.sogyeong.cbcb.community.entity.*;
 import com.sogyeong.cbcb.community.repository.CCommentRepository;
+import com.sogyeong.cbcb.community.repository.CLikeRepository;
 import com.sogyeong.cbcb.community.repository.COpinionRepository;
 import com.sogyeong.cbcb.community.repository.CPostsRepository;
 import com.sogyeong.cbcb.community.request.CPostRequest;
@@ -39,6 +37,7 @@ public class CPostsService {
     private final CCommentRepository cCommRepository;
     private final UserInfoRepository userInfoRepository;
     private final COpinionRepository cOpinionRepository;
+    private  final CLikeRepository likeRepository;
     private final S3Uploader s3Uploader;
 
     @Transactional(readOnly = true)
@@ -103,6 +102,7 @@ public class CPostsService {
                     .cmtId(blindRequest.getCmt_id())
                     .reason_num(blindRequest.getReason_num())
                     .reason(blindRequest.getReason())
+                    .regDate(LocalDateTime.now())
                     .build();
             COpinion newOpinion = cOpinionRepository.save(toSave);
             if(newOpinion.getSeq()>0)
@@ -170,4 +170,43 @@ public class CPostsService {
 
     }
 
+    @Transactional(readOnly = true)
+    public String saveWish(Long postId, Long userId) {
+
+        boolean isUser = userInfoRepository.existsById(userId);
+        Optional<CPosts> posts = cPostsRepository.findById(postId);
+        UserInfo author = posts.get().getUser();
+        if (!isUser) {
+            return ResultMessage.UNDEFINED_USER.getVal();
+        }
+        else if(posts.isEmpty()) {
+            return ResultMessage.UNDEFINED_POST.getVal();
+        }
+        else if (author.getSeq() == userId){
+            return ResultMessage.NOT_LIKE_SELF.getVal();
+        }
+        else{
+            if(likeRepository.existWish(postId,userId)) {
+                if(likeRepository.delWishById(postId,userId)){
+                    return  ResultMessage.LIKE_CANCEL_OK.getVal();
+                }
+                else return ResultMessage.LIKE_CANCEL_FAILED.getVal();
+            }
+            else{
+                CLike toSave
+                        = CLike.builder()
+                        .post(posts.get())
+                        .authorId(author.getSeq())
+                        .member(userId)
+                        .host_chk("N")
+                        .regDate(LocalDateTime.now())
+                        .build();
+                CLike newLike = likeRepository.save(toSave);
+                if(newLike.getSeq()>0)
+                    return  ResultMessage.LIKE_OK.getVal();
+                else
+                    return ResultMessage.LIKE_FAILED.getVal();
+            }
+        }
+    }
 }

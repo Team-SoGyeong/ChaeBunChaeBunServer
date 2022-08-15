@@ -79,12 +79,22 @@ public class CommunityController {
         return new CommonResponse(cPostsService.delCommToPost(commId,userId));
     }
     //글 숨기기
-    @ApiOperation("글 숨기기")
+    @ApiOperation("커뮤니티 글 숨기기")
     @PostMapping("/blind")
     public CommonResponse saveBlind( @ModelAttribute CPostsBlindRequest blindRequest) {
         return new CommonResponse(cPostsService.saveBlind(blindRequest));
     }
     //글/댓글 신고
+    /*@ApiOperation("커뮤니티 글/댓글 신고")
+    @PostMapping("/report")
+    public CommonResponse saveReport( @ModelAttribute CPostsBlindRequest blindRequest) {
+        return new CommonResponse(cPostsService.saveBlind(blindRequest));
+    }*/
+    @ApiOperation("커뮤니티 글 좋아요")
+    @PostMapping("/wishlist/{postId}/{userId}")
+    public CommonResponse saveWish( @PathVariable("postId") Long postId, @PathVariable("userId") Long userId) {
+        return new CommonResponse(cPostsService.saveWish(postId,userId));
+    }
     // 알림 리스트
     // 좋아용 리스트
 }

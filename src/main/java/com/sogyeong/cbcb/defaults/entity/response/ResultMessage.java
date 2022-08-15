@@ -53,6 +53,12 @@ public enum ResultMessage {
 
     // 4. 커뮤니티
     TYPE_ERROR("잘못된 타입명 입력했습니다. post/comm을 입력해주세요."),
+    LIKE_OK("좋아요 성공"),
+    LIKE_FAILED("좋아요 실패"),
+    LIKE_CANCEL_OK("좋아요 취소 성공"),
+    LIKE_CANCEL_FAILED("좋아요 취소 실패"),
+    UNDEFINE_LIKE("존재하지 않는 좋아요내역 입니다. 다시 시도 해주세요"),
+    NOT_LIKE_SELF("자신의 글을 좋아요 없습니다."),
 
     // 5. 공통
     UNDEFINED_USER("존재하지 않는 사용자 입니다. 다시 시도 해주세요"),
