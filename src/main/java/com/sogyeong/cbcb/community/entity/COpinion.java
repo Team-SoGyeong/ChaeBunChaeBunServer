@@ -48,7 +48,7 @@ public class COpinion {
     }
 
     public enum Otype{
-        BLIND, REPORT
+        BLIND, REPORT, REPORT_CMT
     }
 
 }
