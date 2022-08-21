@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Table(name = "community_comment")
 public class CComment {

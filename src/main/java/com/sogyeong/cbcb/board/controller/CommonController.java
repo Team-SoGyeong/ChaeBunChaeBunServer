@@ -7,6 +7,7 @@ import com.sogyeong.cbcb.board.model.response.ResponseNotice;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
 import com.sogyeong.cbcb.board.repository.WishRepository;
 import com.sogyeong.cbcb.board.service.CommonService;
+import com.sogyeong.cbcb.community.service.CPostsService;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
@@ -31,6 +32,7 @@ public class CommonController {
     private WishRepository wishRepository;
     private CommonService cService;
     private MyPostService pService;
+    private CPostsService cPostsService;
 
     @PersistenceContext
     private EntityManager em;
@@ -163,6 +165,23 @@ public class CommonController {
         }
     }
 
+    @GetMapping("/common/notice/v2/{user_id}")
+    public ResponseEntity<? extends BasicResponse> getNoticeList_v2(@PathVariable("user_id") long user_id){
+        boolean isUser = userInfoRepository.existsById(user_id);
+        List list = cPostsService.getMyNotice(user_id);
+
+        if (!isUser) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse(ResultMessage.UNDEFINED_USER.getVal()));
+        }
+        else {
+
+            if (list.size() > 0)
+                return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.RESULT_OK.getVal()));
+            else
+                return ResponseEntity.ok().body(new CommonResponse(list, ResultMessage.RESULT_FAILED.getEditVal("게시글 관련 알림")));
+        }
+    }
     //찜, 댓글 알림 받은 리스트 클릭시 정보 자장
     @PutMapping("/common/notice/{case_type}/{notice_id}")
     public ResponseEntity<? extends BasicResponse> setNoticeList(@PathVariable("case_type") String types, @PathVariable("notice_id") long seq){
@@ -178,6 +197,26 @@ public class CommonController {
         }
         else if(types.equals("comment")) {
             int cilck2 = cService.hostClickByComment(seq);
+            if(cilck2==1){
+                return ResponseEntity.ok().body(new CommonResponse(ResultMessage.UPDATE_OK.getVal()));
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse(ResultMessage.UNDEFINE_COMMENT.getVal()));
+            }
+        }
+        else if(types.equals("like")) {
+            int cilck2 = cPostsService.hostClickByScrap(seq);
+            if(cilck2==1){
+                return ResponseEntity.ok().body(new CommonResponse(ResultMessage.UPDATE_OK.getVal()));
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse(ResultMessage.UNDEFINE_LIKE.getVal()));
+            }
+        }
+        else if(types.equals("community_m")) {
+            int cilck2 = cPostsService.hostClickByComment(seq);
             if(cilck2==1){
                 return ResponseEntity.ok().body(new CommonResponse(ResultMessage.UPDATE_OK.getVal()));
             }

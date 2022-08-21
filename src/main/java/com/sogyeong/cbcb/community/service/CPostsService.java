@@ -1,5 +1,8 @@
 package com.sogyeong.cbcb.community.service;
 
+import com.sogyeong.cbcb.board.entity.Comment;
+import com.sogyeong.cbcb.board.entity.Wish;
+import com.sogyeong.cbcb.board.model.response.ResponseNotice;
 import com.sogyeong.cbcb.community.entity.*;
 import com.sogyeong.cbcb.community.repository.CCommentRepository;
 import com.sogyeong.cbcb.community.repository.CLikeRepository;
@@ -248,5 +251,32 @@ public class CPostsService {
                     return ResultMessage.LIKE_FAILED.getVal();
             }
         }
+    }
+
+    public List getMyNotice(Long userId){
+        if(userInfoRepository.findById(userId).isEmpty())
+            throw new IllegalArgumentException(ResultMessage.UNDEFINED_USER.getVal());
+        else
+            return  cPostsRepository.getNoticeListAll(userId);
+    }
+
+    @Transactional(readOnly = false)
+    public int hostClickByScrap(long seq){
+        Optional<CLike> likes = likeRepository.findById(seq);
+        likes.ifPresent(updateWish->{
+            updateWish.setHost_chk("Y");
+            likeRepository.save(updateWish);
+        });
+        return likes.stream().count()==1 ? 1:-1;
+    }
+
+    @Transactional(readOnly = false)
+    public int hostClickByComment(long seq){
+        Optional<CComment> cmts = cCommRepository.findById(seq);
+        cmts.ifPresent(updateCmt->{
+            updateCmt.setHost_chk("Y");
+            cCommRepository.save(updateCmt);
+        });
+        return cmts.stream().count()==1 ? 1:-1;
     }
 }

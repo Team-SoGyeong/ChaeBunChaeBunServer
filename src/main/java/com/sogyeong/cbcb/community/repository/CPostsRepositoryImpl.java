@@ -1,12 +1,15 @@
 package com.sogyeong.cbcb.community.repository;
 
-import com.sogyeong.cbcb.community.entity.CComment;
+import com.sogyeong.cbcb.board.model.response.ResponseNotice;
 import com.sogyeong.cbcb.community.entity.CPosts;
 import com.sogyeong.cbcb.community.response.CPostsDTO;
 import com.sogyeong.cbcb.community.response.MypageCPostDTO;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.EntityManager;
+import javax.persistence.StoredProcedureQuery;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -79,6 +82,40 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
                         "order by cp.create_date desc", "CPostsDTOMapping")
                 .setParameter("postId", postId)
                 .getSingleResult();
+    }
+
+    @Override
+    public List<LinkedHashMap<String, Object>> getNoticeListAll(Long userId){
+        StoredProcedureQuery spqq =
+                em.createNamedStoredProcedureQuery(CPosts.sp_getNoticeList);
+        spqq.setParameter("_USERID", userId.intValue());
+        List resultList = spqq.getResultList();
+        List noticeList = new ArrayList<ResponseNotice>();
+        for (Object o:  resultList) {
+            Object[] res = (Object[]) o;
+
+            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+
+            map.put("notice_id", res[8]);
+            map.put("caseBy", res[0]);
+            map.put("nickname", res[10]);
+            map.put("post_id", res[13]);
+            map.put("category_id", res[14]);
+            map.put("title", res[1]);
+            map.put("img1", res[11]);
+            map.put("contents", res[12]);
+            map.put("buy_date", res[2]);
+            map.put("total_price", res[3]);
+            map.put("dates", res[5]);
+            map.put("isClick", res[7]);
+            map.put("isNew", res[15]);
+            map.put("isAuth", res[9]);
+
+
+            noticeList.add(map);
+
+        }
+        return noticeList;
     }
                 
     @Override

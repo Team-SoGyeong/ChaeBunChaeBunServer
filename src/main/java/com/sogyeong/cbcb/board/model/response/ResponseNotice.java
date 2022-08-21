@@ -1,5 +1,10 @@
 package com.sogyeong.cbcb.board.model.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
 public class ResponseNotice {
     private long notice_id;
     private long post_id;

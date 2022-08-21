@@ -9,6 +9,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+
 @SqlResultSetMapping(
         name = "CPostsDTOMapping",
         classes = @ConstructorResult(
@@ -45,11 +46,22 @@ import java.time.LocalDateTime;
         )
 )
 
+@NamedStoredProcedureQueries({
+        @NamedStoredProcedureQuery(
+                name = CPosts.sp_getNoticeList,
+                procedureName = "cbcb_db.getNoticeList",   //실제 DB쪽 프로시저 이름
+                parameters = {
+                        @StoredProcedureParameter(name = "_USERID", mode = ParameterMode.IN, type = Integer.class),
+                })
+})
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Table(name = "community_posts")
 public class CPosts {
+    public static final String sp_getNoticeList= "cbcb_db.getNoticeList";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long seq;
