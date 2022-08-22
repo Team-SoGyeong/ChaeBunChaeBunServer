@@ -8,9 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 import javax.persistence.EntityManager;
 import javax.persistence.StoredProcedureQuery;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
@@ -93,9 +91,7 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
         List noticeList = new ArrayList<ResponseNotice>();
         for (Object o:  resultList) {
             Object[] res = (Object[]) o;
-
             LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-
             map.put("notice_id", res[8]);
             map.put("caseBy", res[0]);
             map.put("nickname", res[10]);
@@ -111,9 +107,7 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
             map.put("isNew", res[15]);
             map.put("isAuth", res[9]);
 
-
             noticeList.add(map);
-
         }
         return noticeList;
     }

@@ -21,6 +21,4 @@ public class ResponseNotice {
     private String isClick;
     private String isNew;
     private String isAuth;
-
-
 }
