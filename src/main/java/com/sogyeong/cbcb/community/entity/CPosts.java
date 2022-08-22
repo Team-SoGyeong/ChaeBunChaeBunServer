@@ -66,11 +66,11 @@ public class CPosts {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long seq;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private UserInfo user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
@@ -97,4 +97,8 @@ public class CPosts {
         this.update_date = update_date;
     }
 
+    public void update(String contents, CImages cImages) {
+        this.contents = contents;
+        this.cImages = cImages;
+    }
 }

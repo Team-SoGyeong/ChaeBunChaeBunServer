@@ -50,6 +50,14 @@ public class CommunityController {
     }
 
     //커뮤니티 글 수정
+    @ApiOperation("커뮤니티 글 수정")
+    @PutMapping(path = "/{postId}/{userId}")
+    public CommonResponse<CPostsDTO, String> updatePost(@PathVariable Long postId,
+                                                        @PathVariable Long userId,
+                                                        @ModelAttribute CPostRequest request){
+        return new CommonResponse(cPostsService.updateCPost(postId, userId, request), ResultMessage.RESULT_OK.getVal());
+    }
+
     //커뮤니티 글 삭제
     @ApiOperation("커뮤니티 글 삭제")
     @DeleteMapping("/{postId}/{userId}")

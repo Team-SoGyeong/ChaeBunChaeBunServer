@@ -1,7 +1,5 @@
 package com.sogyeong.cbcb.community.service;
 
-import com.sogyeong.cbcb.board.entity.Comment;
-import com.sogyeong.cbcb.board.entity.Wish;
 import com.sogyeong.cbcb.board.model.response.ResponseNotice;
 import com.sogyeong.cbcb.community.entity.*;
 import com.sogyeong.cbcb.community.repository.CCommentRepository;
@@ -55,12 +53,41 @@ public class CPostsService {
 
     @Transactional
     public CPostsDTO saveCPost(Long authorId, CPostRequest cPostRequest){
-        Optional<UserInfo> user = userInfoRepository.findById(authorId);
-        if(user.isEmpty())
-            throw new IllegalArgumentException(ResultMessage.UNDEFINED_USER.getVal());
+        UserInfo user = userInfoRepository
+                .findById(authorId)
+                .orElseThrow(() -> new IllegalArgumentException(ResultMessage.UNDEFINED_USER.getVal()));
 
+        CImages cImages = uploadImages(cPostRequest.getImgs(), authorId);
+        CPosts toSave
+                = CPosts.builder()
+                .cImages(cImages)
+                .contents(cPostRequest.getContent())
+                .user(user)
+                .address(Address.builder().seq(user.getAddr()).build())
+                .create_date(LocalDateTime.now())
+                .update_date(LocalDateTime.now())
+                .build();
+        CPosts newPost = cPostsRepository.save(toSave);
+        return getCPostByPostId(newPost.getSeq());
+    }
+
+    @Transactional
+    public CPostsDTO updateCPost(Long postId, Long authorId, CPostRequest cPostRequest){
+        UserInfo user = userInfoRepository
+                .findById(authorId)
+                .orElseThrow(() -> new IllegalArgumentException(ResultMessage.UNDEFINED_USER.getVal()));
+
+        CPosts cPosts = cPostsRepository
+                .findByUserAndSeq(user, postId)
+                .orElseThrow(() -> new IllegalStateException(ResultMessage.UNDEFINED_POST.getVal()));
+
+        CImages cImages = uploadImages(cPostRequest.getImgs(), authorId);
+        cPosts.update(cPostRequest.getContent(), cImages);
+        return getCPostByPostId(postId);
+    }
+
+    private CImages uploadImages(List<MultipartFile> imgs, Long authorId){
         CImages cImages = new CImages();
-        List<MultipartFile> imgs = cPostRequest.getImgs();
         if (!(imgs == null) && !imgs.isEmpty()){
             List<String> fileNames = new ArrayList<>();
             imgs.forEach(file -> {
@@ -72,17 +99,7 @@ public class CPostsService {
             });
             cImages.setCImages(fileNames);
         }
-        CPosts toSave
-                = CPosts.builder()
-                .cImages(cImages)
-                .contents(cPostRequest.getContent())
-                .user(user.get())
-                .address(Address.builder().seq(user.get().getAddr()).build())
-                .create_date(LocalDateTime.now())
-                .update_date(LocalDateTime.now())
-                .build();
-        CPosts newPost = cPostsRepository.save(toSave);
-        return getCPostByPostId(newPost.getSeq());
+        return cImages;
     }
 
     @Transactional
@@ -254,10 +271,8 @@ public class CPostsService {
     }
 
     public List getMyNotice(Long userId){
-        if(userInfoRepository.findById(userId).isEmpty())
-            throw new IllegalArgumentException(ResultMessage.UNDEFINED_USER.getVal());
-        else
-            return  cPostsRepository.getNoticeListAll(userId);
+        userInfoRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException(ResultMessage.UNDEFINED_USER.getVal()));
+        return cPostsRepository.getNoticeListAll(userId);
     }
 
     @Transactional(readOnly = false)
