@@ -1,23 +1,21 @@
 package com.sogyeong.cbcb.community.controller;
 
-import com.sogyeong.cbcb.board.model.vo.ReportVO;
+import com.sogyeong.cbcb.community.request.CCommentRequest;
 import com.sogyeong.cbcb.community.request.CPostRequest;
 import com.sogyeong.cbcb.community.request.CPostsBlindRequest;
 import com.sogyeong.cbcb.community.response.CCommentDTO;
 import com.sogyeong.cbcb.community.response.CPostsDTO;
 import com.sogyeong.cbcb.community.response.MypageCPostDTO;
 import com.sogyeong.cbcb.community.service.CPostsService;
-import com.sogyeong.cbcb.config.S3Uploader;
-import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -79,7 +77,18 @@ public class CommunityController {
     public CommonResponse<List<CCommentDTO>, String> getCommentTOPosts(@PathVariable Long postId){
         return new CommonResponse(cPostsService.getCommToPost(postId), ResultMessage.RESULT_OK.getVal());
     }
+
     //커뮤니티 댓글 작성
+    @ApiOperation("커뮤니티 댓글 작성")
+    @PostMapping("/comment")
+    public CommonResponse<List<CCommentDTO>, String> writeComment(@Valid @ModelAttribute CCommentRequest commentRequest){
+        Long commId = cPostsService.saveCComment(commentRequest);
+        if (commId > 0) //작성 성공
+            return new CommonResponse(cPostsService.getCommToPost(commentRequest.getPostId()), ResultMessage.WRITE_OK.getVal());
+        else //작성 실패
+            return new CommonResponse(null, ResultMessage.WRITE_FAILED.getVal());
+    }
+
     //커뮤니티 댓글 삭제
     @ApiOperation("커뮤니티 댓글 삭제")
     @DeleteMapping("/comment/{commId}/{userId}")
