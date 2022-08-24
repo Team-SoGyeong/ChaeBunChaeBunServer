@@ -1,11 +1,11 @@
 package com.sogyeong.cbcb.community.service;
 
-import com.sogyeong.cbcb.board.model.response.ResponseNotice;
 import com.sogyeong.cbcb.community.entity.*;
 import com.sogyeong.cbcb.community.repository.CCommentRepository;
 import com.sogyeong.cbcb.community.repository.CLikeRepository;
 import com.sogyeong.cbcb.community.repository.COpinionRepository;
 import com.sogyeong.cbcb.community.repository.CPostsRepository;
+import com.sogyeong.cbcb.community.request.CCommentRequest;
 import com.sogyeong.cbcb.community.request.CPostRequest;
 import com.sogyeong.cbcb.community.request.CPostsBlindRequest;
 import com.sogyeong.cbcb.community.response.CCommentDTO;
@@ -189,6 +189,24 @@ public class CPostsService {
         if(cPostsRepository.findById(postId).isEmpty())
             throw new IllegalArgumentException(ResultMessage.UNDEFINED_POST.getVal());
         return cCommRepository.getCommToPost(postId);
+    }
+
+    @Transactional
+    public Long saveCComment(CCommentRequest commentRequest){
+        CPosts post = cPostsRepository.findById(commentRequest.getPostId())
+                .orElseThrow(() -> new IllegalArgumentException(ResultMessage.UNDEFINED_POST.getVal()));
+        UserInfo user = userInfoRepository.findById(commentRequest.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException(ResultMessage.UNDEFINED_USER.getVal()));
+
+        CComment toSave = CComment.builder()
+                .content(commentRequest.getContent())
+                .post(post)
+                .member(user.getSeq())
+                .host_chk("N") 
+                .regDate(LocalDateTime.now())
+                .build();
+        CComment saved = cCommRepository.save(toSave);
+        return saved.getSeq();
     }
 
     @Transactional(readOnly = true)
