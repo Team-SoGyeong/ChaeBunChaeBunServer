@@ -19,7 +19,7 @@ public class CPostsDTO {
     private String img4;
     private String img5;
     private Integer likeCount;
-    private Boolean isLike;
+    private Integer isLike;
     private Integer commCount;
 
 }

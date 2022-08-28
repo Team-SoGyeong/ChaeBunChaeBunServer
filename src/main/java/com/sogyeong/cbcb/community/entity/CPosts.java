@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
                         @ColumnResult(name = "img4", type = String.class),
                         @ColumnResult(name = "img5", type = String.class),
                         @ColumnResult(name = "like_count", type = Integer.class),
-                        @ColumnResult(name = "is_like", type = Boolean.class),
+                        @ColumnResult(name = "is_like", type = Integer.class),
                         @ColumnResult(name = "comm_count", type = Integer.class)
                 }
         )
