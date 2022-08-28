@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
                 targetClass = CPostsDTO.class,
                 columns = {
                         @ColumnResult(name = "seq", type = Long.class),
+                        @ColumnResult(name = "user_id", type = Long.class),
                         @ColumnResult(name = "profile", type = String.class),
                         @ColumnResult(name = "nickname", type = String.class),
                         @ColumnResult(name = "neighborhood", type = String.class),
