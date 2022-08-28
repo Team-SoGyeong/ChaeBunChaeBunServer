@@ -81,7 +81,7 @@ public class CommunityController {
     //커뮤니티 댓글 작성
     @ApiOperation("커뮤니티 댓글 작성")
     @PostMapping("/comment")
-    public CommonResponse<List<CCommentDTO>, String> writeComment(@Valid @ModelAttribute CCommentRequest commentRequest){
+    public CommonResponse<List<CCommentDTO>, String> writeComment(@Valid @RequestBody CCommentRequest commentRequest){
         Long commId = cPostsService.saveCComment(commentRequest);
         if (commId > 0) //작성 성공
             return new CommonResponse(cPostsService.getCommToPost(commentRequest.getPostId()), ResultMessage.WRITE_OK.getVal());
@@ -98,13 +98,13 @@ public class CommunityController {
     //글 숨기기
     @ApiOperation("커뮤니티 글 숨기기")
     @PostMapping("/blind")
-    public CommonResponse saveBlind( @ModelAttribute CPostsBlindRequest blindRequest) {
+    public CommonResponse saveBlind( @RequestBody CPostsBlindRequest blindRequest) {
         return new CommonResponse(cPostsService.saveBlind(blindRequest));
     }
     //글/댓글 신고
     @ApiOperation("커뮤니티 글/댓글 신고")
     @PostMapping("/report")
-    public CommonResponse saveReport( @ModelAttribute CPostsBlindRequest blindRequest) {
+    public CommonResponse saveReport( @RequestBody CPostsBlindRequest blindRequest) {
         return new CommonResponse(cPostsService.saveReport(blindRequest));
     }
 
