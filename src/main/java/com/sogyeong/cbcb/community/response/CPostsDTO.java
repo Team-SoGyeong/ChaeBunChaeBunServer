@@ -8,6 +8,7 @@ import lombok.Data;
 public class CPostsDTO {
 
     private Long postId;
+    private Long userId;
     private String profile;
     private String name;
     private String address;
