@@ -11,4 +11,5 @@ public class MypageCPostDTO {
     private String contents;
     private Integer like_count;
     private Integer comm_count;
+    private Integer isLike;
 }
