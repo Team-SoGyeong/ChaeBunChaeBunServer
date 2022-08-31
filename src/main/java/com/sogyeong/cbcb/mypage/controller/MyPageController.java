@@ -3,11 +3,13 @@ package com.sogyeong.cbcb.mypage.controller;
 import com.sogyeong.cbcb.board.entity.Posts;
 import com.sogyeong.cbcb.board.repository.PostsRepository;
 import com.sogyeong.cbcb.board.service.PostsService;
+import com.sogyeong.cbcb.defaults.entity.Address;
 import com.sogyeong.cbcb.defaults.entity.Products;
 import com.sogyeong.cbcb.defaults.entity.response.BasicResponse;
 import com.sogyeong.cbcb.defaults.entity.response.CommonResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ErrorResponse;
 import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
+import com.sogyeong.cbcb.defaults.repository.AddressRepository;
 import com.sogyeong.cbcb.defaults.repository.ProductsRepository;
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
 import com.sogyeong.cbcb.mypage.model.vo.ProfileVO;
@@ -34,6 +36,7 @@ public class MyPageController {
     UserInfoRepository userInfoRepository;
     PostsRepository postsRepository;
     ProductsRepository productsRepository;
+    AddressRepository addressRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -52,13 +55,17 @@ public class MyPageController {
         }
         else{
             String profile = userInfo.stream().findFirst().get().getUrl();
+            Long addrId = userInfo.stream().findFirst().get().getAddr();
             String nickname = userInfo.stream().findFirst().get().getNickname();
+
+            String addr = addressRepository.findById(addrId).get().getNeighborhood();
 
             List profileInfo = new ArrayList();
             LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 
             map.put("img", profile);
             map.put("nickname", nickname);
+            map.put("address", addr);
 
             profileInfo.add(map);
 
