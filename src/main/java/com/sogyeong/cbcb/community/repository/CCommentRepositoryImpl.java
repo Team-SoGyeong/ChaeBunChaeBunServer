@@ -14,7 +14,7 @@ public class CCommentRepositoryImpl implements CCommentRepositoryCustom{
     @Override
     public List<CCommentDTO> getCommToPost(Long postId) {
         return em.createNativeQuery(
-                "select cp.seq as postId, cc.seq as commId, ui.profile, ui.nickname, cc.contents, " +
+                "select cp.seq as postId, cc.seq as commId, cc.member as comm_user, ui.profile, ui.nickname, cc.contents, " +
                         "date_format(cc.reg_date,'%m/%d %H:%i') as create_date " +
                         "from community_posts cp " +
                         "left join community_comment cc on cc.post_id = cp.seq " +

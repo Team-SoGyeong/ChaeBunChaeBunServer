@@ -8,6 +8,7 @@ import lombok.Data;
 public class CCommentDTO {
     private Long postId;
     private Long commId;
+    private Long comm_user;
     private String profile;
     private String name;
     private String content;

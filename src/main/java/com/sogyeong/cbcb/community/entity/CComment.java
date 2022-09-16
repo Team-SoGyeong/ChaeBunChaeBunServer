@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
                 columns = {
                         @ColumnResult(name = "postId", type = Long.class),
                         @ColumnResult(name = "commId", type = Long.class),
+                        @ColumnResult(name = "comm_user", type = Long.class),
                         @ColumnResult(name = "profile", type = String.class),
                         @ColumnResult(name = "nickname", type = String.class),
                         @ColumnResult(name = "contents", type = String.class),
