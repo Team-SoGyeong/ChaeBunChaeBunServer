@@ -40,9 +40,9 @@ public class CommunityController {
     }
     //커뮤니티 글 쓰기
     @ApiOperation("커뮤니티 글 쓰기")
-    @PostMapping(path = "{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "{userId}")
     public CommonResponse<CPostsDTO, String> writePost(@PathVariable Long userId,
-                                                       @ModelAttribute CPostRequest request
+                                                       @RequestBody CPostRequest request
                                                        ){
         return new CommonResponse(cPostsService.saveCPost(userId, request), ResultMessage.RESULT_OK.getVal());
     }
@@ -52,7 +52,7 @@ public class CommunityController {
     @PutMapping(path = "/{postId}/{userId}")
     public CommonResponse<CPostsDTO, String> updatePost(@PathVariable Long postId,
                                                         @PathVariable Long userId,
-                                                        @ModelAttribute CPostRequest request){
+                                                        @RequestBody CPostRequest request){
         return new CommonResponse(cPostsService.updateCPost(postId, userId, request), ResultMessage.RESULT_OK.getVal());
     }
 
