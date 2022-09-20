@@ -10,6 +10,8 @@ import java.util.List;
 @Getter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CImages {
     private String img1;
     private String img2;

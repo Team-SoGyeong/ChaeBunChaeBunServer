@@ -69,7 +69,7 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
     @Override
     public CPostsDTO getCPostByPostId(Long postId) {
         return (CPostsDTO) em.createNativeQuery(
-                "select cp.seq, ui.profile, ui.nickname, da.neighborhood, cp.contents, " +
+                "select cp.seq, cp.user_id, ui.profile, ui.nickname, da.neighborhood, cp.contents, " +
                         "date_format(cp.create_date,'%m/%d') as create_date, " +
                         "cp.img1, cp.img2, cp.img3, cp.img4, cp.img5, " +
                         "(select count(*) from community_like cl where cp.seq = cl.post_id) as like_count, " +

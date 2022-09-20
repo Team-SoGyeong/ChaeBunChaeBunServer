@@ -12,7 +12,6 @@ import com.sogyeong.cbcb.community.response.CCommentDTO;
 import com.sogyeong.cbcb.community.response.CLikeStatusDTO;
 import com.sogyeong.cbcb.community.response.CPostsDTO;
 import com.sogyeong.cbcb.community.response.MypageCPostDTO;
-import com.sogyeong.cbcb.config.S3Uploader;
 import com.sogyeong.cbcb.defaults.entity.Address;
 import com.sogyeong.cbcb.defaults.entity.response.ResultMessage;
 import com.sogyeong.cbcb.mypage.entity.UserInfo;
@@ -21,9 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -38,7 +35,7 @@ public class CPostsService {
     private final UserInfoRepository userInfoRepository;
     private final COpinionRepository cOpinionRepository;
     private  final CLikeRepository likeRepository;
-    private final S3Uploader s3Uploader;
+    //private final S3Uploader s3Uploader;
 
     @Transactional(readOnly = true)
     public List<CPostsDTO> getAllCPosts(Long postId,Long userId){
@@ -57,10 +54,9 @@ public class CPostsService {
                 .findById(authorId)
                 .orElseThrow(() -> new IllegalArgumentException(ResultMessage.UNDEFINED_USER.getVal()));
 
-        CImages cImages = uploadImages(cPostRequest.getImgs(), authorId);
         CPosts toSave
                 = CPosts.builder()
-                .cImages(cImages)
+                .cImages(cPostRequest.getImgs().toEntity())
                 .contents(cPostRequest.getContent())
                 .user(user)
                 .address(Address.builder().seq(user.getAddr()).build())
@@ -81,26 +77,25 @@ public class CPostsService {
                 .findByUserAndSeq(user, postId)
                 .orElseThrow(() -> new IllegalStateException(ResultMessage.UNDEFINED_POST.getVal()));
 
-        CImages cImages = uploadImages(cPostRequest.getImgs(), authorId);
-        cPosts.update(cPostRequest.getContent(), cImages);
+        cPosts.update(cPostRequest.getContent(), cPostRequest.getImgs().toEntity());;
         return getCPostByPostId(postId);
     }
 
-    private CImages uploadImages(List<MultipartFile> imgs, Long authorId){
-        CImages cImages = new CImages();
-        if (!(imgs == null) && !imgs.isEmpty()){
-            List<String> fileNames = new ArrayList<>();
-            imgs.forEach(file -> {
-                try {
-                    fileNames.add(s3Uploader.upload(file, "community/" + authorId));
-                } catch (IOException e) {
-                    log.info("파일 변환 중 오류: ", e);
-                }
-            });
-            cImages.setCImages(fileNames);
-        }
-        return cImages;
-    }
+//    private CImages uploadImages(List<MultipartFile> imgs, Long authorId){
+//        CImages cImages = new CImages();
+//        if (!(imgs == null) && !imgs.isEmpty()){
+//            List<String> fileNames = new ArrayList<>();
+//            imgs.forEach(file -> {
+//                try {
+//                    fileNames.add(s3Uploader.upload(file, "community/" + authorId));
+//                } catch (IOException e) {
+//                    log.info("파일 변환 중 오류: ", e);
+//                }
+//            });
+//            cImages.setCImages(fileNames);
+//        }
+//        return cImages;
+//    }
 
     @Transactional
     public String saveBlind(CPostsBlindRequest blindRequest){
