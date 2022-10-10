@@ -20,7 +20,7 @@ public class CCommentRepositoryImpl implements CCommentRepositoryCustom{
                         "left join community_comment cc on cc.post_id = cp.seq " +
                         "join user_info ui on cc.member = ui.info_id " +
                         "where cp.seq = :postId "+
-                        "order by cc.reg_date desc ", "CCommentDTOMapping")
+                        "order by cc.reg_date ", "CCommentDTOMapping")
                 .setParameter("postId", postId)
                 .getResultList();
     }
