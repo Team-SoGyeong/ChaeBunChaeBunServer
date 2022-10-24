@@ -57,7 +57,7 @@ public class CPostsRepositoryImpl implements CPostsRepositoryCustom{
                     "left join community_comment cc on cc.post_id = cp.seq " +
                     "join user_info ui on cp.user_id = ui.info_id " +
                     "where cc.member =:userId and cp.seq not in (select post_id from community_opinion  where types ='blind' and author_id = :userId) " +
-                    "order by cc.create_date desc";
+                    "order by cc.reg_date desc";
         }
 
         return em.createNativeQuery(
